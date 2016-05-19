@@ -16,9 +16,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
             _pages.Add(page);
         }
 
-        public static BloomDocument DefaultPhotoStoryConvertedBloomDocument()
+        public static BloomDocument DefaultPhotoStoryConvertedBloomDocument(string bookName)
         {
-            return new BloomDocument {_metadata = BloomMetadata.DefaultBloomMetadata(), _bookData = BloomBookData.DefaultBloomBookData()};
+            return new BloomDocument {_metadata = BloomMetadata.DefaultBloomMetadata(bookName), _bookData = BloomBookData.DefaultBloomBookData()};
         }
 
         public Html ConvertToHtml()

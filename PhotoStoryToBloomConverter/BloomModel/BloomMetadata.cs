@@ -26,7 +26,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             "DIV.coverColor TEXTAREA { background-color: #C2A6BF !important; }\r\nDIV.bloom-page.coverColor { background-color: #C2A6BF !important }",
         };
 
-        public static BloomMetadata DefaultBloomMetadata()
+        public static BloomMetadata DefaultBloomMetadata(string title)
         {
             return new BloomMetadata
             {
@@ -37,7 +37,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 TemplateSource = "Basic Book",
                 Generator = "Bloom Version 3.6.123",
                 Styles = StandardBloomStyles,
-                Title = "Test Book!",
+                Title = title,
                 LockedDownAsShell = "true"
             };
         }

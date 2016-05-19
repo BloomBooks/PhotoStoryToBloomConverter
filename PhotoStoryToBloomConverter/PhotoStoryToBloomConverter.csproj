@@ -87,9 +87,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <EmbeddedResource Include="BloomBookResources\meta.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Book.htm" />
+    <EmbeddedResource Include="BloomBookResources\basePage.css" />
+    <EmbeddedResource Include="BloomBookResources\Basic Book.css" />
+    <EmbeddedResource Include="BloomBookResources\languageDisplay.css" />
+    <EmbeddedResource Include="BloomBookResources\license.png" />
+    <EmbeddedResource Include="BloomBookResources\origami.css" />
+    <EmbeddedResource Include="BloomBookResources\placeHolder.png" />
+    <EmbeddedResource Include="BloomBookResources\previewMode.css" />
+    <EmbeddedResource Include="BloomBookResources\thumbnail.png" />
+    <EmbeddedResource Include="BloomBookResources\Traditional-XMatter.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
