@@ -19,7 +19,7 @@ namespace PhotoStoryToBloomConverter
         }
         private static XmlSerializer BloomHtmlSerializer()
         {
-            var serializer = new XmlSerializer(typeof(Html), new XmlRootAttribute("html") { Namespace= "http://www.w3.org/1999/xhtml" });
+            var serializer = new XmlSerializer(typeof(Html), new XmlRootAttribute("html"));
             serializer.UnknownNode += UnknownNodeLogger;
             serializer.UnknownAttribute += UnknownAttributeLogger;
             return serializer;
@@ -41,14 +41,18 @@ namespace PhotoStoryToBloomConverter
         {
             var xmlFileStream = new FileStream(destinationFilename, FileMode.Create);
             var writer = XmlWriter.Create(xmlFileStream, new XmlWriterSettings { OmitXmlDeclaration = true, Indent = true });
-            BloomHtmlSerializer().Serialize(writer, html, html.Namespaces);
+            var xns = new XmlSerializerNamespaces();
+            xns.Add(string.Empty, string.Empty);
+            BloomHtmlSerializer().Serialize(writer, html, xns);
         }
 
         public static string SerializeBloomHtml(Html html)
         {
             var stringBuilder = new StringBuilder();
             var writer = XmlWriter.Create(stringBuilder, new XmlWriterSettings { OmitXmlDeclaration = true, Indent = true });
-            BloomHtmlSerializer().Serialize(writer, html, html.Namespaces);
+            var xns = new XmlSerializerNamespaces();
+            xns.Add(string.Empty, string.Empty);
+            BloomHtmlSerializer().Serialize(writer, html, xns);
             return stringBuilder.ToString();
         }
 

@@ -22,4 +22,4 @@ This htm file will need to be placed in a directory along with all the images an
 
 ## Future Work
 
-The htm file is viewable in your browser, but is not in the full bloom format until it is imported into bloom. This is not currently implemented, the pages can be manually copy pasted into a bloom book, but the entired document is not currently importable. Animations are also not currently added to the htm file, pending some decisions about how to perform them within bloom.
+The book (htm and assets) need to be added to a bloom book directory to include the css scripts and some metadata. Animations are also not currently added to the htm file, pending some decisions about how to perform them within bloom.
