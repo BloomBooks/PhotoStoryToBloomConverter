@@ -63,7 +63,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     new Div { DataBook = "licenseUrl", Lang = "*", SimpleText = LicenseUrl},
                 }
             };
-            dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = $"contentLanguage{index + 1}", Lang = "*", SimpleText = lang }).ToArray());
+            dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
             dataDiv.Divs.AddRange(LocalizedBookTitle.Select(lang => new Div { DataBook = "bookTitle", Lang = "*", FormattedText = new Paragraph { Text = Title } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = credits } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = contributions } }).ToArray());

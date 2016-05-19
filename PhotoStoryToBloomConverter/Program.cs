@@ -22,7 +22,7 @@ namespace PhotoStoryToBloomConverter
 
             if (!File.Exists(projectPath))
             {
-                Console.WriteLine($"Unable to locate project file at {projectPath}");
+                Console.WriteLine(string.Format("Unable to locate project file at {0}",projectPath));
                 return;
             }
 
@@ -33,7 +33,7 @@ namespace PhotoStoryToBloomConverter
             var enclosingDirectory = Path.GetDirectoryName(outputPath);
             if (enclosingDirectory == null)
             {
-                Console.WriteLine($"Invalid output file path {outputPath}");
+                Console.WriteLine(string.Format("Invalid output file path {0}",outputPath));
                 return;
             }
             if (!Directory.Exists(enclosingDirectory))
