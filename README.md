@@ -14,12 +14,9 @@ First, extract the files from the .wp3 file into a folder using the CABExtracter
 
 This will create a folder with all the image and audio assets, along with an xml file called project.xml.
 
-Next, convert the project.xml into a bloom book htm file using the PHotoStoryToBloomConverter.exe file.
+Next, convert the project.xml into a bloom book htm file using the PhotoStoryToBloomConverter.exe file.
 
-    ./path/to/converter /path/to/project.xml /path/to/outputfile
+    ./path/to/converter /path/to/project.xml /path/to/bloomBookDirectory bookName
 
-This htm file will need to be placed in a directory along with all the images and assets included in the previously extracted folder to work.
+This will create a book that shows up in bloom. Close bloom if it is already open, then open it and see the newly converted book.
 
-## Future Work
-
-The book (htm and assets) need to be added to a bloom book directory to include the css scripts and some metadata. Animations are also not currently added to the htm file, pending some decisions about how to perform them within bloom.

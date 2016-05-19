@@ -15,7 +15,7 @@ namespace PhotoStoryToBloomConverter
             if (args.Length != 3)
             {
                 Console.WriteLine(
-                    "usage: .\\PhotoStory3XmlToBloomHtml5Converter projectFilePath bloomBookFolderPath bookName");
+                    "usage: .\\PhotoStory3XmlToBloomHtml5Converter path/to/project.xml path/to/bloomBookDirectory bookName");
                 return;
             }
 
