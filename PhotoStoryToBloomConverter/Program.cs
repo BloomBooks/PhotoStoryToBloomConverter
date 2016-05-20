@@ -10,40 +10,10 @@ namespace PhotoStoryToBloomConverter
 {
     public class Program
     {
+        [STAThread]
         public static void Main(string[] args)
         {
-            if (args.Length != 3)
-            {
-                Console.WriteLine(
-                    "usage: .\\PhotoStory3XmlToBloomHtml5Converter path/to/project.xml path/to/bloomBookDirectory bookName");
-                return;
-            }
-
-            var projectPath = args[0];
-            if (!Path.IsPathRooted(projectPath))
-                projectPath = Path.Combine(Directory.GetCurrentDirectory(), projectPath);
-
-            if (!File.Exists(projectPath))
-            {
-                Console.WriteLine("Unable to locate project file at {0}", projectPath);
-                return;
-            }
-
-            var outputPath = args[1];
-            if (!Path.IsPathRooted(outputPath))
-                outputPath = Path.Combine(Directory.GetCurrentDirectory(), outputPath);
-
-            if (!Directory.Exists(outputPath))
-                Directory.CreateDirectory(outputPath);
-
-            var bookName = args[2];
-            var bookFolderPath = Path.Combine(outputPath, bookName);
-            Directory.CreateDirectory(bookFolderPath);
-
-            var ps3Project = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectPath);
-            ConvertToBloom(ps3Project, Path.Combine(bookFolderPath, string.Format("{0}.htm", bookName)), bookName);
-            CopyAssetsAndResources(Path.GetDirectoryName(projectPath), bookFolderPath);
-            CopyBloomFiles(bookFolderPath);
+            new MainScreen().ShowDialog();
         }
 
         public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName)

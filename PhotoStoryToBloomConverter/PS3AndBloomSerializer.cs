@@ -27,29 +27,37 @@ namespace PhotoStoryToBloomConverter
 
         public static PhotoStoryProject DeserializePhotoStoryXml(string filename)
         {
-            var xmlFileStream = new FileStream(filename, FileMode.Open);
-            return (PhotoStoryProject)Ps3ProjectSerializer().Deserialize(xmlFileStream);
+            using (var xmlFileStream = new FileStream(filename, FileMode.Open))
+            {
+                return (PhotoStoryProject) Ps3ProjectSerializer().Deserialize(xmlFileStream);
+            }
         }
 
         public static Html DeserializeBloomHtml(string filename)
         {
-            var xmlFileStream = new FileStream(filename, FileMode.Open);
-            return (Html)BloomHtmlSerializer().Deserialize(xmlFileStream);
+            using (var xmlFileStream = new FileStream(filename, FileMode.Open))
+            {
+                return (Html) BloomHtmlSerializer().Deserialize(xmlFileStream);
+            }
         }
 
         public static void SerializeBloomHtml(Html html, string destinationFilename)
         {
-            var xmlFileStream = new FileStream(destinationFilename, FileMode.Create);
-            var writer = XmlWriter.Create(xmlFileStream, new XmlWriterSettings { OmitXmlDeclaration = true, Indent = true });
-            var xns = new XmlSerializerNamespaces();
-            xns.Add(string.Empty, string.Empty);
-            BloomHtmlSerializer().Serialize(writer, html, xns);
+            using (var xmlFileStream = new FileStream(destinationFilename, FileMode.Create))
+            {
+                using (var writer = XmlWriter.Create(xmlFileStream, new XmlWriterSettings {OmitXmlDeclaration = true, Indent = true}))
+                {
+                    var xns = new XmlSerializerNamespaces();
+                    xns.Add(string.Empty, string.Empty);
+                    BloomHtmlSerializer().Serialize(writer, html, xns);
+                }
+            }
         }
 
         public static string SerializeBloomHtml(Html html)
         {
             var stringBuilder = new StringBuilder();
-            var writer = XmlWriter.Create(stringBuilder, new XmlWriterSettings { OmitXmlDeclaration = true, Indent = true });
+            var writer = XmlWriter.Create(stringBuilder, new XmlWriterSettings {OmitXmlDeclaration = true, Indent = true});
             var xns = new XmlSerializerNamespaces();
             xns.Add(string.Empty, string.Empty);
             BloomHtmlSerializer().Serialize(writer, html, xns);

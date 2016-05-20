@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E2F3B110-0E8E-4430-A519-F56C1FFC4B53}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PhotoStoryToBloomConverter</RootNamespace>
     <AssemblyName>PhotoStoryToBloomConverter</AssemblyName>
@@ -41,6 +41,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,6 +69,12 @@
     <Compile Include="BloomModel\BloomMetadata.cs" />
     <Compile Include="BloomModel\BloomPage.cs" />
     <Compile Include="BloomModel\BloomTextBox.cs" />
+    <Compile Include="MainScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainScreen.Designer.cs">
+      <DependentUpon>MainScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="PS3AndBloomSerializer.cs" />
     <Compile Include="PS3Model\Edit.cs" />
     <Compile Include="PS3Model\Font.cs" />
@@ -86,6 +93,9 @@
     <Compile Include="PS3Model\VisualUnit.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MainScreen.resx">
+      <DependentUpon>MainScreen.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="App.config" />
     <EmbeddedResource Include="BloomBookResources\meta.json" />
   </ItemGroup>
