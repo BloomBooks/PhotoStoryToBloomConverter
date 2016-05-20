@@ -40,8 +40,6 @@ namespace PhotoStoryToBloomConverter
             var bookFolderPath = Path.Combine(outputPath, bookName);
             Directory.CreateDirectory(bookFolderPath);
 
-            Console.WriteLine("Project path: {0}, Output path: {1}, Book name: {2}", projectPath, outputPath, bookName);
-            Console.WriteLine("Book folder: {0}", bookFolderPath);
             var ps3Project = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectPath);
             ConvertToBloom(ps3Project, Path.Combine(bookFolderPath, string.Format("{0}.htm", bookName)), bookName);
             CopyAssetsAndResources(Path.GetDirectoryName(projectPath), bookFolderPath);
@@ -63,14 +61,10 @@ namespace PhotoStoryToBloomConverter
         //The assumption is that the wp3 archive only contains assets and a project.xml file. We convert the .xml file and copy the images and audio tracks.
         public static void CopyAssetsAndResources(string sourceFolderPath, string destinationFolderPath)
         {
-            Console.WriteLine("Copying files from directory {0} to directory {1}", sourceFolderPath,
-                destinationFolderPath);
             foreach (var filePath in Directory.EnumerateFiles(sourceFolderPath))
             {
                 var filename = Path.GetFileName(filePath);
                 if (filename.Equals("project.xml")) continue;
-                Console.WriteLine("Copying file from {0} to {1}", Path.Combine(sourceFolderPath, filename),
-                    Path.Combine(destinationFolderPath, filename));
                 File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, filename));
             }
         }
