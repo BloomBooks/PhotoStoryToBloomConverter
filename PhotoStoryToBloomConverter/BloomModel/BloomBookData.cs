@@ -28,11 +28,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
         public List<List<Dictionary<string, string>>> LocalizedNarrationList;
 
-        public static BloomBookData DefaultBloomBookData()
+        public static BloomBookData DefaultBloomBookData(string title)
         {
             return new BloomBookData
             {
-                Title = "",
+                Title = title,
                 LanguagesOfBook = "English",
                 StyleNumberSequence = "0",
                 LicenseUrl = "http://creativecommons.org/licenses/by/4.0",
@@ -64,7 +64,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 }
             };
             dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
-            dataDiv.Divs.AddRange(LocalizedBookTitle.Select(lang => new Div { DataBook = "bookTitle", Lang = "*", FormattedText = new Paragraph { Text = Title } }).ToArray());
+            dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = Title } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = credits } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = contributions } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = acknowledgments } }).ToArray());

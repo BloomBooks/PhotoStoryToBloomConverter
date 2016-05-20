@@ -18,7 +18,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
         public static BloomDocument DefaultPhotoStoryConvertedBloomDocument(string bookName)
         {
-            return new BloomDocument {_metadata = BloomMetadata.DefaultBloomMetadata(bookName), _bookData = BloomBookData.DefaultBloomBookData()};
+            return new BloomDocument {_metadata = BloomMetadata.DefaultBloomMetadata(bookName), _bookData = BloomBookData.DefaultBloomBookData(bookName)};
         }
 
         public Html ConvertToHtml()
