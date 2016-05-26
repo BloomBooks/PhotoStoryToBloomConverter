@@ -2,19 +2,16 @@
 
 namespace PhotoStoryToBloomConverter.PS3Model
 {
-    public class Motion
+    public class AbsoluteMotion
     {
         [XmlAttribute("manual")]
         public int Manual;
         [XmlAttribute("workingImageWidth")]
-        public int WorkingImageWidth;
+        public int BaseImageWidth;
         [XmlAttribute("workingImageHeight")]
-        public int WorkingImageHeight;
+        public int BaseImageHeight;
 
         [XmlElement("Rect")]
         public Rect[] Rects;
-
-        [XmlElement("RelativeRect")]
-        public Rect[] RelativeRects;
     }
 }

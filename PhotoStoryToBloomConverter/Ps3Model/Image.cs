@@ -6,6 +6,7 @@ namespace PhotoStoryToBloomConverter.PS3Model
     {
         [XmlAttribute("path")]
         public string Path;
+        //Comments generally indicates the next image name, not always accurate
         [XmlAttribute("comments")]
         public string Comments;
         [XmlAttribute("lastModified")]
@@ -24,9 +25,9 @@ namespace PhotoStoryToBloomConverter.PS3Model
         [XmlElement("Edit")]
         public Edit[] Edits;
         [XmlElement("Motion")]
-        public Motion[] Motions;
+        public AbsoluteMotion AbsoluteMotion;
         [XmlElement("Motion2")]
-        public Motion[] Motions2;
+        public PercentageMotion PercentageMotion;
         [XmlElement("Transition2")]
         public Transition[] Transitions;
         [XmlElement("MusicTrack")]

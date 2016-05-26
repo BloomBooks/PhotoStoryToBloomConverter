@@ -76,12 +76,13 @@
       <DependentUpon>MainScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="PS3AndBloomSerializer.cs" />
+    <Compile Include="PS3Model\AbsoluteMotion.cs" />
     <Compile Include="PS3Model\Edit.cs" />
     <Compile Include="PS3Model\Font.cs" />
     <Compile Include="PS3Model\Image.cs" />
-    <Compile Include="PS3Model\Motion.cs" />
     <Compile Include="PS3Model\MusicTrack.cs" />
     <Compile Include="PS3Model\Narration.cs" />
+    <Compile Include="PS3Model\PercentageMotion.cs" />
     <Compile Include="PS3Model\PhotoStoryProject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

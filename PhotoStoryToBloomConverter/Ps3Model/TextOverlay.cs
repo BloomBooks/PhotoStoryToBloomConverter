@@ -2,6 +2,7 @@
 
 namespace PhotoStoryToBloomConverter.PS3Model
 {
+    //Usually only seen on the title slide
     public class TextOverlay
     {
         [XmlAttribute("text")]

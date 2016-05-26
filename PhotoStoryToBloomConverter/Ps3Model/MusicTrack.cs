@@ -2,6 +2,7 @@
 
 namespace PhotoStoryToBloomConverter.PS3Model
 {
+    //Music track represents background music, usually triggered by an image
     public class MusicTrack
     {
         [XmlAttribute("type")]
