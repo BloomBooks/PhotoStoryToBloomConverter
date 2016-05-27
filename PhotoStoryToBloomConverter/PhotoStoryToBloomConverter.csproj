@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BloomModel\BloomAudio.cs" />
     <Compile Include="BloomModel\BloomBookData.cs" />
     <Compile Include="BloomModel\BloomDocument.cs" />
     <Compile Include="BloomModel\BloomHtmlModel\Body.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="BloomModel\BloomHtmlModel\Style.cs" />
     <Compile Include="BloomModel\BloomHtmlModel\Title.cs" />
     <Compile Include="BloomModel\BloomImage.cs" />
+    <Compile Include="BloomModel\BloomImageMotion.cs" />
     <Compile Include="BloomModel\BloomMetadata.cs" />
     <Compile Include="BloomModel\BloomPage.cs" />
     <Compile Include="BloomModel\BloomTextBox.cs" />

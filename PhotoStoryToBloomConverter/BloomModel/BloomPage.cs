@@ -18,17 +18,20 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public string PageLabel;
         public string PageDescription;
 
+        public BloomAudio Audio;
+
         public BloomPage()
         {
             Uuid = Guid.NewGuid().ToString();
         }
 
-        public static BloomPage DefaultBloomPageWithImage(BloomImage image)
+        public static BloomPage BloomImageOnlyPage(BloomImage image, BloomAudio audio)
         {
             return new BloomPage
             {
                 BloomTags = "bloom-page numberedPage customPage A4Landscape layout-style-Default bloom-monolingual",
                 Image = image,
+                Audio = audio,
                 PageLabel = "",
                 PageDescription = "",
                 Language = ""

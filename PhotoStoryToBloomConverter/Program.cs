@@ -18,13 +18,7 @@ namespace PhotoStoryToBloomConverter
 
         public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName)
         {
-            var document = BloomDocument.DefaultPhotoStoryConvertedBloomDocument(bookName);
-            foreach (var unit in project.VisualUnits)
-            {
-                var image = unit.Image;
-                var bloomImage = new BloomImage(image.Path, new Size {Height = image.Height, Width = image.Width});
-                document.AddPage(BloomPage.DefaultBloomPageWithImage(bloomImage));
-            }
+            var document = new BloomDocument(project, bookName);
             Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Drawing;
+using System.Xml.Serialization;
 
 namespace PhotoStoryToBloomConverter.PS3Model
 {
@@ -22,5 +23,16 @@ namespace PhotoStoryToBloomConverter.PS3Model
         public float Right;
         [XmlAttribute("top")]
         public float Top;
+
+        public Rectangle ToRectangle()
+        {
+            return new Rectangle
+            {
+                X = UpperLeftX,
+                Y = UpperLeftY - (int)Height,
+                Width = (int)Width,
+                Height = (int)Height
+            };
+        }
     }
 }
