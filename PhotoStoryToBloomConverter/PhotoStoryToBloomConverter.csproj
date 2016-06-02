@@ -113,6 +113,9 @@
     <EmbeddedResource Include="BloomBookResources\thumbnail.png" />
     <EmbeddedResource Include="BloomBookResources\Traditional-XMatter.css" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="BloomBookResources\player.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

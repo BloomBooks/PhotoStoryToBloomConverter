@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
