@@ -35,7 +35,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 var bloomImage = new BloomImage
                 {
                     Src = image.Path,
-                    ImageSize = new Size { Height = image.Height, Width = image.Width },
+                    ImageSize = new Size { Height = image.AbsoluteMotion.BaseImageHeight, Width = image.AbsoluteMotion.BaseImageWidth },
                     ImageMotion = new BloomImageMotion
                     {
                         CropRectangle = cropRectangle,
@@ -43,6 +43,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                         FinalImageRectangle = image.AbsoluteMotion.Rects[1].ToAnimationRectangle(),
                     }
                 };
+                
                 var backgroundPath = "";
                 if (image.MusicTracks != null)
                 {
