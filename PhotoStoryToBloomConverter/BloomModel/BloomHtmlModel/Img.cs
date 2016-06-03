@@ -20,9 +20,9 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string DataDerived;
         [XmlAttribute("class")]
         public string Class;
-        [XmlAttribute("height")]
-        public int Height;
         [XmlAttribute("width")]
         public int Width;
+        [XmlAttribute("height")]
+        public int Height;
     }
 }
