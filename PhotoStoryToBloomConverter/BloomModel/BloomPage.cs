@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 
 namespace PhotoStoryToBloomConverter.BloomModel
@@ -45,6 +46,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 Class = BloomTags,
                 Id = Uuid,
                 DataPageLineage = "056B6F11-4A6C-4942-B2BC-8861E62B03B3",
+                BackgroundAudio = GetBackgroundAudio(),
                 Lang = "",
                 Divs = new List<Div>
                 {
@@ -70,6 +72,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     }
                 }
             };
+        }
+
+        public string GetBackgroundAudio()
+        {
+            if (!string.IsNullOrWhiteSpace(Audio.BackgroundAudioPath))
+                return Path.Combine(BloomAudio.kAudioDirectory, Audio.BackgroundAudioPath);
+            return null;
         }
     }
 }

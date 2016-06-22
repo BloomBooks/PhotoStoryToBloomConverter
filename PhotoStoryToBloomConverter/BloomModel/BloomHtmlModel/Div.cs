@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
@@ -75,6 +76,10 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string AriaDescribedBy;
         [XmlAttribute("aria-label")]
         public string AriaLabel;
+
+        [XmlAttribute("data-backgroundaudio")]
+        [DefaultValue("")]
+        public string BackgroundAudio;
 
         [XmlText]
         public string SimpleText;

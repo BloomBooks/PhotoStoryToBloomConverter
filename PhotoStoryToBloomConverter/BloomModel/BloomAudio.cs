@@ -2,6 +2,8 @@
 {
     public class BloomAudio
     {
+        public const string kAudioDirectory = "audio";
+
         public string NarrationPath;
         public string BackgroundAudioPath;
 
