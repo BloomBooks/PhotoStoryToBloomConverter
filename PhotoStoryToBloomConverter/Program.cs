@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -28,8 +27,16 @@ namespace PhotoStoryToBloomConverter
             foreach (var filePath in Directory.EnumerateFiles(sourceFolderPath))
             {
                 var filename = Path.GetFileName(filePath);
-                if (filename.Equals("project.xml")) continue;
-                File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, filename));
+                if (filename.Equals("project.xml"))
+                    continue;
+
+                if (IsAudioFile(filename))
+                {
+                    Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
+                    File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, filename));
+                }
+                else
+                    File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, filename));
             }
         }
 
@@ -52,6 +59,11 @@ namespace PhotoStoryToBloomConverter
                     }
                 }
             }
+        }
+
+        private static bool IsAudioFile(string fileName)
+        {
+            return fileName.EndsWith(".mp3") || fileName.EndsWith(".wav");
         }
     }
 }

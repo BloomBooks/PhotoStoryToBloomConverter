@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
@@ -68,6 +69,10 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string DataHasLanguageTipContent;
         [XmlAttribute("data-languagetipcontent")]
         public string DataLanguageTipContent;
+
+        [XmlAttribute("data-backgroundaudio")]
+        [DefaultValue("")]
+        public string BackgroundAudio;
 
         [XmlText]
         public string SimpleText;
