@@ -24,12 +24,12 @@ namespace PhotoStoryToBloomConverter.PS3Model
         [XmlAttribute("top")]
         public float Top;
 
-        public Rectangle ToRectangle()
+        public Rectangle ToAnimationRectangle()
         {
             return new Rectangle
             {
-                X = UpperLeftX,
-                Y = UpperLeftY - (int)Height,
+                X = -UpperLeftX,
+                Y = -UpperLeftY,
                 Width = (int)Width,
                 Height = (int)Height
             };

@@ -8,5 +8,7 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string Type;
         [XmlAttribute("src")]
         public string Src;
+        [XmlText] 
+        public string StubForcingFullTag = "";
     }
 }
