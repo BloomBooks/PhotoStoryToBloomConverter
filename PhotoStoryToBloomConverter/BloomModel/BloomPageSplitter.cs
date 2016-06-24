@@ -23,7 +23,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 {
                     new Div
                     {
-                        Class = "split-pane-componenet position-top",
+                        Class = "split-pane-component position-top",
                         Style = "bottom: 0%;",
                         Divs = new List<Div>
                         {
