@@ -70,6 +70,7 @@
     <Compile Include="BloomModel\BloomImageMotion.cs" />
     <Compile Include="BloomModel\BloomMetadata.cs" />
     <Compile Include="BloomModel\BloomPage.cs" />
+    <Compile Include="BloomModel\BloomPageSplitter.cs" />
     <Compile Include="BloomModel\BloomTextBox.cs" />
     <Compile Include="MainScreen.cs">
       <SubType>Form</SubType>

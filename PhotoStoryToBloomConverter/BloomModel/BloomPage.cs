@@ -8,8 +8,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
     //Comparable to a div with the bloom tag 'bloom-page'
     public class BloomPage
     {
-        public BloomTextBox TextBox;
-        public BloomImage Image;
+        public BloomPageSplitter ImageAndTextWithAudioSplitter;
 
         public string BloomTags;
         public string Uuid;
@@ -18,8 +17,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
         public string PageLabel;
         public string PageDescription;
-
-        public BloomAudio Audio;
 
         public BloomPage()
         {
@@ -31,11 +28,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
             return new BloomPage
             {
                 BloomTags = "bloom-page numberedPage customPage A4Landscape layout-style-Default bloom-monolingual",
-                Image = image,
-                Audio = audio,
                 PageLabel = "",
                 PageDescription = "",
-                Language = ""
+                Language = "",
+                ImageAndTextWithAudioSplitter = new BloomPageSplitter { Image = image, Audio = audio }
             };
         }
 
@@ -57,17 +53,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                         Class = "marginBox",
                         Divs = new List<Div>
                         {
-                            new Div
-                            {
-                                Class = "split-pane-component-inner",
-                                Style = "position: relative;",
-                                MinHeight = "60px 150px 250px",
-                                MinWidth = "60px 150px 250px",
-                                Divs = new List<Div>
-                                {
-                                    Image.ConvertToHtml(),
-                                }
-                            }
+                            ImageAndTextWithAudioSplitter.ConvertToHtml()
                         }
                     }
                 }
@@ -76,8 +62,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
         public string GetBackgroundAudio()
         {
-            if (!string.IsNullOrWhiteSpace(Audio.BackgroundAudioPath))
-                return Path.Combine(BloomAudio.kAudioDirectory, Audio.BackgroundAudioPath);
+            if (!string.IsNullOrWhiteSpace(ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath))
+                return Path.Combine(BloomAudio.kAudioDirectory, ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath);
             return null;
         }
     }
