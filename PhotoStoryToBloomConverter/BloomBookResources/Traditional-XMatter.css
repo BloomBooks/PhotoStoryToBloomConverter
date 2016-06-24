@@ -27,6 +27,28 @@
 .bloom-backMatter .pageLabel:after {
   content: ": Traditional Front/Back Matter";
 }
+.Device16x9Portrait.outsideFrontCover .marginBox,
+.Device16x9Portrait.outsideBackCover .marginBox {
+  height: 100mm;
+  width: 177.77777778mm;
+  top: 0;
+  left: 0 !important;
+}
+.Device16x9Portrait.outsideFrontCover .marginBox IMG,
+.Device16x9Portrait.outsideBackCover .marginBox IMG {
+  max-width: 177.77777778mm;
+}
+.Device16x9Landscape.outsideFrontCover .marginBox,
+.Device16x9Landscape.outsideBackCover .marginBox {
+  height: 100mm;
+  width: 177.77777778mm;
+  top: 0;
+  left: 0 !important;
+}
+.Device16x9Landscape.outsideFrontCover .marginBox IMG,
+.Device16x9Landscape.outsideBackCover .marginBox IMG {
+  max-width: 177.77777778mm;
+}
 .A4Portrait.outsideFrontCover .marginBox,
 .A4Portrait.outsideBackCover .marginBox {
   /*There's no page number on the cover, so we might as well have a the bottom stuff closer to the bottom*/
@@ -246,7 +268,7 @@
 }
 .frontCover .bottomBlock .coverBottomBookTopic {
   position: absolute;
-  bottom: 8px;
+  bottom: 7px;
   right: 0;
   height: 20px;
   text-align: right;
@@ -342,18 +364,6 @@
 .credits .Credits-Page-style {
   font-size: 10pt;
   line-height: 1.4em;
-}
-.credits .licenseAndCopyrightBlock {
-  min-height: 60px;
-}
-.credits .licenseAndCopyrightBlock .copyright {
-  margin-bottom: 2em;
-}
-.credits .licenseAndCopyrightBlock .licenseBlock {
-  margin-bottom: 2em;
-}
-.credits .licenseAndCopyrightBlock img {
-  width: 94px;
 }
 .credits .originalAcknowledgments .bloom-contentNational1 {
   display: block !important;
@@ -468,3 +478,5 @@ BODY[bookcreationtype="translation"] .titlePage #funding .bloom-contentNational1
 .ISBNContainer .ISBNContainer SPAN {
   vertical-align: top;
 }
+
+/*# sourceMappingURL=../../../../../output/browser/templates/xMatter/Traditional-XMatter/Traditional-XMatter.css.map */

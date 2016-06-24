@@ -175,6 +175,18 @@ preview.css.
 
 Changes here generally require similar changes in EpubMaker.FixPictureSizes().
 */
+.bloom-page.Device16x9Portrait {
+  min-width: 100mm;
+  max-width: 100mm;
+  min-height: 177.77777778mm;
+  max-height: 177.77777778mm;
+}
+.bloom-page.Device16x9Landscape {
+  min-width: 177.77777778mm;
+  max-width: 177.77777778mm;
+  min-height: 100mm;
+  max-height: 100mm;
+}
 .bloom-page.A5Portrait {
   min-width: 148mm;
   max-width: 148mm;
@@ -286,6 +298,38 @@ Changes here generally require similar changes in EpubMaker.FixPictureSizes().
 .marginBox {
   position: absolute;
   top: 15mm;
+}
+.Device16x9Landscape .origami-toggle,
+.Device16x9Portrait .origami-toggle {
+  display: none;
+}
+.Device16x9Landscape .pageLabel,
+.Device16x9Portrait .pageLabel {
+  display: none;
+}
+.Device16x9Portrait .marginBox {
+  height: 177.77777778mm;
+  width: 100mm;
+  top: 0;
+  left: 0 !important;
+}
+.Device16x9Portrait .marginBox IMG {
+  max-width: 100mm;
+}
+.Device16x9Landscape .marginBox {
+  height: 100mm;
+  width: 177.77777778mm;
+  top: 0;
+  left: 0 !important;
+}
+.Device16x9Landscape .marginBox IMG {
+  max-width: 177.77777778mm;
+}
+.Device16x9Landscape .marginBox .position-top {
+  bottom: 0 !important;
+}
+.Device16x9Landscape .marginBox .position-bottom {
+  display: none;
 }
 .A4Portrait .marginBox {
   height: 267mm;
@@ -441,6 +485,10 @@ label.placeholder {
 .superscript {
   vertical-align: super;
   font-size: 80%;
+}
+/* This is the html default, but our Browser.reset.* unfortunately overrides it. */
+sup {
+  font-size: smaller;
 }
 h1 {
   font-size: 1.5em;

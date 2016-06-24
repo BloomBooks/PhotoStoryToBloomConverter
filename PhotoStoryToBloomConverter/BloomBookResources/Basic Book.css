@@ -67,7 +67,21 @@ STARTLAYOUTS
 			   "Default"
 			]
 		 }
-	  }
+	  },
+	{
+		 "Device16x9Portrait":{
+			"Styles":[
+			   "Default"
+			]
+		 }
+	},
+	{
+		 "Device16x9LandScape":{
+			"Styles":[
+			   "Default"
+			]
+		 }
+	}
    ]
 }
 ENDLAYOUTS
@@ -460,3 +474,5 @@ in javascript. Search for 'bloom-centerContentVertically'.
 .pictureAndWordPage .bloom-content3 {
   font-size: 200% ;
 }
+
+/*# sourceMappingURL=../../../../../output/browser/templates/template books/Basic Book/Basic Book.css.map */
