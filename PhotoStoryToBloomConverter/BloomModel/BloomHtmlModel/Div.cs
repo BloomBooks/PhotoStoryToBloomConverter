@@ -15,13 +15,6 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         [XmlAttribute("style")]
         public string Style;
 
-        [XmlAttribute("data-i18n")]
-        public string DataI18n;
-
-        [XmlAttribute("aria-describedby")]
-        public string AriaDescribedBy;
-        [XmlAttribute("aria-label")]
-        public string AriaLabel;
 
         [XmlAttribute("role")]
         public string Role;
@@ -36,6 +29,8 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string MinWidth;
         [XmlAttribute("title")]
         public string Title;
+        [XmlAttribute("contenteditable")]
+        public string ContentEditable;
 
         [XmlAttribute("data-page")]
         public string DataPage;
@@ -53,8 +48,6 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string DataLicense;
         [XmlAttribute("data-hint")]
         public string DataHint;
-        [XmlAttribute("contenteditable")]
-        public string ContentEditable;
         [XmlAttribute("data-metalanguage")]
         public string DataMetaLanguage;
         [XmlAttribute("data-functiononhintclick")]
@@ -69,6 +62,20 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string DataHasLanguageTipContent;
         [XmlAttribute("data-languagetipcontent")]
         public string DataLanguageTipContent;
+        [XmlAttribute("data-initialrect")]
+        public string DataInitialRect;
+        [XmlAttribute("data-finalrect")]
+        public string DataFinalRect;
+        //TODO: This needs to not be hard-coded. But it is a decent default for the moment.
+        [XmlAttribute("data-duration")] 
+        public string DataDuration = "5";
+        [XmlAttribute("data-i18n")]
+        public string DataI18n;
+
+        [XmlAttribute("aria-describedby")]
+        public string AriaDescribedBy;
+        [XmlAttribute("aria-label")]
+        public string AriaLabel;
 
         [XmlAttribute("data-backgroundaudio")]
         [DefaultValue("")]

@@ -18,7 +18,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             "..\\customCollectionStyles.css"
         };
 
-        public static string StandardBloomBootstrapScript = "C:\\Users\\BrownA\\AppData\\Local\\BloomBeta\\app-3.6.123\\BloomBrowserUI\\bookPreview\\js\\bloomPreviewBootstrap.js";
+        public static string BloomPlayerScript = "player.js";
 
         public static string[] StandardBloomStyles =
         {
@@ -31,7 +31,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             return new BloomMetadata
             {
                 Links = StandardBloomLinks,
-                Script = StandardBloomBootstrapScript,
+                Script = BloomPlayerScript,
                 BloomVersion = "2.0",
                 Charset = "UTF-8",
                 TemplateSource = "Basic Book",
@@ -57,7 +57,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             return new Head
             {
                 Title = new Title {TitleText = Title},
-                //Script = new Script {Src = BloomMetadata.StandardBloomBootstrapScript, Type = "text/javascript"},
+                Script = new Script {Src = Script, Type = "text/javascript"},
                 Links = Links.Select(linkRef => new Link {Href = linkRef, Rel = "stylesheet", Type = "text/css"}).ToArray(),
                 Styles = Styles.Select(styleCss => new Style {Css = styleCss, Type = "text/css"}).ToArray(),
                 Metas = new []

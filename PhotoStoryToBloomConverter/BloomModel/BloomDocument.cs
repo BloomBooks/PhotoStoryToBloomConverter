@@ -28,7 +28,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     foreach (var edit in image.Edits)
                     {
                         if (edit.RotateAndCrop == null) continue;
-                        cropRectangle = edit.RotateAndCrop.CroppedRect.ToRectangle();
+                        cropRectangle = edit.RotateAndCrop.CroppedRect.ToAnimationRectangle();
                     }
                 }
 
@@ -39,10 +39,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     ImageMotion = new BloomImageMotion
                     {
                         CropRectangle = cropRectangle,
-                        InitialImageRectangle = image.AbsoluteMotion.Rects[0].ToRectangle(),
-                        FinalImageRectangle = image.AbsoluteMotion.Rects[1].ToRectangle(),
+                        InitialImageRectangle = image.AbsoluteMotion.Rects[0].ToAnimationRectangle(),
+                        FinalImageRectangle = image.AbsoluteMotion.Rects[1].ToAnimationRectangle(),
                     }
                 };
+                
                 var backgroundPath = "";
                 if (image.MusicTracks != null)
                 {
