@@ -14,7 +14,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
         {
             var imageDiv = Image.ConvertToHtml();
             //var textDiv = TextBox.ConvertToHtml();
-            var narrationSpan = (Audio.NarrationPath == null)? null : new Span { Class = "audio-sentence", Id = Audio.NarrationPath, RecordingMD5 = "undefined", ContentText = "" };
+            var narrationSpan = (Audio.NarrationPath == null)? null : new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath), RecordingMD5 = "undefined", ContentText = "" };
             return new Div
             {
                 Class = "split-pane horizontal-percent",
