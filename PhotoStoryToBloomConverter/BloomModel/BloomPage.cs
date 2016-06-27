@@ -35,7 +35,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             };
         }
 
-        public Div ConvertToHtml()
+        public Div ConvertToHtml(string text)
         {
             return new Div
             {
@@ -53,7 +53,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                         Class = "marginBox",
                         Divs = new List<Div>
                         {
-                            ImageAndTextWithAudioSplitter.ConvertToHtml()
+                            ImageAndTextWithAudioSplitter.ConvertToHtml(text)
                         }
                     }
                 }

@@ -62,7 +62,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
         }
 
-        public Html ConvertToHtml()
+        public Html ConvertToHtml(IList<string> text)
         {
             var html = new Html
             {
@@ -77,7 +77,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     }
                 }
             };
-            html.Body.Divs.AddRange(_pages.Select(page => page.ConvertToHtml()));
+			IList<Div> divs = new List<Div>(_pages.Count);
+	        for (int i = 0; i < _pages.Count && i < text.Count; i++)
+		        divs.Add(_pages[i].ConvertToHtml(text[i]));
+	        html.Body.Divs.AddRange(divs);
             return html;
 
         }

@@ -10,11 +10,12 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public BloomImage Image;
         public BloomAudio Audio;
 
-        public Div ConvertToHtml()
+        public Div ConvertToHtml(string text)
         {
             var imageDiv = Image.ConvertToHtml();
-            //var textDiv = TextBox.ConvertToHtml();
-            var narrationSpan = (Audio.NarrationPath == null)? null : new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath), RecordingMD5 = "undefined", ContentText = "" };
+	        var contentText = string.IsNullOrWhiteSpace(text) ? "nbsp;" : text;
+            var narrationSpan = (Audio.NarrationPath == null) ? null :
+				new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath), RecordingMD5 = "undefined", ContentText = contentText };
             return new Div
             {
                 Class = "split-pane horizontal-percent",

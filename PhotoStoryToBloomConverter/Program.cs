@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,10 +16,10 @@ namespace PhotoStoryToBloomConverter
             new MainScreen().ShowDialog();
         }
 
-        public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName)
+        public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<string> text)
         {
             var document = new BloomDocument(project, bookName);
-            Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);
+            Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(text), destinationFile);
         }
 
         //The assumption is that the wp3 archive only contains assets and a project.xml file. We convert the .xml file and copy the images and audio tracks.

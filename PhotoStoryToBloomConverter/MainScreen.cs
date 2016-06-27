@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using PhotoStoryToBloomConverter.PS3Model;
@@ -8,15 +9,11 @@ namespace PhotoStoryToBloomConverter
     public partial class MainScreen : Form
     {
         private PhotoStoryProject photoStoryProject;
+	    private IList<string> extractedText; 
 
         public MainScreen()
         {
             InitializeComponent();
-        }
-
-        private void MainScreen_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void selectProjectXmlButton_Click(object sender, EventArgs e)
@@ -94,7 +91,7 @@ namespace PhotoStoryToBloomConverter
 
             Directory.CreateDirectory(convertedProjectDirectory);
 
-            Program.ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName);
+            Program.ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
             Program.CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
             Program.CopyBloomFiles(convertedProjectDirectory);
 
@@ -108,5 +105,31 @@ namespace PhotoStoryToBloomConverter
             else
                 Close();
         }
+
+		private void selectWordDocButton_Click(object sender, EventArgs e)
+		{
+			var fileDialog = new OpenFileDialog
+			{
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				Filter = ".docx files (*.docx)|*.docx",
+				RestoreDirectory = true
+			};
+
+			if (fileDialog.ShowDialog() != DialogResult.OK)
+				return;
+
+			var path = fileDialog.FileName;
+
+			IList<string> text;
+			if (!TextExtractor.TryExtractText(path, out text))
+			{
+				MessageBox.Show("There was a problem extracting text from this file. Please try a different one or continue without text.");
+				wordDocTextBox.Text = string.Empty;
+				return;
+			}
+			extractedText = text;
+
+			wordDocTextBox.Text = path;
+		}
     }
 }
