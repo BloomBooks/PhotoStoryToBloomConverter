@@ -78,8 +78,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 }
             };
 			IList<Div> divs = new List<Div>(_pages.Count);
-	        for (int i = 0; i < _pages.Count && i < text.Count; i++)
-		        divs.Add(_pages[i].ConvertToHtml(text[i]));
+	        for (int i = 0; i < _pages.Count; i++)
+	        {
+		        string pageText = null;
+		        if (text != null && text.Count > i)
+			        pageText = text[i];
+		        divs.Add(_pages[i].ConvertToHtml(pageText));
+	        }
 	        html.Body.Divs.AddRange(divs);
             return html;
 
