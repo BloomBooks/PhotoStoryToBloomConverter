@@ -45,7 +45,7 @@ namespace PhotoStoryToBloomConverter
             }
 
             if (projectNameTextBox.Text.Length == 0 && bookName.Length > 0)
-                projectNameTextBox.Text = bookName;
+				projectNameTextBox.Text = bookName.Trim();
         }
 
         private void selectCollectionButton_Click(object sender, EventArgs e)

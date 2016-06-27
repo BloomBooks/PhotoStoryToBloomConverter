@@ -1,0 +1,44 @@
+'http://answers.microsoft.com/en-us/office/forum/office_2007-word/is-it-possible-to-convert-a-batch-of-doc-files-to/8f5549be-8143-4f0a-8f82-06c855fcb092?auth=1
+
+'Use this macro to convert a batch of .doc files into .docx files. The user chooses a single directory for input and output.
+'It will overwrite existing .docx files which have the target filename.
+
+Sub DocToDocx()
+Dim strFilename As String
+Dim strDocName As String
+Dim strPath As String
+Dim oDoc As Document
+Dim fDialog As FileDialog
+Dim intPos As Integer
+Set fDialog = Application.FileDialog(msoFileDialogFolderPicker)
+With fDialog
+    .Title = "Select folder and click OK"
+    .AllowMultiSelect = False
+    .InitialView = msoFileDialogViewList
+    If .Show <> -1 Then
+        MsgBox "Cancelled By User", , "List Folder Contents"
+        Exit Sub
+    End If
+    strPath = fDialog.SelectedItems.Item(1)
+    If Right(strPath, 1) <> "\" Then strPath = strPath + "\"
+End With
+If Documents.Count > 0 Then
+    Documents.Close SaveChanges:=wdPromptToSaveChanges
+End If
+If Left(strPath, 1) = Chr(34) Then
+    strPath = Mid(strPath, 2, Len(strPath) - 2)
+End If
+strFilename = Dir$(strPath & "*.doc")
+While Len(strFilename) <> 0
+    Set oDoc = Documents.Open(strPath & strFilename)
+    strDocName = ActiveDocument.FullName
+    intPos = InStrRev(strDocName, ".")
+    strDocName = Left(strDocName, intPos - 1)
+    strDocName = strDocName & ".docx"
+    oDoc.SaveAs FileName:=strDocName, _
+        FileFormat:=wdFormatDocumentDefault
+    oDoc.Close SaveChanges:=wdDoNotSaveChanges
+    strFilename = Dir$()
+Wend
+
+End Sub
