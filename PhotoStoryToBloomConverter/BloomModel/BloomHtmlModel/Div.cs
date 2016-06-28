@@ -68,7 +68,7 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string DataFinalRect;
         //TODO: This needs to not be hard-coded. But it is a decent default for the moment.
         [XmlAttribute("data-duration")] 
-        public string DataDuration = "5";
+        public string DataDuration = "5000";
         [XmlAttribute("data-i18n")]
         public string DataI18n;
 

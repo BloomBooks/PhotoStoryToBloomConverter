@@ -19,9 +19,20 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 				Style = string.Format("background-image:url('{0}')", Src),
 
-                DataInitialRect = string.Format("{0} {1} {2} {3}", ImageMotion.InitialImageRectangle.Left, ImageMotion.InitialImageRectangle.Top, ImageMotion.InitialImageRectangle.Width, ImageMotion.InitialImageRectangle.Height),
-                DataFinalRect = string.Format("{0} {1} {2} {3}", ImageMotion.FinalImageRectangle.Left, ImageMotion.FinalImageRectangle.Top, ImageMotion.FinalImageRectangle.Width, ImageMotion.FinalImageRectangle.Height),
+                DataInitialRect = GetRectangleAttribute(ImageSize, ImageMotion.InitialImageRectangle),
+				DataFinalRect = GetRectangleAttribute(ImageSize, ImageMotion.FinalImageRectangle),
             };
         }
+
+	    private string GetRectangleAttribute(Size size, Rectangle rect)
+	    {
+		    double width = size.Width;
+		    double height = size.Height;
+			return string.Format("{0:N4} {1:N4} {2:N4} {3:N4}",
+				-rect.Left / width,
+				-rect.Top / height,
+				rect.Width / width,
+				rect.Height / height);
+	    }
     }
 }
