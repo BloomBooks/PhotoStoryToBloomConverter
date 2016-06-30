@@ -92,6 +92,12 @@
     <Compile Include="BloomModel\BloomPage.cs" />
     <Compile Include="BloomModel\BloomPageSplitter.cs" />
     <Compile Include="BloomModel\BloomTextBox.cs" />
+    <Compile Include="BatchConversionDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BatchConversionDlg.Designer.cs">
+      <DependentUpon>BatchConversionDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -118,6 +124,9 @@
     <Compile Include="TextExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="BatchConversionDlg.resx">
+      <DependentUpon>BatchConversionDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainScreen.resx">
       <DependentUpon>MainScreen.cs</DependentUpon>
     </EmbeddedResource>
@@ -135,6 +144,12 @@
     <EmbeddedResource Include="BloomBookResources\previewMode.css" />
     <EmbeddedResource Include="BloomBookResources\thumbnail.png" />
     <EmbeddedResource Include="BloomBookResources\Traditional-XMatter.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CABExtracter\CABExtracter.csproj">
+      <Project>{ff361d04-3cde-4af0-bfbe-9b2a884ca00f}</Project>
+      <Name>CABExtracter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

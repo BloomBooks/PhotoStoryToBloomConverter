@@ -32,20 +32,10 @@ namespace PhotoStoryToBloomConverter
 
             photoStoryProjectTextBox.Text = projectPath;
 
-            var bookName = "";
-            foreach (var vunit in photoStoryProject.VisualUnits)
-            {
-                foreach (var edit in vunit.Image.Edits)
-                {
-                    if (edit.TextOverlays.Length <= 0) continue;
-                    bookName = edit.TextOverlays[0].Text;
-                    break;
-                }
-                if (bookName != "") break;
-            }
+	        var bookName = photoStoryProject.GetProjectName();
 
             if (projectNameTextBox.Text.Length == 0 && bookName.Length > 0)
-				projectNameTextBox.Text = bookName.Trim();
+				projectNameTextBox.Text = bookName;
         }
 
         private void selectCollectionButton_Click(object sender, EventArgs e)
@@ -130,6 +120,15 @@ namespace PhotoStoryToBloomConverter
 			extractedText = text;
 
 			wordDocTextBox.Text = path;
+		}
+
+		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using (var dlg = new BatchConversionDlg())
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+					Close();
+			}
 		}
     }
 }

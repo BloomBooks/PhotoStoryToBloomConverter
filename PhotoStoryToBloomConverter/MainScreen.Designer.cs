@@ -40,6 +40,7 @@
 			this.wordDocTextBox = new System.Windows.Forms.TextBox();
 			this.selectWordDocButton = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
+			this.linkLabelBatchConversion = new System.Windows.Forms.LinkLabel();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -149,11 +150,23 @@
 			this.label4.TabIndex = 10;
 			this.label4.Text = "Select the Word Document (.docx) Containing the Text (optional)";
 			// 
+			// linkLabelBatchConversion
+			// 
+			this.linkLabelBatchConversion.AutoSize = true;
+			this.linkLabelBatchConversion.Location = new System.Drawing.Point(15, 223);
+			this.linkLabelBatchConversion.Name = "linkLabelBatchConversion";
+			this.linkLabelBatchConversion.Size = new System.Drawing.Size(91, 13);
+			this.linkLabelBatchConversion.TabIndex = 13;
+			this.linkLabelBatchConversion.TabStop = true;
+			this.linkLabelBatchConversion.Text = "Batch Conversion";
+			this.linkLabelBatchConversion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+			// 
 			// MainScreen
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(511, 238);
+			this.ClientSize = new System.Drawing.Size(511, 255);
+			this.Controls.Add(this.linkLabelBatchConversion);
 			this.Controls.Add(this.wordDocTextBox);
 			this.Controls.Add(this.selectWordDocButton);
 			this.Controls.Add(this.label4);
@@ -189,5 +202,6 @@
 		private System.Windows.Forms.TextBox wordDocTextBox;
 		private System.Windows.Forms.Button selectWordDocButton;
 		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.LinkLabel linkLabelBatchConversion;
     }
 }

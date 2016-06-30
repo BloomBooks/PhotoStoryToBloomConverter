@@ -22,5 +22,23 @@ namespace PhotoStoryToBloomConverter.PS3Model
         
         [XmlElement("VisualUnit")]
         public VisualUnit[] VisualUnits;
+
+	    public string GetProjectName()
+	    {
+			var bookName = "";
+			foreach (var vunit in VisualUnits)
+			{
+				foreach (var edit in vunit.Image.Edits)
+				{
+					if (edit.TextOverlays.Length <= 0)
+						continue;
+					bookName = edit.TextOverlays[0].Text.Trim();
+					break;
+				}
+				if (bookName != "") 
+					break;
+			}
+		    return bookName;
+	    }
     }
 }

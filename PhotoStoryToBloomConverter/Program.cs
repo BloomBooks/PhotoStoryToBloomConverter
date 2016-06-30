@@ -46,6 +46,9 @@ namespace PhotoStoryToBloomConverter
             var assembly = Assembly.GetExecutingAssembly();
             foreach (var resourcename in assembly.GetManifestResourceNames())
             {
+	            if (!resourcename.Contains("BloomBookResources"))
+		            continue;
+
                 //Resource names are of the form PhotoStoryToBloomConverter.BloomBookResources.Filename
                 var components = resourcename.Split('.');
                 var filename = string.Join(".", components.Skip(components.Length - 2));
@@ -64,7 +67,7 @@ namespace PhotoStoryToBloomConverter
 
         private static bool IsAudioFile(string fileName)
         {
-            return fileName.EndsWith(".mp3") || fileName.EndsWith(".wav");
+			return Path.GetExtension(fileName) == ".mp3" || Path.GetExtension(fileName) == ".wav" || Path.GetExtension(fileName) == ".wma";
         }
     }
 }

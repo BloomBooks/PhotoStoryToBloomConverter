@@ -17,7 +17,7 @@ namespace CABExtracter
         /// </summary>
         /// <param name="cabFilePath">The absolute path to the cab archive to be extracted from</param>
         /// <param name="destinationDirectoryPath">The absolute path to the destination directory for extracted files</param>
-        private static void ExpandCabFile(string cabFilePath, string destinationDirectoryPath)
+        public static void ExpandCabFile(string cabFilePath, string destinationDirectoryPath)
         {
             var shell = new Shell();
             if (!Path.GetExtension(cabFilePath).Equals("cab"))
