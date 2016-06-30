@@ -27,7 +27,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
         {
             return new BloomPage
             {
-                BloomTags = "bloom-page numberedPage customPage A4Landscape layout-style-Default bloom-monolingual",
+                BloomTags = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual",
                 PageLabel = "",
                 PageDescription = "",
                 Language = "",

@@ -25,7 +25,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     new Div
                     {
                         Class = "split-pane-component position-top",
-                        Style = "bottom: 0%;",
+                        Style = "bottom: 50%;",
                         Divs = new List<Div>
                         {
                             new Div
@@ -44,14 +44,14 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     new Div
                     {
                         Class = "split-pane-divider horizontal-divider",
-                        Style = "bottom: 0%;",
-                        Title = "100%",
+                        Style = "bottom: 50%;",
+                        Title = "50%",
                         SimpleText = ""
                     },
                     new Div
                     {
                         Class = "split-pane-component position-bottom",
-                        Style = "height: 0%;",
+                        Style = "height: 50%;",
                         Divs = new List<Div>
                         {
                             new Div 
@@ -84,12 +84,12 @@ namespace PhotoStoryToBloomConverter.BloomModel
                                     },
                                     new Div
                                     {
-                                        Class = "bloom-translationGroup bloom-trailingElement normal-style childOverflowingThis",
+                                        Class = "bloom-translationGroup bloom-trailingElement normal-style",
                                         Divs = new List<Div>
                                         {
                                             new Div
                                             {
-                                                Class = "bloom-editable cke_editable cke_editable_inline cke_contents_ltr normal-style thisOverflowingParent bloom-content1",
+                                                Class = "bloom-editable cke_editable cke_editable_inline cke_contents_ltr normal-style bloom-content1",
                                                 ContentEditable = "true",
                                                 Lang = "en",
                                                 Style = "min-height: 24px;",
