@@ -40,7 +40,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
         }
 
         public string[] Links;
-        public string Script;
+        public string Script = "file:///c:/bloomPlayer/output/bloomPlayer.js"; //TODO this is obviously only temporary until we figure out how this will work long-term
         public string Title;
         public string BloomVersion;
         public string Charset;
