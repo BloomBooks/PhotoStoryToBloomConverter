@@ -67,7 +67,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
                 var bloomAudio = new BloomAudio(narrationPath, backgroundPath);
                 //If the image doesn't exist, we assume we removed it because it was a credit or cover image
-                if (!File.Exists(Path.Combine(bookDirectoryPath, image.Path)))
+                if (File.Exists(Path.Combine(bookDirectoryPath, image.Path)))
                     _pages.Add(BloomPage.BloomImageOnlyPage(bloomImage, bloomAudio));
                 else
                 {
