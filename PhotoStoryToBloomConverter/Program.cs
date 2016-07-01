@@ -36,7 +36,8 @@ namespace PhotoStoryToBloomConverter
                     Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
                     File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, filename));
                 }
-                else
+                //Don't copy if it is a credits or cover image, we won't use them (but do extract any credits information)
+                else if (!CreditsExtractor.imageIsCreditsOrCover(Path.Combine(sourceFolderPath, filename)))
                     File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, filename));
             }
         }
