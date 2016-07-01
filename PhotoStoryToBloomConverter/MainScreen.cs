@@ -81,8 +81,8 @@ namespace PhotoStoryToBloomConverter
 
             Directory.CreateDirectory(convertedProjectDirectory);
 
-            Program.ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
             Program.CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
+            Program.ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
             Program.CopyBloomFiles(convertedProjectDirectory);
 
             var result = MessageBox.Show("Success! Convert another project?", "Photo Story to Bloom Converter", MessageBoxButtons.YesNo);

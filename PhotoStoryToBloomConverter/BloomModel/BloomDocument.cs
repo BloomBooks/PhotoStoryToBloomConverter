@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 using PhotoStoryToBloomConverter.PS3Model;
+using System.IO;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -13,7 +14,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
 
-        public BloomDocument(PhotoStoryProject project, string bookName)
+        public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath)
         {
             _metadata = BloomMetadata.DefaultBloomMetadata(bookName);
             _bookData = BloomBookData.DefaultBloomBookData(bookName);
@@ -57,9 +58,58 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     narrationPath = unit.Narration.Path;
 
                 var bloomAudio = new BloomAudio(narrationPath, backgroundPath);
-                _pages.Add(BloomPage.BloomImageOnlyPage(bloomImage, bloomAudio));
+                if (!imageIsCreditsOrCover(Path.Combine(bookDirectoryPath, image.Path)))
+                    _pages.Add(BloomPage.BloomImageOnlyPage(bloomImage, bloomAudio));
+            }
+        }
+
+        private readonly string[] creditImages = { "Credit-Beginning.jpg", "Credit-SinEnters.jpg", "Credit-Moses.jpg", "Credit-Ruth.jpg" };
+        private readonly string[] coverImages = { "Cover-Beginning.jpg", "Cover-Lazarus.png" };
+
+        private bool imageIsCreditsOrCover(string imagePath)
+        {
+            foreach (var creditImagePath in creditImages)
+            {
+                if (FileCompare(imagePath, Path.Combine("Credit Images", creditImagePath)))
+                    return true;
+            }
+            foreach (var coverImagePath in coverImages)
+            {
+                if (FileCompare(imagePath, Path.Combine("Cover Images", coverImagePath)))
+                    return true;
+            }
+            return false;
+        }
+
+        private bool FileCompare(string file1, string file2)
+        {
+
+            if (file1 == file2) return true;
+
+            FileStream fs1 = new FileStream(file1, FileMode.Open);
+            FileStream fs2 = new FileStream(file2, FileMode.Open);
+
+            if (fs1.Length != fs2.Length)
+            {
+                fs1.Close();
+                fs2.Close();
+                return false;
             }
 
+            int file1byte;
+            int file2byte;
+
+            do
+            {
+                file1byte = fs1.ReadByte();
+                file2byte = fs2.ReadByte();
+            }
+            while ((file1byte == file2byte) && (file1byte != -1));
+
+            fs1.Close();
+            fs2.Close();
+
+            return ((file1byte - file2byte) == 0);
         }
 
         public Html ConvertToHtml(IList<string> text)
