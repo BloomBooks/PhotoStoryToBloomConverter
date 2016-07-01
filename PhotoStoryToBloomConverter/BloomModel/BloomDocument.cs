@@ -71,9 +71,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     _pages.Add(BloomPage.BloomImageOnlyPage(bloomImage, bloomAudio));
                 else
                 {
-                    deletedPages++;
                     if(i - deletedPages < _text.Count)
                         _text.RemoveAt(i - deletedPages); //Don't leave orphaned text, it will throw off the matching of text and image.
+                    deletedPages++;
                 }
             }
         }
