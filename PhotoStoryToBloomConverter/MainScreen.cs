@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
 using PhotoStoryToBloomConverter.PS3Model;
 
@@ -53,37 +52,20 @@ namespace PhotoStoryToBloomConverter
 
         private void convertProjectButton_Click(object sender, EventArgs e)
         {
-            var projectXmlPath = photoStoryProjectTextBox.Text;
+			var projectXmlPath = photoStoryProjectTextBox.Text;
             var bloomCollectionPath = bloomCollectionTextBox.Text;
             var projectName = projectNameTextBox.Text.Trim();
-            if (projectXmlPath.Length == 0 || bloomCollectionPath.Length == 0 || projectName.Length == 0)
-            {
-                MessageBox.Show("Please fill out all fields");
-                return;
-            }
-            if (!File.Exists(projectXmlPath))
-            {
-                MessageBox.Show("The project does not exist");
-                return;
-            }
-            if (!File.Exists(bloomCollectionPath))
-            {
-                MessageBox.Show("The bloom file does not exist");
-                return;
-            }
-            var convertedProjectDirectory = Path.Combine(Path.GetDirectoryName(bloomCollectionPath), projectName);
-            if (Directory.Exists(convertedProjectDirectory))
-            {
-                MessageBox.Show("A book already exists with this name in that collection");
-                projectNameTextBox.Text = "";
-                return;
-            }
-
-            Directory.CreateDirectory(convertedProjectDirectory);
-
-            Program.CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
-            Program.ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
-            Program.CopyBloomFiles(convertedProjectDirectory);
+	        try
+	        {
+		        Program.Convert(projectXmlPath, bloomCollectionPath, projectName, photoStoryProject, extractedText);
+	        }
+	        catch (ArgumentException ae)
+	        {
+		        MessageBox.Show(ae.Message);
+		        if (ae.ParamName == "projectName")
+					projectNameTextBox.Text = "";
+		        return;
+	        }
 
             var result = MessageBox.Show("Success! Convert another project?", "Photo Story to Bloom Converter", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
