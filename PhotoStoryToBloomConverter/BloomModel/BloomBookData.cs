@@ -20,7 +20,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public string[] LocalizedSmallCoverCredits;
         public string[] LocalizedOriginalContributions;
         public string[] LocalizedFunding;
-        public string[] LocalizedOriginalAcknowledgments;
+        public List<string> LocalizedOriginalAcknowledgments;
         public string[] LocalizedInsideFrontCover;
         public string[] LocalizedInsideBackCover;
         public string[] LocalizedOutsideBackCover;
@@ -35,18 +35,18 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 Title = title,
                 LanguagesOfBook = "English",
                 StyleNumberSequence = "0",
-                LicenseUrl = "http://creativecommons.org/licenses/by/4.0",
-                LicenseImage = "license.png",
+                LicenseUrl = "",
+                LicenseImage = "",
                 ContentLanguages = new [] { "en" },
                 LocalizedBookTitle = new [] { "" },
                 LocalizedSmallCoverCredits = new[] { "" },
                 LocalizedOriginalContributions = new[] { "" },
                 LocalizedFunding = new[] { "" },
-                LocalizedOriginalAcknowledgments = new[] { "" },
+                LocalizedOriginalAcknowledgments = new List<string>(),
                 LocalizedInsideFrontCover = new[] { "" },
                 LocalizedInsideBackCover = new[] { "" },
                 LocalizedOutsideBackCover = new[] { "" },
-                LocalizedLicenseDescription = new[] { "You are free to make commercial use of this work. You may adapt and add to this work. You must keep the copyright and credits for authors, illustrators, etc." },
+                LocalizedLicenseDescription = new[] { "" },
             };
         }
 
