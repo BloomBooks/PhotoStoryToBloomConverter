@@ -18,8 +18,8 @@ namespace PhotoStoryToBloomConverter
 
         public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<string> text)
         {
-            var document = new BloomDocument(project, bookName, Path.GetDirectoryName(destinationFile));
-            Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(text), destinationFile);
+            var document = new BloomDocument(project, bookName, Path.GetDirectoryName(destinationFile), text);
+            Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);
         }
 
         //The assumption is that the wp3 archive only contains assets and a project.xml file. We convert the .xml file and copy the images and audio tracks.

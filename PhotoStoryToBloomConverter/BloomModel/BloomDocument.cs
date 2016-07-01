@@ -15,14 +15,18 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomMetadata _metadata;
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
+        private readonly IList<string> _text;
 
-        public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath)
+        public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<string> narratedText)
         {
             _metadata = BloomMetadata.DefaultBloomMetadata(bookName);
             _bookData = BloomBookData.DefaultBloomBookData(bookName);
+            _text = narratedText;
 
-            foreach (var unit in project.VisualUnits)
+            var originalTextListLength = _text.Count;
+            for (var i = 0; i < project.VisualUnits.Length; i++)
             {
+                var unit = project.VisualUnits[i];
                 var image = unit.Image;
 
                 var cropRectangle = new Rectangle();
@@ -46,7 +50,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                         FinalImageRectangle = image.AbsoluteMotion.Rects[1].ToAnimationRectangle(),
                     }
                 };
-                
+
                 var backgroundPath = "";
                 if (image.MusicTracks != null)
                 {
@@ -62,6 +66,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 var bloomAudio = new BloomAudio(narrationPath, backgroundPath);
                 if (!imageIsCreditsOrCover(Path.Combine(bookDirectoryPath, image.Path)))
                     _pages.Add(BloomPage.BloomImageOnlyPage(bloomImage, bloomAudio));
+                else if (i < originalTextListLength)
+                    _text.RemoveAt(i); //Don't leave orphaned text, it will throw off the matching of text and image.
             }
         }
 
@@ -154,7 +160,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             return ((file1byte - file2byte) == 0);
         }
 
-        public Html ConvertToHtml(IList<string> text)
+        public Html ConvertToHtml()
         {
             var html = new Html
             {
@@ -173,8 +179,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
 	        for (int i = 0; i < _pages.Count; i++)
 	        {
 		        string pageText = null;
-		        if (text != null && text.Count > i)
-			        pageText = text[i];
+		        if (_text != null && _text.Count > i)
+			        pageText = _text[i];
 		        divs.Add(_pages[i].ConvertToHtml(pageText));
 	        }
 	        html.Body.Divs.AddRange(divs);
