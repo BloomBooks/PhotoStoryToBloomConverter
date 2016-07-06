@@ -4,7 +4,11 @@ Tools to help convert the Photo Story 3 format into a bloom book format
 
 ## Building
 
-This project is built in Visual Studio to run on Windows. Open the PhotoStoryToBloomTools.sln file and build the two projects. Two executable files will be created, CABExtracter and PhotoStoryToBloomConverter. They will be at CABExtracter/bin/Debug/CABExtracter.exe and PhotoStoryToBloomConverter/bin/Debug/PhotoStoryToBloomConverter.exe respectively.
+This project is built in Visual Studio to run on Windows. 
+
+There is a dependency on libpalaso which can be downloaded from build.palaso.org. Run build/getDependencies-windows.sh.
+
+Open the PhotoStoryToBloomTools.sln file and build the two projects. Two executable files will be created, CABExtracter and PhotoStoryToBloomConverter. They will be at CABExtracter/output/Debug/CABExtracter.exe and PhotoStoryToBloomConverter/output/Debug/PhotoStoryToBloomConverter.exe respectively.
 
 ## Conversion
 

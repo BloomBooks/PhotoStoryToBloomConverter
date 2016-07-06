@@ -45,19 +45,24 @@ namespace PhotoStoryToBloomConverter
 		        Convert(args[0], args[1], projectName, null, null, docxPath);
 	        }
 	        catch (ArgumentException ae)
-	        {
-		        Console.WriteLine();
-		        Console.WriteLine(ae.Message);
-		        Console.WriteLine();
-	        }
+			{
+				DisplayError(ae.Message);
+			}
 	        catch (Exception e)
 	        {
-		        Console.WriteLine();
-		        Console.WriteLine("An unexpected error occurred: ");
-		        Console.WriteLine(e.Message);
-		        Console.WriteLine();
+				DisplayError(e.Message);
 	        }
         }
+
+	    private static void DisplayError(string error)
+		{
+			Console.WriteLine();
+			Console.WriteLine("An unexpected error occurred: ");
+			Console.WriteLine(error);
+			Console.WriteLine();
+			Console.WriteLine("Press any key to exit.");
+			Console.ReadKey();
+	    }
 
 	    private static void DisplayHelp()
 		{
@@ -192,7 +197,14 @@ namespace PhotoStoryToBloomConverter
                 if (filename.Equals("project.xml"))
                     continue;
 
-                if (IsAudioFile(filename))
+	            if (AudioFileNeedsConversion(filename))
+				{
+					Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
+					var newFileName = ConvertAudioFile(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, Path.GetFileNameWithoutExtension(filename)));
+					if (newFileName == null)
+						throw new ApplicationException(string.Format("Unable to convert {0}.", Path.Combine(sourceFolderPath, filename)));
+	            }
+                else if (IsAudioFile(filename))
                 {
                     Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
                     File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, filename));
@@ -227,9 +239,19 @@ namespace PhotoStoryToBloomConverter
             }
         }
 
-        private static bool IsAudioFile(string fileName)
-        {
+	    private static bool AudioFileNeedsConversion(string fileName)
+		{
+			return Path.GetExtension(fileName) == ".wav";
+		}
+
+		private static string ConvertAudioFile(string sourcePath, string targetPathWithoutExtension)
+		{
+			return new OggEncoder().Encode(sourcePath, targetPathWithoutExtension);
+		}
+
+		private static bool IsAudioFile(string fileName)
+		{
 			return Path.GetExtension(fileName) == ".mp3" || Path.GetExtension(fileName) == ".wav" || Path.GetExtension(fileName) == ".wma";
-        }
+		}
     }
 }

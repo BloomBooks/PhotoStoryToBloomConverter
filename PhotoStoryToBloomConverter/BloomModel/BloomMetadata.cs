@@ -32,7 +32,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 BloomVersion = "2.0",
                 Charset = "UTF-8",
                 TemplateSource = "Basic Book",
-                Generator = "Bloom Version 3.6.123",
+                Generator = "PhotoStoryToBloomConverter 1.0",
                 Styles = StandardBloomStyles,
                 Title = title,
                 LockedDownAsShell = "true"
