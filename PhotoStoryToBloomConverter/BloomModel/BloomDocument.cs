@@ -21,6 +21,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
             _metadata = BloomMetadata.DefaultBloomMetadata(bookName);
             _bookData = BloomBookData.DefaultBloomBookData(bookName);
 
+            //A little bit of book-keeping, we want to remove images that are cover or credit images from the final directory
+            var imagePathsToRemove = new SortedSet<string>();
+
             //For each visual unit create a bloom page
             //Instead of creating a page for cover and credits pages, put information into the book data (data-div)
             //The X-Matter pack will create more visually appealing cover pages
@@ -47,6 +50,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     }
                     if (i == 0 && visualUnit.Narration != null)
                         _bookData.CoverNarrationPath = visualUnit.Narration.Path;
+
+                    imagePathsToRemove.Add(Path.Combine(bookDirectoryPath, psImage.Path));
                 }
                 else
                 {
@@ -94,6 +99,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
                     _pages.Add(new BloomPage(bloomImage, text, bloomAudio));
                 }
+            }
+            foreach (var imagePath in imagePathsToRemove)
+            {
+                File.Delete(imagePath);
             }
         }
 
