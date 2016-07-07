@@ -38,7 +38,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 Id = Uuid,
                 DataPageLineage = "",
                 BackgroundAudio = GetBackgroundAudio(),
-                BackgroundAudioVolume = BackgroundVolume.ToString(),
+                BackgroundAudioVolume = (BackgroundVolume == 0)?null:BackgroundVolume.ToString(),
                 Lang = "",
                 Divs = new List<Div>
                 {

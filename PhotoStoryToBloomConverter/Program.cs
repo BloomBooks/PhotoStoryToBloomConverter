@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using PhotoStoryToBloomConverter.BloomModel;
 using PhotoStoryToBloomConverter.PS3Model;
+using System.Diagnostics;
 
 namespace PhotoStoryToBloomConverter
 {
@@ -114,7 +115,7 @@ namespace PhotoStoryToBloomConverter
                     Console.WriteLine("Error: bloomAppPath does not exist.");
                     return;
                 }
-                Convert(projectPath, Directory.GetParent(collectionPath).FullName, projectName, docxPath, bloomPath);
+                Convert(projectPath, collectionPath, projectName, docxPath, bloomPath);
             }
             else
             {
@@ -145,11 +146,14 @@ namespace PhotoStoryToBloomConverter
                 return;
             }
             else if (Directory.Exists(convertedProjectDirectory) && overwrite)
+            {
                 DeleteAllFilesAndFoldersInDirectory(convertedProjectDirectory);
+                Console.WriteLine("Overwrote existing project");
+            }
             else
                 Directory.CreateDirectory(convertedProjectDirectory);
 
-            if(extractedText == null)
+            if(extractedText == null && docxPath != null)
             {
                 TextExtractor.TryExtractText(docxPath, out extractedText);
                 if (extractedText == null)
@@ -164,6 +168,8 @@ namespace PhotoStoryToBloomConverter
 			CopyBloomFiles(convertedProjectDirectory);
 			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
 
+            //Bloom Hydration is still a work in progress
+            //Process.Start(bloomPath, string.Format("hydrate --preset app --bookpath {0} --VernacularIsoCode en", convertedProjectDirectory));
             Console.WriteLine("Successfully converted {0}", projectName);
 	    }
 
@@ -216,6 +222,8 @@ namespace PhotoStoryToBloomConverter
 		{
 			foreach (FileInfo file in new DirectoryInfo(directoryPath).GetFiles())
 				file.Delete();
+            foreach (DirectoryInfo directory in new DirectoryInfo(directoryPath).GetDirectories())
+                directory.Delete(true);
 		}
 
 		private static string GetMatchingDocxFile(string directoryPath, string wp3FilePath)

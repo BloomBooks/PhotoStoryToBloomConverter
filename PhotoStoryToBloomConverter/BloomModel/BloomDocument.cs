@@ -15,7 +15,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomMetadata _metadata;
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
-        private readonly IList<string> _text;
 
         public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<string> narratedText)
         {
@@ -29,10 +28,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
             {
                 var visualUnit = project.VisualUnits[i];
                 var psImage = visualUnit.Image;
-                if (CreditsAndCoverExtractor.imageIsCreditsOrCover(psImage.Path))
+                if (CreditsAndCoverExtractor.imageIsCreditsOrCover(Path.Combine(bookDirectoryPath, psImage.Path)))
                 {
                     //If it was a credits page, put credit information into the data divs
-                    if (CreditsAndCoverExtractor.extractedCreditString.Length > 0)
+                    if (CreditsAndCoverExtractor.extractedCreditString != null)
                     {
                         _bookData.LocalizedOriginalAcknowledgments.Add(CreditsAndCoverExtractor.extractedCreditString);
                         //Reset the extracted info, so we don't see it again
@@ -40,7 +39,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     }
 
                     //If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
-                    if (i == 0 && psImage.MusicTracks.Length > 0 && psImage.MusicTracks.First().SoundTracks.Length > 0)
+                    if (i == 0 && psImage.MusicTracks != null && psImage.MusicTracks.First().SoundTracks != null)
                     {
                         _bookData.CoverBackgroundAudioPath = psImage.MusicTracks.First().SoundTracks.First().Path;
                         _bookData.CoverBackgroundAudioVolume = psImage.MusicTracks.First().Volume / 100.00;
@@ -75,12 +74,12 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     };
 
                     var text = "";
-                    if (narratedText.Count > i)
+                    if (narratedText != null && narratedText.Count > i)
                         text = narratedText[i];
 
                     var backgroundPath = "";
                     var backgroundVolume = 0.00;
-                    if (psImage.MusicTracks.Length > 0 && psImage.MusicTracks.First().SoundTracks.Length > 0)
+                    if (psImage.MusicTracks != null && psImage.MusicTracks.First().SoundTracks != null)
                     {
                         backgroundPath = psImage.MusicTracks.First().SoundTracks.First().Path;
                         //Converting from 1-100 to 0.01-1.00
