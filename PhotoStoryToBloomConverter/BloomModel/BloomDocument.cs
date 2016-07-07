@@ -15,67 +15,101 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomMetadata _metadata;
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
-        private readonly IList<string> _text;
 
         public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<string> narratedText)
         {
             _metadata = BloomMetadata.DefaultBloomMetadata(bookName);
             _bookData = BloomBookData.DefaultBloomBookData(bookName);
-            if (CreditsExtractor.extractedCreditString.Length > 0) 
-                _bookData.LocalizedOriginalAcknowledgments.Add(CreditsExtractor.extractedCreditString);
-            _text = narratedText;
 
-            var deletedPages = 0;
+            //A little bit of book-keeping, we want to remove images that are cover or credit images from the final directory
+            var imagePathsToRemove = new SortedSet<string>();
+
+            //For each visual unit create a bloom page
+            //Instead of creating a page for cover and credits pages, put information into the book data (data-div)
+            //The X-Matter pack will create more visually appealing cover pages
             for (var i = 0; i < project.VisualUnits.Length; i++)
             {
-                var unit = project.VisualUnits[i];
-                var image = unit.Image;
-
-                var cropRectangle = new Rectangle();
-                if (image.Edits != null)
+                var visualUnit = project.VisualUnits[i];
+                var psImage = visualUnit.Image;
+                var backgroundAudioPath = GetBackgroundAudioPathForImage(psImage);
+                var backgroundAudioVolume = (backgroundAudioPath == null)?0.00:GetBackgroundAudioVolumeForImage(psImage);
+                if (CreditsAndCoverExtractor.imageIsCreditsOrCover(Path.Combine(bookDirectoryPath, psImage.Path)))
                 {
-                    foreach (var edit in image.Edits)
+                    //If it was a credits page, put credit information into the data divs
+                    if (CreditsAndCoverExtractor.extractedCreditString != null)
                     {
-                        if (edit.RotateAndCrop == null) continue;
-                        cropRectangle = edit.RotateAndCrop.CroppedRect.ToAnimationRectangle();
+                        _bookData.LocalizedOriginalAcknowledgments.Add(CreditsAndCoverExtractor.extractedCreditString);
+                        //Reset the extracted info, so we don't see it again
+                        CreditsAndCoverExtractor.extractedCreditString = null;
                     }
+
+                    //If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
+                    if (i == 0 && backgroundAudioPath != null)
+                    {
+                        _bookData.CoverBackgroundAudioPath = backgroundAudioPath;
+                        _bookData.CoverBackgroundAudioVolume = backgroundAudioVolume;
+
+                    }
+                    if (i == 0 && visualUnit.Narration != null)
+                        _bookData.CoverNarrationPath = visualUnit.Narration.Path;
+
+                    imagePathsToRemove.Add(Path.Combine(bookDirectoryPath, psImage.Path));
                 }
-
-                var bloomImage = new BloomImage
-                {
-                    Src = image.Path,
-                    ImageSize = new Size { Height = image.AbsoluteMotion.BaseImageHeight, Width = image.AbsoluteMotion.BaseImageWidth },
-                    ImageMotion = new BloomImageMotion
-                    {
-                        CropRectangle = cropRectangle,
-                        InitialImageRectangle = image.AbsoluteMotion.Rects[0].ToAnimationRectangle(),
-                        FinalImageRectangle = image.AbsoluteMotion.Rects[1].ToAnimationRectangle(),
-                    }
-                };
-
-                var backgroundPath = "";
-                if (image.MusicTracks != null)
-                {
-                    foreach (var musicTrack in image.MusicTracks)
-                    {
-                        backgroundPath = musicTrack.SoundTracks.First().Path;
-                    }
-                }
-                var narrationPath = "";
-                if (unit.Narration != null)
-                    narrationPath = unit.Narration.Path;
-
-                var bloomAudio = new BloomAudio(narrationPath, backgroundPath);
-                //If the image doesn't exist, we assume we removed it because it was a credit or cover image
-                if (File.Exists(Path.Combine(bookDirectoryPath, image.Path)))
-                    _pages.Add(BloomPage.BloomImageOnlyPage(bloomImage, bloomAudio));
                 else
                 {
-                    if(i - deletedPages < _text.Count)
-                        _text.RemoveAt(i - deletedPages); //Don't leave orphaned text, it will throw off the matching of text and image.
-                    deletedPages++;
+                    var cropRectangle = new Rectangle();
+                    //If the image photostory was using had a crop edit, we need to adjust the image displayed for bloom likewise
+                    if (psImage.Edits != null)
+                    {
+                        foreach (var edit in psImage.Edits)
+                        {
+                            if (edit.RotateAndCrop == null) continue;
+                            cropRectangle = edit.RotateAndCrop.CroppedRect.ToAnimationRectangle();
+                        }
+                    }
+
+                    var bloomImage = new BloomImage
+                    {
+                        Src = psImage.Path,
+                        ImageSize = new Size { Height = psImage.AbsoluteMotion.BaseImageHeight, Width = psImage.AbsoluteMotion.BaseImageWidth },
+                        ImageMotion = new BloomImageMotion
+                        {
+                            CropRectangle = cropRectangle,
+                            InitialImageRectangle = psImage.AbsoluteMotion.Rects[0].ToAnimationRectangle(),
+                            FinalImageRectangle = psImage.AbsoluteMotion.Rects[1].ToAnimationRectangle(),
+                        }
+                    };
+
+                    var text = "";
+                    if (narratedText != null && narratedText.Count > i)
+                        text = narratedText[i];
+
+                    var narrationPath = "";
+                    if (visualUnit.Narration != null)
+                        narrationPath = visualUnit.Narration.Path;
+
+                    var bloomAudio = new BloomAudio(narrationPath, backgroundAudioPath, backgroundAudioVolume);
+
+                    _pages.Add(new BloomPage(bloomImage, text, bloomAudio));
                 }
             }
+            foreach (var imagePath in imagePathsToRemove)
+            {
+                File.Delete(imagePath);
+            }
+        }
+
+        private double GetBackgroundAudioVolumeForImage(Ps3Image image)
+        {
+            //Converting from 1-100 to 0.01-1.00
+            return image.MusicTracks.First().Volume / 100.00;
+        }
+
+        private string GetBackgroundAudioPathForImage(Ps3Image image)
+        {
+            if (image.MusicTracks != null && image.MusicTracks.First().SoundTracks != null)
+                return image.MusicTracks.First().SoundTracks.First().Path;
+            return null;
         }
 
         public Html ConvertToHtml()
@@ -93,17 +127,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     }
                 }
             };
-			IList<Div> divs = new List<Div>(_pages.Count);
-	        for (int i = 0; i < _pages.Count; i++)
-	        {
-		        string pageText = null;
-		        if (_text != null && _text.Count > i)
-			        pageText = _text[i];
-		        divs.Add(_pages[i].ConvertToHtml(pageText));
-	        }
-	        html.Body.Divs.AddRange(divs);
+            foreach (var page in _pages)
+                html.Body.Divs.Add(page.ConvertToHtml());
             return html;
-
         }
     }
 }

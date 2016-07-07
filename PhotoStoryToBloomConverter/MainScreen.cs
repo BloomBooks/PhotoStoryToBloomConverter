@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PhotoStoryToBloomConverter.PS3Model;
+using System.IO;
 
 namespace PhotoStoryToBloomConverter
 {
@@ -47,7 +48,54 @@ namespace PhotoStoryToBloomConverter
             };
 
             if (fileDialog.ShowDialog() != DialogResult.OK) return;
+
             bloomCollectionTextBox.Text = fileDialog.FileName;
+        }
+
+        private void selectBloomExeButton_Clicked(object sender, EventArgs e)
+        {
+            var bloomPath = GetBloomExePathFromDialog();
+            if(bloomPath != null)
+                bloomExeTextBox.Text = bloomPath;
+        }
+
+        public static string GetBloomExePathFromDialog()
+        {
+            var fileDialog = new OpenFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                Filter = "Bloom Executable (*.exe)|*.exe",
+                RestoreDirectory = true
+            };
+
+            if (fileDialog.ShowDialog() != DialogResult.OK) return null;
+            return fileDialog.FileName;
+        }
+
+        private void selectWordDocButton_Click(object sender, EventArgs e)
+        {
+            var fileDialog = new OpenFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                Filter = ".docx files (*.docx)|*.docx",
+                RestoreDirectory = true
+            };
+
+            if (fileDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            var path = fileDialog.FileName;
+
+            IList<string> text;
+            if (!TextExtractor.TryExtractText(path, out text))
+            {
+                MessageBox.Show("There was a problem extracting text from this file. Please try a different one or continue without text.");
+                wordDocTextBox.Text = string.Empty;
+                return;
+            }
+            extractedText = text;
+
+            wordDocTextBox.Text = path;
         }
 
         private void convertProjectButton_Click(object sender, EventArgs e)
@@ -55,17 +103,10 @@ namespace PhotoStoryToBloomConverter
 			var projectXmlPath = photoStoryProjectTextBox.Text;
             var bloomCollectionPath = bloomCollectionTextBox.Text;
             var projectName = projectNameTextBox.Text.Trim();
-	        try
-	        {
-		        Program.Convert(projectXmlPath, bloomCollectionPath, projectName, photoStoryProject, extractedText);
-	        }
-	        catch (ArgumentException ae)
-	        {
-		        MessageBox.Show(ae.Message);
-		        if (ae.ParamName == "projectName")
-					projectNameTextBox.Text = "";
-		        return;
-	        }
+            var textPath = wordDocTextBox.Text;
+            var bloomExePath = bloomCollectionTextBox.Text;
+
+		    Program.Convert(projectXmlPath, Path.GetDirectoryName(bloomCollectionPath), projectName, textPath, bloomExePath, photoStoryProject, extractedText);
 
             var result = MessageBox.Show("Success! Convert another project?", "Photo Story to Bloom Converter", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
@@ -78,33 +119,7 @@ namespace PhotoStoryToBloomConverter
                 Close();
         }
 
-		private void selectWordDocButton_Click(object sender, EventArgs e)
-		{
-			var fileDialog = new OpenFileDialog
-			{
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-				Filter = ".docx files (*.docx)|*.docx",
-				RestoreDirectory = true
-			};
-
-			if (fileDialog.ShowDialog() != DialogResult.OK)
-				return;
-
-			var path = fileDialog.FileName;
-
-			IList<string> text;
-			if (!TextExtractor.TryExtractText(path, out text))
-			{
-				MessageBox.Show("There was a problem extracting text from this file. Please try a different one or continue without text.");
-				wordDocTextBox.Text = string.Empty;
-				return;
-			}
-			extractedText = text;
-
-			wordDocTextBox.Text = path;
-		}
-
-		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void batchLabel_linkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			using (var dlg = new BatchConversionDlg())
 			{

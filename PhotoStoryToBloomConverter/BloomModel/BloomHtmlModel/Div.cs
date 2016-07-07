@@ -80,6 +80,9 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         [DefaultValue("")]
         public string BackgroundAudio;
 
+        [XmlAttribute("data-backgroundaudiovolume")]
+        public string BackgroundAudioVolume;
+
         [XmlText]
         public string SimpleText;
 

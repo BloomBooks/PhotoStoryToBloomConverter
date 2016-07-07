@@ -21,18 +21,26 @@ namespace PhotoStoryToBloomConverter
 				directoryTextBox.Text = directoryPath;
 	        }
         }
+        
+        private void selectBloomExePathButton_Clicked(object sender, EventArgs e)
+        {
+            var bloomPath = MainScreen.GetBloomExePathFromDialog();
+            if(bloomPath != null)
+                bloomExePathTextBox.Text = bloomPath;
+        }
 
         private void convertButton_Click(object sender, EventArgs e)
         {
 			var directoryPath = directoryTextBox.Text;
 	        try
 	        {
-		        Program.BatchConvert(directoryPath);
+		        Program.BatchConvert(directoryPath, bloomExePathTextBox.Text);
 	        }
 	        catch (ArgumentException ae)
 	        {
 		        MessageBox.Show(ae.Message);
 	        }
         }
+
     }
 }
