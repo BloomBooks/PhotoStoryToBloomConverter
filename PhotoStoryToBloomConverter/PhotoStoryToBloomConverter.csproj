@@ -101,7 +101,7 @@
     <Compile Include="BatchConversionDlg.Designer.cs">
       <DependentUpon>BatchConversionDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="CreditsExtractor.cs" />
+    <Compile Include="CreditsAndCoverExtractor.cs" />
     <Compile Include="MainScreen.cs">
       <SubType>Form</SubType>
     </Compile>

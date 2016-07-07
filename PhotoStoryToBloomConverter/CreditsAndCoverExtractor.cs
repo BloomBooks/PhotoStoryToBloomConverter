@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PhotoStoryToBloomConverter
 {
-    class CreditsExtractor
+    class CreditsAndCoverExtractor
     {
         private static readonly string[] creditImageHashes = { "369F414F6F2CC91AE0AD0FF1CDCFAD21", "CDF13EC119AD0128E1196DB518B64BF8", "E3BF24BB5F62DFF39E7C2301E4ED2642", "56C6BDF749C9FE421C9BC6F832B7CCE0" };
         private static readonly string[] coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
