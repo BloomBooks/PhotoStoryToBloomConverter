@@ -6,14 +6,15 @@ namespace PhotoStoryToBloomConverter.BloomModel
 {
     public class BloomPageSplitter
     {
-        public BloomTextBox TextBox;
+        public string Text;
         public BloomImage Image;
         public BloomAudio Audio;
+        
 
-        public Div ConvertToHtml(string text)
+        public Div ConvertToHtml()
         {
             var imageDiv = Image.ConvertToHtml();
-	        var contentText = string.IsNullOrWhiteSpace(text) ? "nbsp;" : text;
+	        var contentText = string.IsNullOrWhiteSpace(Text) ? "nbsp;" : Text;
             var narrationSpan = (Audio.NarrationPath == null) ? null :
 				new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath), RecordingMD5 = "undefined", ContentText = contentText };
             return new Div

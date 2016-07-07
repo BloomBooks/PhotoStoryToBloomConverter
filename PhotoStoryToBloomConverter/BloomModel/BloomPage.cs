@@ -14,35 +14,31 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public string Uuid;
         public string DataPageLineage;
         public string Language;
+        public string Text;
+        public float BackgroundVolume;
 
         public string PageLabel;
         public string PageDescription;
 
-        public BloomPage()
+        public BloomPage(BloomImage image, string text, BloomAudio audio)
         {
             Uuid = Guid.NewGuid().ToString();
+            BloomTags = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual";
+            PageLabel = "";
+            PageDescription = "";
+            Language = "";
+            ImageAndTextWithAudioSplitter = new BloomPageSplitter { Image = image, Text = text, Audio = audio };
         }
 
-        public static BloomPage BloomImageOnlyPage(BloomImage image, BloomAudio audio)
-        {
-            return new BloomPage
-            {
-                BloomTags = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual",
-                PageLabel = "",
-                PageDescription = "",
-                Language = "",
-                ImageAndTextWithAudioSplitter = new BloomPageSplitter { Image = image, Audio = audio }
-            };
-        }
-
-        public Div ConvertToHtml(string text)
+        public Div ConvertToHtml()
         {
             return new Div
             {
                 Class = BloomTags,
                 Id = Uuid,
-                DataPageLineage = "056B6F11-4A6C-4942-B2BC-8861E62B03B3",
+                DataPageLineage = "",
                 BackgroundAudio = GetBackgroundAudio(),
+                BackgroundAudioVolume = BackgroundVolume.ToString(),
                 Lang = "",
                 Divs = new List<Div>
                 {
@@ -53,7 +49,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                         Class = "marginBox",
                         Divs = new List<Div>
                         {
-                            ImageAndTextWithAudioSplitter.ConvertToHtml(text)
+                            ImageAndTextWithAudioSplitter.ConvertToHtml()
                         }
                     }
                 }
