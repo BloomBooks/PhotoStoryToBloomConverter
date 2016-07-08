@@ -65,10 +65,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     new Div { DataBook = "styleNumberSequence", Lang = "*", SimpleText = StyleNumberSequence},
                     new Div { DataBook = "languagesOfBook", Lang = "*", SimpleText = LanguagesOfBook},
                     new Div { DataBook = "licenseUrl", Lang = "*", SimpleText = LicenseUrl},
-                    new Div { DataBook = "initial-backgroundaudio", Lang = "*", SimpleText = Path.GetFileNameWithoutExtension(CoverNarrationPath) },
-                    new Div { DataBook = "initial-backgroundaudiovolume", Lang = "*", SimpleText = CoverBackgroundAudioVolume.ToString() }
                 }
             };
+            if (CoverBackgroundAudioPath != null)
+            {
+                dataDiv.Divs.Add(new Div { DataBook = "initialBackgroundAudio", Lang = "*", SimpleText = Path.GetFileNameWithoutExtension(CoverBackgroundAudioPath) });
+                dataDiv.Divs.Add(new Div { DataBook = "initialBackgroundAudioVolume", Lang = "*", SimpleText = CoverBackgroundAudioVolume.ToString() });
+            }
             dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
             dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new Paragraph { Span = new Span { Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", RecordingMD5 = "undefined", ContentText = Title } } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = credits } }).ToArray());
