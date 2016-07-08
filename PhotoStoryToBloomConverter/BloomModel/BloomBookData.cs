@@ -69,7 +69,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             };
             if (CoverBackgroundAudioPath != null)
             {
-                dataDiv.Divs.Add(new Div { DataBook = "initialBackgroundAudio", Lang = "*", SimpleText = Path.GetFileNameWithoutExtension(CoverBackgroundAudioPath) });
+                dataDiv.Divs.Add(new Div { DataBook = "initialBackgroundAudio", Lang = "*", SimpleText = GetBackgroundAudio() });
                 dataDiv.Divs.Add(new Div { DataBook = "initialBackgroundAudioVolume", Lang = "*", SimpleText = CoverBackgroundAudioVolume.ToString() });
             }
             dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
@@ -83,6 +83,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
             dataDiv.Divs.AddRange(LocalizedOutsideBackCover.Select((outsideBackCover, index) => new Div { DataBook = "outsideBackCover", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = outsideBackCover } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedLicenseDescription.Select((licenseDescription, index) => new Div { DataBook = "licenseDescription", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = licenseDescription } }).ToArray());
             return dataDiv;
+        }
+
+        public string GetBackgroundAudio()
+        {
+            if (!string.IsNullOrWhiteSpace(CoverBackgroundAudioPath))
+                return Path.Combine(BloomAudio.kAudioDirectory, CoverBackgroundAudioPath);
+            return null;
         }
     }
 }
