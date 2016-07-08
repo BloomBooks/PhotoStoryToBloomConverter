@@ -15,7 +15,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public string DataPageLineage;
         public string Language;
         public string Text;
-        public float BackgroundVolume;
 
         public string PageLabel;
         public string PageDescription;
@@ -38,7 +37,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 Id = Uuid,
                 DataPageLineage = "",
                 BackgroundAudio = GetBackgroundAudio(),
-                BackgroundAudioVolume = (BackgroundVolume == 0)?null:BackgroundVolume.ToString(),
+                BackgroundAudioVolume = (string.IsNullOrWhiteSpace(ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath)) ? null : ImageAndTextWithAudioSplitter.Audio.BackgroundVolume.ToString(),
                 Lang = "",
                 Divs = new List<Div>
                 {
