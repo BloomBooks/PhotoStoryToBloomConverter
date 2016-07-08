@@ -136,19 +136,7 @@
       <DependentUpon>MainScreen.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
-    <EmbeddedResource Include="BloomBookResources\meta.json" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="BloomBookResources\basePage.css" />
-    <EmbeddedResource Include="BloomBookResources\Basic Book.css" />
-    <EmbeddedResource Include="BloomBookResources\languageDisplay.css" />
-    <EmbeddedResource Include="BloomBookResources\license.png" />
-    <EmbeddedResource Include="BloomBookResources\origami.css" />
-    <EmbeddedResource Include="BloomBookResources\placeHolder.png" />
-    <EmbeddedResource Include="BloomBookResources\previewMode.css" />
-    <EmbeddedResource Include="BloomBookResources\thumbnail.png" />
-    <EmbeddedResource Include="BloomBookResources\Traditional-XMatter.css" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CABExtracter\CABExtracter.csproj">
