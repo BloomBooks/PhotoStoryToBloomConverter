@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
+using System.IO;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -13,6 +14,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public string LicenseImage;
         public string Title;
         public string[] ContentLanguages;
+
+        public string CoverNarrationPath;
+        public string CoverBackgroundAudioPath;
+        public double CoverBackgroundAudioVolume;
 
         //All localized variables are expected to have similar indexes 
         //to their languages location in ContentLanguages
@@ -59,12 +64,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 {
                     new Div { DataBook = "styleNumberSequence", Lang = "*", SimpleText = StyleNumberSequence},
                     new Div { DataBook = "languagesOfBook", Lang = "*", SimpleText = LanguagesOfBook},
-                    //new Div { DataBook = "coverImage", Lang = "*", SimpleText = CoverImage},
                     new Div { DataBook = "licenseUrl", Lang = "*", SimpleText = LicenseUrl},
+                    new Div { DataBook = "initial-backgroundaudio", Lang = "*", SimpleText = Path.GetFileNameWithoutExtension(CoverNarrationPath) },
+                    new Div { DataBook = "initial-backgroundaudiovolume", Lang = "*", SimpleText = CoverBackgroundAudioVolume.ToString() }
                 }
             };
             dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
-            dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = Title } }).ToArray());
+            dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new Paragraph { Span = new Span { Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", RecordingMD5 = "undefined", ContentText = Title } } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = credits } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = contributions } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = acknowledgments } }).ToArray());

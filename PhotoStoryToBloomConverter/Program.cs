@@ -5,122 +5,173 @@ using System.Linq;
 using System.Reflection;
 using PhotoStoryToBloomConverter.BloomModel;
 using PhotoStoryToBloomConverter.PS3Model;
+using System.Diagnostics;
 
 namespace PhotoStoryToBloomConverter
 {
+
     public class Program
     {
+        private static Boolean overwrite = false;
+        private static Boolean batch = false;
+
         [STAThread]
         public static void Main(string[] args)
         {
-	        if (args.Length == 0)
-	        {
-		        new MainScreen().ShowDialog();
-		        return;
-	        }
+            string projectPath = null;
+            string collectionPath = null;
+            string bloomPath = null;
+            string projectName = null;
+            string docxPath = null;
 
-	        if (args[0] == "-h" || args[0] == "-help" || args[0] == "-?" || args[0] == "?")
-	        {
-		        DisplayHelp();
-		        return;
-	        }
-	        try
-	        {
-		        if (args[0] == "-b")
-		        {
-			        BatchConvert(args[1]);
-			        return;
-		        }
+            for (var i = 0; i < args.Length; i++)
+            {
+                var arg = args[i];
+                if (arg == "-h" || arg == "-help" || arg == "-?" || arg == "?")
+                {
+                    DisplayUsage();
+                    return;
+                }
+                if (arg == "-g")
+                {
+                    new MainScreen().ShowDialog();
+                    return;
+                }
+                if (arg == "-b")
+                {
+                    batch = true;
+                }
+                else if (arg == "-f")
+                {
+                    overwrite = true;
+                }
+                else if (arg == "-pn")
+                {
+                    if(args.Length > i+1)
+                    {
+                        projectName = args[i + 1];
+                    }
+                    else
+                    {
+                        Console.WriteLine("Project name not set");
+                        DisplayUsage();
+                    }
+                }
+                else if (arg == "-t")
+                {
+                    if (args.Length > i + 1)
+                    {
+                        docxPath = args[i + 1];
+                    }
+                    else
+                    {
+                        Console.WriteLine("Word document path not set");
+                        DisplayUsage();
+                    }
+                }
+                else
+                {
+                    if (projectPath == null)
+                        projectPath = arg;
+                    else if (collectionPath == null)
+                        collectionPath = arg;
+                    else if (bloomPath == null)
+                        bloomPath = arg;
+                }
+            }
+            if (batch && projectPath != null)
+            {
+                //Reassign arguments
+                var batchPath = projectPath;
+                bloomPath = collectionPath;
 
-		        string projectName = null;
-				string docxPath = null;
-		        if (args.Length > 2 && args[2] == "-pn")
-		        {
-					projectName = args[3];
-					if (args.Length > 4 && args[4] == "-t")
-						docxPath = args[5];
-		        }
-		        else if (args.Length > 2 && args[2] == "-t")
-			        docxPath = args[3];
-		        Convert(args[0], args[1], projectName, null, null, docxPath);
-	        }
-	        catch (ArgumentException ae)
-			{
-				DisplayError(ae.Message);
-			}
-	        catch (Exception e)
-	        {
-				DisplayError(e.Message);
-	        }
+                if (!Directory.Exists(batchPath))
+                {
+                    Console.WriteLine("Error: batchDirectoryPath does not exist.");
+                    return;
+                }
+                if (!File.Exists(bloomPath))
+                {
+                    Console.WriteLine("Error: bloomAppPath does not exist.");
+                    return;
+                }
+                BatchConvert(batchPath, bloomPath);
+            }
+            else if (!batch && projectPath != null && collectionPath != null && bloomPath != null)
+            {
+                if (!File.Exists(projectPath))
+                {
+                    Console.WriteLine("Error: projectXmlPath does not exist.");
+                    return;
+                }
+                if (!File.Exists(collectionPath))
+                {
+                    Console.WriteLine("Error: bloomCollectionPath does not exist.");
+                    return;
+                }
+                if (!File.Exists(bloomPath))
+                {
+                    Console.WriteLine("Error: bloomAppPath does not exist.");
+                    return;
+                }
+                Convert(projectPath, Path.GetDirectoryName(collectionPath), projectName, docxPath, bloomPath);
+            }
+            else
+            {
+                DisplayUsage();
+            }
         }
 
-	    private static void DisplayError(string error)
+	    private static void DisplayUsage()
 		{
-			Console.WriteLine();
-			Console.WriteLine("An unexpected error occurred: ");
-			Console.WriteLine(error);
-			Console.WriteLine();
-			Console.WriteLine("Press any key to exit.");
-			Console.ReadKey();
-	    }
-
-	    private static void DisplayHelp()
-		{
-			Console.WriteLine("Single conversion mode arguments:");
-			Console.WriteLine("  path the project.xml file");
-			Console.WriteLine("  path to bloom collection file");
-			Console.WriteLine("  (optional) -pn => project name (if this is not provided, we will attempt to extract it from the project)");
-			Console.WriteLine("  (optional) -t => path to .docx file containing text to extract");
-			Console.WriteLine();
-			Console.WriteLine("-b => batch mode (must be the first argument)");
-		    Console.WriteLine();
-			Console.WriteLine("Batch mode arguments:");
-			Console.WriteLine("  path to directory containing wp3 files and docx files");
+            Console.WriteLine("usage: PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath]");
+			Console.WriteLine("       PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f]");
+            Console.WriteLine("       PhotoStoryToBloomConverter.exe -g");
 		}
 
-	    public static void Convert(string projectXmlPath, string bloomCollectionPath, string projectName = null, PhotoStoryProject photoStoryProject = null, IList<string> extractedText = null, string docxPath = null)
+        public static void Convert(string projectXmlPath, string destinationFolder, string projectName, string docxPath, string bloomPath, PhotoStoryProject photoStoryProject = null, IList<string> extractedText = null)
 	    {
-		    if (string.IsNullOrEmpty(projectXmlPath))
-				throw new ArgumentException("Project xml path must be provided.", "projectXmlPath");
-			if (!File.Exists(projectXmlPath))
-				throw new ArgumentException("The project does not exist.", "projectXmlPath");
+            if (photoStoryProject == null)
+            {
+                photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
+                if (string.IsNullOrEmpty(projectName))
+                    projectName = photoStoryProject.GetProjectName();
+            }
 
-		    if (photoStoryProject == null)
-		    {
-				photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
-			    if (projectName == null)
-				    projectName = photoStoryProject.GetProjectName();
-			}
-			else if (string.IsNullOrEmpty(projectName))
-				throw new ArgumentException("Project name must be provided.", "projectName");
+            var convertedProjectDirectory = Path.Combine(destinationFolder, projectName);
+            if (Directory.Exists(convertedProjectDirectory) && !overwrite)
+            {
+                Console.WriteLine(string.Format("Error: A book already exists with the name {0}.", projectName), "projectName");
+                return;
+            }
+            else if (Directory.Exists(convertedProjectDirectory) && overwrite)
+            {
+                DeleteAllFilesAndFoldersInDirectory(convertedProjectDirectory);
+            }
+            else
+                Directory.CreateDirectory(convertedProjectDirectory);
 
-			if (string.IsNullOrEmpty(bloomCollectionPath))
-				throw new ArgumentException("Bloom collection path must be provided.", "bloomCollectionPath");
-			if (!File.Exists(bloomCollectionPath))
-				throw new ArgumentException("The bloom file does not exist.", "bloomCollectionPath");
-			var convertedProjectDirectory = Path.Combine(Path.GetDirectoryName(bloomCollectionPath), projectName);
-			if (Directory.Exists(convertedProjectDirectory))
-				throw new ArgumentException(string.Format("A book already exists with the name {0} in that collection.", projectName), "projectName");
+            if(extractedText == null && docxPath != null)
+            {
+                TextExtractor.TryExtractText(docxPath, out extractedText);
+                if (extractedText == null)
+                    Console.WriteLine("Unable to extract text from {0}", docxPath);
+            }
 
-		    if (extractedText == null && docxPath != null)
-		    {
-			    TextExtractor.TryExtractText(docxPath, out extractedText);
-				if (extractedText == null)
-					Console.WriteLine("Unable to extract text.");
-		    }
-
-		    Directory.CreateDirectory(convertedProjectDirectory);
-
+            //Three things needed for a bloom book: 
+            //  book assets (images, narration audio, background audio)
+            //  bloom book css and images
+            //  the actual book, a generated html file built from the photostory project
 			CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
-			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
 			CopyBloomFiles(convertedProjectDirectory);
+			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
+
+            //Process.Start(bloomPath, string.Format("hydrate --preset app --bookpath {0} --VernacularIsoCode en", convertedProjectDirectory));
+            if(!batch)Console.WriteLine("Successfully converted {0}", projectName);
 	    }
 
-	    public static void BatchConvert(string directoryPath)
+	    public static void BatchConvert(string directoryPath, string bloomExePath)
 		{
-			if (directoryPath.Length == 0 || !Directory.Exists(directoryPath))
-				throw new ArgumentException("Please select an existing directory.", "directoryPath");
-
 			var outputDirectory = Path.Combine(directoryPath, "Batch Conversion Output");
 			Directory.CreateDirectory(outputDirectory);
 
@@ -133,25 +184,12 @@ namespace PhotoStoryToBloomConverter
 				CABExtracter.Program.ExpandCabFile(projectPath, tempFolder);
 
 				var projectXmlPath = Path.Combine(tempFolder, "project.xml");
-
-				var photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
-				var projectName = photoStoryProject.GetProjectName();
-				if (string.IsNullOrWhiteSpace(projectName))
-					projectName = Path.GetFileNameWithoutExtension(projectPath);
-				var convertedProjectDirectory = Path.Combine(outputDirectory, projectName);
-				Directory.CreateDirectory(convertedProjectDirectory);
-
+                var photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
+                var projectName = photoStoryProject.GetProjectName();
+                if (string.IsNullOrWhiteSpace(projectName))
+                    projectName = Path.GetFileNameWithoutExtension(projectPath);
 				var matchingDocxFile = GetMatchingDocxFile(directoryPath, projectPath);
-				IList<string> text = null;
-				if (matchingDocxFile != null)
-					TextExtractor.TryExtractText(matchingDocxFile, out text);
-
-				if (text == null)
-					Console.WriteLine("Could not extract text for {0}", projectName);
-
-				CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
-				ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, text);
-				CopyBloomFiles(convertedProjectDirectory);
+                Convert(projectXmlPath, outputDirectory, projectName, matchingDocxFile, bloomExePath, photoStoryProject);
 
 				DeleteAllFilesAndFoldersInDirectory(tempFolder);
 
@@ -168,6 +206,8 @@ namespace PhotoStoryToBloomConverter
 		{
 			foreach (FileInfo file in new DirectoryInfo(directoryPath).GetFiles())
 				file.Delete();
+            foreach (DirectoryInfo directory in new DirectoryInfo(directoryPath).GetDirectories())
+                directory.Delete(true);
 		}
 
 		private static string GetMatchingDocxFile(string directoryPath, string wp3FilePath)
@@ -182,6 +222,7 @@ namespace PhotoStoryToBloomConverter
 			return null;
 		}
 
+        //Pulls in all the gathered information for the poject and creates a single bloom book html file at destinationFile
         public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<string> text)
         {
             var document = new BloomDocument(project, bookName, Path.GetDirectoryName(destinationFile), text);
@@ -197,6 +238,7 @@ namespace PhotoStoryToBloomConverter
                 if (filename.Equals("project.xml"))
                     continue;
 
+                //Converting all .wav files to .ogg
 	            if (AudioFileNeedsConversion(filename))
 				{
 					Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
@@ -204,13 +246,14 @@ namespace PhotoStoryToBloomConverter
 					if (newFileName == null)
 						throw new ApplicationException(string.Format("Unable to convert {0}.", Path.Combine(sourceFolderPath, filename)));
 	            }
+                //Audio files currently registered are .mp3 .wav .wma, going to store them all in a separate audio directory
                 else if (IsAudioFile(filename))
                 {
                     Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
                     File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, filename));
                 }
-                //Don't copy if it is a credits or cover image, we won't use them (but do extract any credits information)
-                else if (!CreditsExtractor.imageIsCreditsOrCover(Path.Combine(sourceFolderPath, filename)))
+                //Assuming these are our image assets
+                else
                     File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, filename));
             }
         }
@@ -220,10 +263,10 @@ namespace PhotoStoryToBloomConverter
             var assembly = Assembly.GetExecutingAssembly();
             foreach (var resourcename in assembly.GetManifestResourceNames())
             {
+                //Resource names are of the form PhotoStoryToBloomConverter.BloomBookResources.Filename
 	            if (!resourcename.Contains("BloomBookResources"))
 		            continue;
 
-                //Resource names are of the form PhotoStoryToBloomConverter.BloomBookResources.Filename
                 var components = resourcename.Split('.');
                 var filename = string.Join(".", components.Skip(components.Length - 2));
 
