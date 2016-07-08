@@ -163,10 +163,10 @@ namespace PhotoStoryToBloomConverter
             //  bloom book css and images
             //  the actual book, a generated html file built from the photostory project
 			CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
-			CopyBloomFiles(convertedProjectDirectory);
 			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
 
-            //Process.Start(bloomPath, string.Format("hydrate --preset app --bookpath {0} --VernacularIsoCode en", convertedProjectDirectory));
+            var hydrationArguments = string.Format("hydrate --preset app --bookpath \"{0}\" --VernacularIsoCode en", convertedProjectDirectory);
+            Process.Start(bloomPath, hydrationArguments);
             if(!batch)Console.WriteLine("Successfully converted {0}", projectName);
 	    }
 
@@ -255,30 +255,6 @@ namespace PhotoStoryToBloomConverter
                 //Assuming these are our image assets
                 else
                     File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, filename));
-            }
-        }
-
-        public static void CopyBloomFiles(string destinationFolderPath)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            foreach (var resourcename in assembly.GetManifestResourceNames())
-            {
-                //Resource names are of the form PhotoStoryToBloomConverter.BloomBookResources.Filename
-	            if (!resourcename.Contains("BloomBookResources"))
-		            continue;
-
-                var components = resourcename.Split('.');
-                var filename = string.Join(".", components.Skip(components.Length - 2));
-
-                using (var stream = assembly.GetManifestResourceStream(resourcename))
-                {
-                    using (
-                        var filestream = new FileStream(Path.Combine(destinationFolderPath, filename),
-                            FileMode.CreateNew))
-                    {
-                        if (stream != null) stream.CopyTo(filestream);
-                    }
-                }
             }
         }
 
