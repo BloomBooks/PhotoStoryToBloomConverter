@@ -265,7 +265,7 @@ namespace PhotoStoryToBloomConverter
 
 		private static string ConvertAudioFile(string sourcePath, string targetPathWithoutExtension)
 		{
-			return new OggEncoder().Encode(sourcePath, targetPathWithoutExtension);
+			return new Mp3Encoder().Encode(sourcePath, targetPathWithoutExtension);
 		}
 
 		private static bool IsAudioFile(string fileName)
