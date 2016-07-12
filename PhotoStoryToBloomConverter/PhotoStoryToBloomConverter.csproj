@@ -153,10 +153,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="libmp3lame.32.dll">
+    <Content Include="..\packages\NAudio.Lame.1.0.4\content\libmp3lame.32.dll">
+      <Link>libmp3lame.32.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="libmp3lame.64.dll">
+    <Content Include="..\packages\NAudio.Lame.1.0.4\content\libmp3lame.64.dll">
+      <Link>libmp3lame.64.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
