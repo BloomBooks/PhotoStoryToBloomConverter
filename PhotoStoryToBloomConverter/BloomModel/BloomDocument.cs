@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using NAudio.Wave;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -88,7 +89,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     if (visualUnit.Narration != null)
                         narrationPath = visualUnit.Narration.Path;
 
-                    var bloomAudio = new BloomAudio(narrationPath, backgroundAudioPath, backgroundAudioVolume);
+	                var narrationFilePath = Path.Combine(bookDirectoryPath, BloomAudio.kAudioDirectory, narrationPath);
+                    var bloomAudio = new BloomAudio(narrationPath, backgroundAudioPath, backgroundAudioVolume, GetDuration(narrationFilePath));
 
                     _pages.Add(new BloomPage(bloomImage, text, bloomAudio));
                 }
@@ -99,7 +101,17 @@ namespace PhotoStoryToBloomConverter.BloomModel
             }
         }
 
-        private double GetBackgroundAudioVolumeForImage(Ps3Image image)
+		private string GetDuration(string path)
+		{
+			if (File.Exists(path))
+				return new AudioFileReader(path).TotalTime.ToString();
+			var mp3Path = Path.ChangeExtension(path, "mp3");
+			if (File.Exists(mp3Path))
+				return new AudioFileReader(mp3Path).TotalTime.TotalSeconds.ToString();
+			return "2"; // arbitrary, should not happen.
+		}
+
+		private double GetBackgroundAudioVolumeForImage(Ps3Image image)
         {
             //Converting from 1-100 to 0.01-1.00
             return image.MusicTracks.First().Volume / 100.00;

@@ -10,6 +10,8 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string Class;
         [XmlAttribute("recordingmd5")]
         public string RecordingMD5;
+		[XmlAttribute("data-duration")]
+	    public string Duration;
 
         [XmlText]
         public string ContentText;

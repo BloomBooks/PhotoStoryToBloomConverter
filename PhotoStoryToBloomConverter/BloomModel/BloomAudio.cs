@@ -7,12 +7,14 @@
         public string NarrationPath;
         public string BackgroundAudioPath;
         public double BackgroundVolume;
+	    public string Duration;
 
-        public BloomAudio(string narrationPath, string backgroundAudioPath, double backgroundVolume)
+        public BloomAudio(string narrationPath, string backgroundAudioPath, double backgroundVolume, string duration)
         {
             NarrationPath = narrationPath;
             BackgroundAudioPath = backgroundAudioPath;
             BackgroundVolume = backgroundVolume;
+	        Duration = duration;
         }
     }
 }

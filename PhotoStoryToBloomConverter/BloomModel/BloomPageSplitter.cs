@@ -1,6 +1,7 @@
 ﻿using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 using System.Collections.Generic;
 using System.IO;
+using NAudio.Wave;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -16,7 +17,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
             var imageDiv = Image.ConvertToHtml();
 	        var contentText = string.IsNullOrWhiteSpace(Text) ? "nbsp;" : Text;
             var narrationSpan = (Audio.NarrationPath == null) ? null :
-				new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath), RecordingMD5 = "undefined", ContentText = contentText };
+				new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath), RecordingMD5 = "undefined",
+					ContentText = contentText, Duration = Audio.Duration};
             return new Div
             {
                 Class = "split-pane horizontal-percent",
@@ -113,5 +115,5 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 }
             };
         }
-    }
+	}
 }
