@@ -166,8 +166,23 @@ namespace PhotoStoryToBloomConverter
 			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
 
             var hydrationArguments = string.Format("hydrate --preset app --bookpath \"{0}\" --VernacularIsoCode en", convertedProjectDirectory);
-            Process.Start(bloomPath, hydrationArguments);
-            if(!batch)Console.WriteLine("Successfully converted {0}", projectName);
+	        bool hydrateSuccessful;
+	        try
+	        {
+				using (var process = Process.Start(bloomPath, hydrationArguments))
+				{
+					process.WaitForExit();
+					hydrateSuccessful = process.ExitCode == 0;
+				}
+	        }
+	        catch
+	        {
+		        hydrateSuccessful = false;
+	        }
+			if (!hydrateSuccessful)
+				Console.WriteLine("Unable to hydrate {0}", projectName);
+	        else if (!batch)
+		        Console.WriteLine("Successfully converted {0}", projectName);
 	    }
 
 	    public static void BatchConvert(string directoryPath, string bloomExePath)

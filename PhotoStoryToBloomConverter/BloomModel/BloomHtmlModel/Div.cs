@@ -40,6 +40,8 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string DataPageLineage;
         [XmlAttribute("data-book")]
         public string DataBook;
+		[XmlAttribute("data-book-attributes")]
+		public string DataBookAttributes;
         [XmlAttribute("data-copyright")]
         public string DataCopyright;
         [XmlAttribute("data-creator")]

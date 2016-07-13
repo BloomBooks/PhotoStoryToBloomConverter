@@ -117,6 +117,7 @@
       <DependentUpon>MainScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Mp3Encoder.cs" />
+    <Compile Include="OggEncoder.cs" />
     <Compile Include="PS3AndBloomSerializer.cs" />
     <Compile Include="PS3Model\AbsoluteMotion.cs" />
     <Compile Include="PS3Model\Edit.cs" />

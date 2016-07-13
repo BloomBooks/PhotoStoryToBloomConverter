@@ -22,6 +22,9 @@ namespace PhotoStoryToBloomConverter
 			return outputPath;
 		}
 
-		public string FormatName => "mp3";
+		public string FormatName
+		{
+			get { return "mp3"; }
+		}
 	}
 }
