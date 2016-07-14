@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using NAudio.Wave;
+using SIL.Windows.Forms;
+using SIL.Windows.Forms.ClearShare;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -16,6 +18,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomMetadata _metadata;
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
+        private string ImageCopyright;
+        private string ImageLicense;
+        private string ImageCreator;
 
         public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<string> narratedText)
         {
@@ -34,14 +39,21 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 var psImage = visualUnit.Image;
                 var backgroundAudioPath = GetBackgroundAudioPathForImage(psImage);
                 var backgroundAudioVolume = (backgroundAudioPath == null)?0.00:GetBackgroundAudioVolumeForImage(psImage);
-                if (CreditsAndCoverExtractor.imageIsCreditsOrCover(Path.Combine(bookDirectoryPath, psImage.Path)))
+
+                var extractor = new CreditsAndCoverExtractor();
+                if (extractor.imageIsCreditsOrCover(Path.Combine(bookDirectoryPath, psImage.Path)))
                 {
                     //If it was a credits page, put credit information into the data divs
-                    if (CreditsAndCoverExtractor.extractedCreditString != null)
+                    if (extractor.extractedCreditString != null)
                     {
-                        _bookData.LocalizedOriginalAcknowledgments.Add(CreditsAndCoverExtractor.extractedCreditString);
-                        //Reset the extracted info, so we don't see it again
-                        CreditsAndCoverExtractor.extractedCreditString = null;
+                        _bookData.LocalizedOriginalAcknowledgments.Add(extractor.extractedCreditString);
+
+                        if (extractor.extractedImageCopyright != null)
+                            ImageCopyright = extractor.extractedImageCopyright;
+                        if (extractor.extractedImageLicense != null)
+                            ImageLicense = extractor.extractedImageLicense;
+                        if (extractor.extractedImageCreator != null)
+                            ImageCreator = extractor.extractedImageCreator;
                     }
 
                     //If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
@@ -93,6 +105,22 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     var bloomAudio = new BloomAudio(narrationPath, backgroundAudioPath, backgroundAudioVolume, GetDuration(narrationFilePath));
 
                     _pages.Add(new BloomPage(bloomImage, text, bloomAudio));
+                }
+            }
+
+            if (ImageCopyright != null || ImageLicense != null || ImageCreator != null)
+            {
+                //Because credits may have been at end of book, go back through and set image credits if we extracted some.
+                foreach (var page in _pages)
+                {
+                    var imageLocation = Path.Combine(bookDirectoryPath, page.ImageAndTextWithAudioSplitter.Image.Src);
+                    using (var image = SIL.Windows.Forms.ImageToolbox.PalasoImage.FromFile(imageLocation))
+                    {
+                        image.Metadata.CopyrightNotice = ImageCopyright;
+                        image.Metadata.License = new CreativeCommonsLicense(true, true, CreativeCommonsLicense.DerivativeRules.DerivativesWithShareAndShareAlike);
+                        image.Metadata.Creator = ImageCreator;
+                        image.SaveUpdatedMetadataIfItMakesSense();
+                    }
                 }
             }
             foreach (var imagePath in imagePathsToRemove)

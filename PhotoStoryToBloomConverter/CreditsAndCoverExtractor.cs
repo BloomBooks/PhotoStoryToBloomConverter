@@ -10,13 +10,16 @@ namespace PhotoStoryToBloomConverter
 {
     class CreditsAndCoverExtractor
     {
-        private static readonly string[] creditImageHashes = { "369F414F6F2CC91AE0AD0FF1CDCFAD21", "CDF13EC119AD0128E1196DB518B64BF8", "E3BF24BB5F62DFF39E7C2301E4ED2642", "56C6BDF749C9FE421C9BC6F832B7CCE0" };
-        private static readonly string[] coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
+        private readonly string[] creditImageHashes = { "369F414F6F2CC91AE0AD0FF1CDCFAD21", "CDF13EC119AD0128E1196DB518B64BF8", "E3BF24BB5F62DFF39E7C2301E4ED2642", "56C6BDF749C9FE421C9BC6F832B7CCE0" };
+        private readonly string[] coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
 
-        public static string extractedCreditString;
+        public string extractedCreditString;
+        public string extractedImageCopyright;
+        public string extractedImageLicense;
+        public string extractedImageCreator;
 
         //We are assuming that if an image is checked, it is part of the current book, and the credits should be extracted
-        public static bool imageIsCreditsOrCover(string imagePath)
+        public bool imageIsCreditsOrCover(string imagePath)
         {
             var md5Hash = BitConverter.ToString(MD5.Create().ComputeHash(File.ReadAllBytes(imagePath))).Replace("-", "");
             //Currently all of the information from the credit page needs to be stored in the additional acknowledgments section
@@ -48,6 +51,9 @@ namespace PhotoStoryToBloomConverter
                                         "Illustrations by Jim Padgett, Courtesy of Sweet Publishing, Ft. Worth, TX. ©2011 and Carolyn Dyk." + " " +
                                         "Skin-darkened by Lori MacLean and VM Productions." + " " +
                                         "Some images adapted by Beth Rupprecht.";
+                extractedImageCopyright = "© Sweet Publishing";
+                extractedImageLicense = "https://creativecommons.org/licenses/by-sa/3.0/";
+                extractedImageCreator = "Jim Padgett";
                 return true;
             }
             //SinEnters and Ruth have the same credits, they are just different resolution images
