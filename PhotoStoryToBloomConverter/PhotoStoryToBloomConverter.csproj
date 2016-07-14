@@ -82,6 +82,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="taglib-sharp">
+      <HintPath>..\lib\dotnet\taglib-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BloomModel\BloomAudio.cs" />

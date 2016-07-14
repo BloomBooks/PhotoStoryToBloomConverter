@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using NAudio.Wave;
+using SIL.Windows.Forms;
+using SIL.Windows.Forms.ClearShare;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -16,6 +18,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomMetadata _metadata;
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
+        private string ImageCopyright;
+        private string ImageLicense;
+        private string ImageCreator;
 
         public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<string> narratedText)
         {
@@ -40,8 +45,20 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     if (CreditsAndCoverExtractor.extractedCreditString != null)
                     {
                         _bookData.LocalizedOriginalAcknowledgments.Add(CreditsAndCoverExtractor.extractedCreditString);
+
+                        if (CreditsAndCoverExtractor.extractedImageCopyright != null)
+                            ImageCopyright = CreditsAndCoverExtractor.extractedImageCopyright;
+                        if (CreditsAndCoverExtractor.extractedImageLicense != null)
+                            ImageLicense = CreditsAndCoverExtractor.extractedImageLicense;
+                        if (CreditsAndCoverExtractor.extractedImageCreator != null)
+                            ImageCreator = CreditsAndCoverExtractor.extractedImageCreator;
+
                         //Reset the extracted info, so we don't see it again
                         CreditsAndCoverExtractor.extractedCreditString = null;
+                        CreditsAndCoverExtractor.extractedImageCopyright = null;
+                        CreditsAndCoverExtractor.extractedImageLicense = null;
+                        CreditsAndCoverExtractor.extractedImageCreator = null;
+
                     }
 
                     //If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
@@ -93,6 +110,18 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     var bloomAudio = new BloomAudio(narrationPath, backgroundAudioPath, backgroundAudioVolume, GetDuration(narrationFilePath));
 
                     _pages.Add(new BloomPage(bloomImage, text, bloomAudio));
+                }
+            }
+            //Because credits may have been at end of book, go back through and set image credits if we extracted some.
+            foreach (var page in _pages)
+            {
+                var imageLocation = Path.Combine(bookDirectoryPath, page.ImageAndTextWithAudioSplitter.Image.Src);
+                using (var image = SIL.Windows.Forms.ImageToolbox.PalasoImage.FromFile(imageLocation))
+                {
+                    image.Metadata.CopyrightNotice = ImageCopyright;
+                    image.Metadata.License = new CreativeCommonsLicense(true, true, CreativeCommonsLicense.DerivativeRules.DerivativesWithShareAndShareAlike);
+                    image.Metadata.Creator = ImageCreator;
+                    image.SaveUpdatedMetadataIfItMakesSense();
                 }
             }
             foreach (var imagePath in imagePathsToRemove)

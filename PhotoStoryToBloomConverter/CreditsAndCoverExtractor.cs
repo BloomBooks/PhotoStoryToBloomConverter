@@ -14,6 +14,9 @@ namespace PhotoStoryToBloomConverter
         private static readonly string[] coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
 
         public static string extractedCreditString;
+        public static string extractedImageCopyright;
+        public static string extractedImageLicense;
+        public static string extractedImageCreator;
 
         //We are assuming that if an image is checked, it is part of the current book, and the credits should be extracted
         public static bool imageIsCreditsOrCover(string imagePath)
@@ -48,6 +51,9 @@ namespace PhotoStoryToBloomConverter
                                         "Illustrations by Jim Padgett, Courtesy of Sweet Publishing, Ft. Worth, TX. ©2011 and Carolyn Dyk." + " " +
                                         "Skin-darkened by Lori MacLean and VM Productions." + " " +
                                         "Some images adapted by Beth Rupprecht.";
+                extractedImageCopyright = "© Sweet Publishing";
+                extractedImageLicense = "https://creativecommons.org/licenses/by-sa/3.0/";
+                extractedImageCreator = "Jim Padgett";
                 return true;
             }
             //SinEnters and Ruth have the same credits, they are just different resolution images
