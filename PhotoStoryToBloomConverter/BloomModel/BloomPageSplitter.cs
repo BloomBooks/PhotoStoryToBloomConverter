@@ -17,7 +17,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
             var imageDiv = Image.ConvertToHtml();
 	        var contentText = string.IsNullOrWhiteSpace(Text) ? "nbsp;" : Text;
             var narrationSpan = (Audio.NarrationPath == null) ? null :
-				new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath), RecordingMD5 = "undefined",
+				new Span { Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath),
 					ContentText = contentText, Duration = Audio.Duration};
             return new Div
             {

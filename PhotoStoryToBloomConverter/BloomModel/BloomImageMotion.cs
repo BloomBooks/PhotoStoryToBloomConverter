@@ -7,6 +7,5 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public Rectangle CropRectangle;
         public Rectangle InitialImageRectangle;
         public Rectangle FinalImageRectangle;
-        public double MotionDuration;
     }
 }
