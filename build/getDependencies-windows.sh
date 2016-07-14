@@ -70,4 +70,6 @@ mkdir -p ../lib/dotnet
 # download artifact dependencies
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/SIL.Core.dll?branch=%3Cdefault%3E ../lib/dotnet/SIL.Core.dll
 copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/SIL.Core.pdb?branch=%3Cdefault%3E ../lib/dotnet/SIL.Core.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/SIL.Windows.Forms.dll?branch=%3Cdefault%3E ../lib/dotnet/SIL.Windows.Forms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt436/latest.lastSuccessful/SIL.Windows.Forms.pdb?branch=%3Cdefault%3E ../lib/dotnet/SIL.Windows.Forms.Core.pdb
 # End of script
