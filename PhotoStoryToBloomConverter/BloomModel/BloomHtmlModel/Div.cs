@@ -68,8 +68,6 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string DataInitialRect;
         [XmlAttribute("data-finalrect")]
         public string DataFinalRect;
-        [XmlAttribute("data-duration")] 
-        public string DataDuration;
         [XmlAttribute("data-i18n")]
         public string DataI18n;
 

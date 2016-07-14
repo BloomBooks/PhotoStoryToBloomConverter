@@ -12,7 +12,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public string StyleNumberSequence;
         public string LicenseUrl;
         public string LicenseImage;
+        public string LicenseNotes;
         public string Title;
+        public string Copyright;
         public string[] ContentLanguages;
 
         public string CoverNarrationPath;
@@ -40,9 +42,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 Title = title,
                 LanguagesOfBook = "English",
                 StyleNumberSequence = "0",
-                LicenseUrl = "",
-                LicenseImage = "",
                 ContentLanguages = new [] { "en" },
+                Copyright = "The copyright on this book is to be determined",
+                LicenseNotes = "The license on this book is to be determined",
                 LocalizedBookTitle = new [] { "" },
                 LocalizedSmallCoverCredits = new[] { "" },
                 LocalizedOriginalContributions = new[] { "" },
@@ -64,13 +66,14 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 {
                     new Div { DataBook = "styleNumberSequence", Lang = "*", SimpleText = StyleNumberSequence},
                     new Div { DataBook = "languagesOfBook", Lang = "*", SimpleText = LanguagesOfBook},
-                    new Div { DataBook = "licenseUrl", Lang = "*", SimpleText = LicenseUrl},
+                    new Div { DataBook = "copyright", Lang = "*", SimpleText = Copyright},
+                    new Div { DataBook = "licenseNotes", Lang = "*", SimpleText = LicenseNotes }
                 }
             };
             if (CoverBackgroundAudioPath != null)
 	            dataDiv.Divs.Add(new Div { DataBookAttributes = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString() });
             dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
-            dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new Paragraph { Span = new Span { Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", RecordingMD5 = "undefined", ContentText = Title } } }).ToArray());
+            dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new Paragraph { Span = new Span { Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", ContentText = Title } } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = credits } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = contributions } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = acknowledgments } }).ToArray());
@@ -78,7 +81,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
             dataDiv.Divs.AddRange(LocalizedInsideFrontCover.Select((insideFrontCover, index) => new Div { DataBook = "insideFrontCover", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = insideFrontCover } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedInsideBackCover.Select((insideBackCover, index) => new Div { DataBook = "insideBackCover", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = insideBackCover } }).ToArray());
             dataDiv.Divs.AddRange(LocalizedOutsideBackCover.Select((outsideBackCover, index) => new Div { DataBook = "outsideBackCover", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = outsideBackCover } }).ToArray());
-            dataDiv.Divs.AddRange(LocalizedLicenseDescription.Select((licenseDescription, index) => new Div { DataBook = "licenseDescription", Lang = ContentLanguages[index], FormattedText = new Paragraph { Text = licenseDescription } }).ToArray());
             return dataDiv;
         }
 

@@ -21,7 +21,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
                 DataInitialRect = GetRectangleAttribute(ImageSize, ImageMotion.InitialImageRectangle),
 				DataFinalRect = GetRectangleAttribute(ImageSize, ImageMotion.FinalImageRectangle),
-				DataDuration = "5000"
             };
         }
 
