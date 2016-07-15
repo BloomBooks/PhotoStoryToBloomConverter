@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
 using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
+using SIL.Windows.Forms.ImageToolbox;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
     //Comparable to a div with the bloom tag 'bloom-page'
     public class BloomPage
     {
-        public BloomPageSplitter ImageAndTextWithAudioSplitter;
+	    public BloomPageSplitter ImageAndTextWithAudioSplitter { get; set; }
 
-        public string BloomTags;
-        public string Uuid;
-        public string DataPageLineage;
-        public string Language;
-        public string Text;
+	    public string BloomTags { get; set; }
+	    public string Uuid { get; set; }
+	    public string DataPageLineage { get; set; }
+	    public string Language { get; set; }
+	    public string Text { get; set; }
 
-        public string PageLabel;
-        public string PageDescription;
+	    public string PageLabel { get; set; }
+	    public string PageDescription { get; set; }
 
-        public BloomPage(BloomImage image, string text, BloomAudio audio)
+	    public BloomPage(BloomImage image, string text, BloomAudio audio)
         {
             Uuid = Guid.NewGuid().ToString();
             BloomTags = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual";
@@ -37,7 +38,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 Id = Uuid,
                 DataPageLineage = "",
                 BackgroundAudio = GetBackgroundAudio(),
-                BackgroundAudioVolume = (string.IsNullOrWhiteSpace(ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath)) ? null : ImageAndTextWithAudioSplitter.Audio.BackgroundVolume.ToString(),
+                BackgroundAudioVolume = string.IsNullOrWhiteSpace(ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath) ? null : ImageAndTextWithAudioSplitter.Audio.BackgroundVolume.ToString(CultureInfo.InvariantCulture),
                 Lang = "",
                 Divs = new List<Div>
                 {
@@ -58,7 +59,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
         public string GetBackgroundAudio()
         {
             if (!string.IsNullOrWhiteSpace(ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath))
-                return Path.Combine(BloomAudio.kAudioDirectory, ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath);
+                return ImageAndTextWithAudioSplitter.Audio.BackgroundAudioPath;
             return null;
         }
     }
