@@ -20,4 +20,12 @@ This will create a folder with all the image and audio assets, along with an xml
 
 The next prerequisite is to install Bloom and create a collection. Download from http://bloomlibrary.org/installers. Then open bloom and fill out the necessary information to create a collection.
 
-Next, run the PhotoStoryToBloomConverter application. Select the location of the project.xml file from the extracted project folder, along with the bloom collection that was created in bloom (default location is 'My Documents\Bloom'). Change the name of the project if necessary or desired and click the convert button. Success! You have converted a Photo Story project into Bloom. Now restart Bloom, and your newly converted book(s) should appear.
+Next, run the PhotoStoryToBloomConverter command line tool.
+
+    ./path/to/converter projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath]
+
+## Batch Conversion
+
+Running the converter for a batch of projects is simple. To use the tool in batch mode, with all your .wp3 and .docx files in the same directory.
+
+    ./path/to/converter -b batchDirectoryPath bloomAppPath [-f]
