@@ -116,6 +116,7 @@
       <DependentUpon>BatchConversionDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="CreditsAndCoverExtractor.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="MainScreen.cs">
       <SubType>Form</SubType>
     </Compile>

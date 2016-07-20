@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using PhotoStoryToBloomConverter.BloomModel;
 using PhotoStoryToBloomConverter.PS3Model;
 using System.Diagnostics;
@@ -12,8 +11,8 @@ namespace PhotoStoryToBloomConverter
 
     public class Program
     {
-        private static Boolean overwrite = false;
-        private static Boolean batch = false;
+        private static Boolean s_overwrite;
+        private static Boolean s_batch;
 
         [STAThread]
         public static void Main(string[] args)
@@ -23,6 +22,8 @@ namespace PhotoStoryToBloomConverter
             string bloomPath = null;
             string projectName = null;
             string docxPath = null;
+	        string docxDirectory = null;
+	        string projectCode = null;
 
             for (var i = 0; i < args.Length; i++)
             {
@@ -39,11 +40,11 @@ namespace PhotoStoryToBloomConverter
                 }
                 if (arg == "-b")
                 {
-                    batch = true;
+                    s_batch = true;
                 }
                 else if (arg == "-f")
                 {
-                    overwrite = true;
+                    s_overwrite = true;
                 }
                 else if (arg == "-pn")
                 {
@@ -68,7 +69,31 @@ namespace PhotoStoryToBloomConverter
                         Console.WriteLine("Word document path not set");
                         DisplayUsage();
                     }
-                }
+				}
+				else if (arg == "-td")
+				{
+					if (args.Length > i + 1)
+					{
+						docxDirectory = args[i + 1];
+					}
+					else
+					{
+						Console.WriteLine("Word document directory not set");
+						DisplayUsage();
+					}
+				}
+				else if (arg == "-c")
+				{
+					if (args.Length > i + 1)
+					{
+						projectCode = args[i + 1];
+					}
+					else
+					{
+						Console.WriteLine("Project code not set");
+						DisplayUsage();
+					}
+				}
                 else
                 {
                     if (projectPath == null)
@@ -79,7 +104,7 @@ namespace PhotoStoryToBloomConverter
                         bloomPath = arg;
                 }
             }
-            if (batch && projectPath != null)
+            if (s_batch && projectPath != null)
             {
                 //Reassign arguments
                 var batchPath = projectPath;
@@ -97,7 +122,7 @@ namespace PhotoStoryToBloomConverter
                 }
                 BatchConvert(batchPath, bloomPath);
             }
-            else if (!batch && projectPath != null && collectionPath != null && bloomPath != null)
+            else if (!s_batch && projectPath != null && collectionPath != null && bloomPath != null)
             {
                 if (!File.Exists(projectPath))
                 {
@@ -114,7 +139,12 @@ namespace PhotoStoryToBloomConverter
                     Console.WriteLine("Error: bloomAppPath does not exist.");
                     return;
                 }
-                Convert(projectPath, Path.GetDirectoryName(collectionPath), projectName, docxPath, bloomPath);
+	            IEnumerable<string> docxPaths;
+	            if (docxDirectory != null)
+					docxPaths = GetMatchingDocxFiles(docxDirectory, projectCode);
+	            else
+		            docxPaths = new List<string> { docxPath };
+				Convert(projectPath, Path.GetDirectoryName(collectionPath), projectName, docxPaths, bloomPath);
             }
             else
             {
@@ -124,13 +154,16 @@ namespace PhotoStoryToBloomConverter
 
 	    private static void DisplayUsage()
 		{
-            Console.WriteLine("usage: PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath]");
+            Console.WriteLine("usage: PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath | -td narrativeDocxDirectory -c projectCode]");
 			Console.WriteLine("       PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f]");
             Console.WriteLine("       PhotoStoryToBloomConverter.exe -g");
 		}
 
-        public static void Convert(string projectXmlPath, string destinationFolder, string projectName, string docxPath, string bloomPath, PhotoStoryProject photoStoryProject = null, IList<string> extractedText = null)
+        public static void Convert(string projectXmlPath, string destinationFolder, string projectName, IEnumerable<string> docxPaths, string bloomPath, PhotoStoryProject photoStoryProject = null)
 	    {
+			if (docxPaths == null)
+				docxPaths = new List<string>();
+
             if (photoStoryProject == null)
             {
                 photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
@@ -139,31 +172,47 @@ namespace PhotoStoryToBloomConverter
             }
 
             var convertedProjectDirectory = Path.Combine(destinationFolder, projectName);
-            if (Directory.Exists(convertedProjectDirectory) && !overwrite)
+            if (Directory.Exists(convertedProjectDirectory) && !s_overwrite)
             {
                 Console.WriteLine(string.Format("Error: A book already exists with the name {0}.", projectName), "projectName");
                 return;
             }
-            else if (Directory.Exists(convertedProjectDirectory) && overwrite)
+            if (Directory.Exists(convertedProjectDirectory) && s_overwrite)
             {
                 DeleteAllFilesAndFoldersInDirectory(convertedProjectDirectory);
             }
             else
                 Directory.CreateDirectory(convertedProjectDirectory);
 
-            if(extractedText == null && docxPath != null)
-            {
-                TextExtractor.TryExtractText(docxPath, out extractedText);
-                if (extractedText == null)
-                    Console.WriteLine("Unable to extract text from {0}", docxPath);
-            }
+			var languageDictionary = new Dictionary<Language, IList<string>>();
+	        foreach (var docxPath in docxPaths)
+	        {
+				IList<string> languageText;
+		        var language = Path.GetFileNameWithoutExtension(docxPath).GetLanguageFromFileNameWithoutExtension();
+				if (language != Language.Unknown && languageDictionary.ContainsKey(language))
+					continue;
+				if (TextExtractor.TryExtractText(docxPath, out languageText))
+					languageDictionary.Add(language, languageText);
+	        }
+
+			var allLanguages = new List<List<KeyValuePair<Language, string>>>();
+			for (int index = 0; index < languageDictionary[Language.English].Count; index++)
+			{
+				var list = new List<KeyValuePair<Language, string>>(6);
+				foreach (var language in languageDictionary)
+				{
+					if (language.Value.Count > index)
+						list.Add(new KeyValuePair<Language, string>(language.Key, language.Value[index]));
+				}
+				allLanguages.Add(list);
+	        }
 
             //Three things needed for a bloom book: 
             //  book assets (images, narration audio, background audio)
             //  bloom book css and images
             //  the actual book, a generated html file built from the photostory project
 			CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
-			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, extractedText);
+			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, allLanguages);
 
             var hydrationArguments = string.Format("hydrate --preset app --bookpath \"{0}\" --VernacularIsoCode en", convertedProjectDirectory);
 	        bool hydrateSuccessful;
@@ -181,7 +230,7 @@ namespace PhotoStoryToBloomConverter
 	        }
 			if (!hydrateSuccessful)
 				Console.WriteLine("Unable to hydrate {0}", projectName);
-	        else if (!batch)
+	        else if (!s_batch)
 		        Console.WriteLine("Successfully converted {0}", projectName);
 	    }
 
@@ -201,10 +250,13 @@ namespace PhotoStoryToBloomConverter
 				var projectXmlPath = Path.Combine(tempFolder, "project.xml");
                 var photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
                 var projectName = photoStoryProject.GetProjectName();
+				var projectFileNameWithoutExtension = Path.GetFileNameWithoutExtension(projectPath);
                 if (string.IsNullOrWhiteSpace(projectName))
-                    projectName = Path.GetFileNameWithoutExtension(projectPath);
-				var matchingDocxFile = GetMatchingDocxFile(directoryPath, projectPath);
-                Convert(projectXmlPath, outputDirectory, projectName, matchingDocxFile, bloomExePath, photoStoryProject);
+					projectName = projectFileNameWithoutExtension;
+
+				var projectCode = projectFileNameWithoutExtension.Split(' ')[0];
+				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
+                Convert(projectXmlPath, outputDirectory, projectName, matchingDocxFiles, bloomExePath, photoStoryProject);
 
 				DeleteAllFilesAndFoldersInDirectory(tempFolder);
 
@@ -225,20 +277,15 @@ namespace PhotoStoryToBloomConverter
                 directory.Delete(true);
 		}
 
-		private static string GetMatchingDocxFile(string directoryPath, string wp3FilePath)
+		private static IEnumerable<string> GetMatchingDocxFiles(string directoryPath, string projectCode)
 		{
-			var wp3Name = Path.GetFileNameWithoutExtension(wp3FilePath);
-			var wp3NameCode = wp3Name.Split(' ')[0];
-
 			var directoryInfo = new DirectoryInfo(directoryPath);
-			var matchingFiles = directoryInfo.GetFiles(wp3NameCode + "*.docx");
-			if (matchingFiles.Length == 1)
-				return matchingFiles[0].FullName;
-			return null;
+			var matchingFiles = directoryInfo.GetFiles(projectCode + "*.docx");
+			return matchingFiles.Select(f => Path.Combine(directoryPath, f.Name));
 		}
 
-        //Pulls in all the gathered information for the poject and creates a single bloom book html file at destinationFile
-        public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<string> text)
+        //Pulls in all the gathered information for the project and creates a single bloom book html file at destinationFile
+        public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<List<KeyValuePair<Language, string>>> text)
         {
             var document = new BloomDocument(project, bookName, Path.GetDirectoryName(destinationFile), text);
             Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);

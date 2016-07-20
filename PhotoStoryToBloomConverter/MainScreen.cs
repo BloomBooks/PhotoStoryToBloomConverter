@@ -8,8 +8,7 @@ namespace PhotoStoryToBloomConverter
 {
     public partial class MainScreen : Form
     {
-        private PhotoStoryProject photoStoryProject;
-	    private IList<string> extractedText; 
+        private PhotoStoryProject _photoStoryProject;
 
         public MainScreen()
         {
@@ -28,11 +27,11 @@ namespace PhotoStoryToBloomConverter
             if (fileDialog.ShowDialog() != DialogResult.OK) return;
             var projectPath = fileDialog.FileName;
 
-            photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectPath);
+            _photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectPath);
 
             photoStoryProjectTextBox.Text = projectPath;
 
-	        var bookName = photoStoryProject.GetProjectName();
+	        var bookName = _photoStoryProject.GetProjectName();
 
             if (projectNameTextBox.Text.Length == 0 && bookName.Length > 0)
 				projectNameTextBox.Text = bookName;
@@ -84,18 +83,7 @@ namespace PhotoStoryToBloomConverter
             if (fileDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            var path = fileDialog.FileName;
-
-            IList<string> text;
-            if (!TextExtractor.TryExtractText(path, out text))
-            {
-                MessageBox.Show("There was a problem extracting text from this file. Please try a different one or continue without text.");
-                wordDocTextBox.Text = string.Empty;
-                return;
-            }
-            extractedText = text;
-
-            wordDocTextBox.Text = path;
+			wordDocTextBox.Text = fileDialog.FileName;
         }
 
         private void convertProjectButton_Click(object sender, EventArgs e)
@@ -106,12 +94,12 @@ namespace PhotoStoryToBloomConverter
             var textPath = wordDocTextBox.Text;
             var bloomExePath = bloomCollectionTextBox.Text;
 
-		    Program.Convert(projectXmlPath, Path.GetDirectoryName(bloomCollectionPath), projectName, textPath, bloomExePath, photoStoryProject, extractedText);
+		    Program.Convert(projectXmlPath, Path.GetDirectoryName(bloomCollectionPath), projectName, new List<string>{textPath}, bloomExePath, _photoStoryProject);
 
             var result = MessageBox.Show("Success! Convert another project?", "Photo Story to Bloom Converter", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
-                photoStoryProject = null;
+                _photoStoryProject = null;
                 photoStoryProjectTextBox.Text = "";
                 projectNameTextBox.Text = "";
             }

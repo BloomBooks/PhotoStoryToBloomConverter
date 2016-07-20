@@ -1,13 +1,10 @@
 ﻿using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 using PhotoStoryToBloomConverter.PS3Model;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using NAudio.Wave;
-using SIL.Windows.Forms;
 using SIL.Windows.Forms.ClearShare;
 
 namespace PhotoStoryToBloomConverter.BloomModel
@@ -18,11 +15,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomMetadata _metadata;
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
-        private string ImageCopyright;
-        private string ImageLicense;
-        private string ImageCreator;
+        private readonly string _imageCopyright;
+        private readonly string _imageLicense;
+        private readonly string _imageCreator;
 
-        public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<string> narratedText)
+		public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<List<KeyValuePair<Language, string>>> narratedText)
         {
             _metadata = BloomMetadata.DefaultBloomMetadata(bookName);
             _bookData = BloomBookData.DefaultBloomBookData(bookName);
@@ -49,11 +46,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
                         _bookData.LocalizedOriginalAcknowledgments.Add(extractor.extractedCreditString);
 
                         if (extractor.extractedImageCopyright != null)
-                            ImageCopyright = extractor.extractedImageCopyright;
+                            _imageCopyright = extractor.extractedImageCopyright;
                         if (extractor.extractedImageLicense != null)
-                            ImageLicense = extractor.extractedImageLicense;
+                            _imageLicense = extractor.extractedImageLicense;
                         if (extractor.extractedImageCreator != null)
-                            ImageCreator = extractor.extractedImageCreator;
+                            _imageCreator = extractor.extractedImageCreator;
                     }
 
                     //If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
@@ -93,7 +90,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                         }
                     };
 
-                    var text = "";
+                    List<KeyValuePair<Language, string>> text = null;
                     if (narratedText != null && narratedText.Count > i)
                         text = narratedText[i];
 
@@ -108,7 +105,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 }
             }
 
-            if (ImageCopyright != null || ImageLicense != null || ImageCreator != null)
+            if (_imageCopyright != null || _imageLicense != null || _imageCreator != null)
             {
                 //Because credits may have been at end of book, go back through and set image credits if we extracted some.
                 foreach (var page in _pages)
@@ -116,9 +113,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     var imageLocation = Path.Combine(bookDirectoryPath, page.ImageAndTextWithAudioSplitter.Image.Src);
                     using (var image = SIL.Windows.Forms.ImageToolbox.PalasoImage.FromFile(imageLocation))
                     {
-                        image.Metadata.CopyrightNotice = ImageCopyright;
+                        image.Metadata.CopyrightNotice = _imageCopyright;
                         image.Metadata.License = new CreativeCommonsLicense(true, true, CreativeCommonsLicense.DerivativeRules.DerivativesWithShareAndShareAlike);
-                        image.Metadata.Creator = ImageCreator;
+                        image.Metadata.Creator = _imageCreator;
                         image.SaveUpdatedMetadataIfItMakesSense();
                     }
                 }

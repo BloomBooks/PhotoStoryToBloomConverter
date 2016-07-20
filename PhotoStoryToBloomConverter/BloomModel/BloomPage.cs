@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
-using SIL.Windows.Forms.ImageToolbox;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -20,8 +19,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
 	    public string PageLabel { get; set; }
 	    public string PageDescription { get; set; }
 
-	    public BloomPage(BloomImage image, string text, BloomAudio audio)
+	    public BloomPage(BloomImage image, IList<KeyValuePair<Language, string>> text, BloomAudio audio)
         {
+			if (text == null)
+				text = new List<KeyValuePair<Language, string>>();
             Uuid = Guid.NewGuid().ToString();
             BloomTags = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual";
             PageLabel = "";
