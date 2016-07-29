@@ -214,7 +214,7 @@ namespace PhotoStoryToBloomConverter
 			CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
 			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, allLanguages);
 
-            var hydrationArguments = string.Format("hydrate --preset app --bookpath \"{0}\" --VernacularIsoCode en", convertedProjectDirectory);
+            var hydrationArguments = string.Format("hydrate --preset app --bookpath \"{0}\" --vernacularisocode en", convertedProjectDirectory);
 	        bool hydrateSuccessful;
 	        try
 	        {
