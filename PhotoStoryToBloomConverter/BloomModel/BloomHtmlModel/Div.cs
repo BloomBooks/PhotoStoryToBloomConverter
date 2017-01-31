@@ -87,7 +87,7 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
         public string SimpleText;
 
         [XmlElement("p")]
-        public Paragraph FormattedText;
+        public List<Paragraph> FormattedText;
         [XmlElement("div")]
         public List<Div> Divs;
         [XmlElement("label")]

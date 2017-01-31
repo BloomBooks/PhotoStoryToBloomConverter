@@ -1,11 +1,14 @@
-﻿using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
+﻿using System;
+using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 using PhotoStoryToBloomConverter.PS3Model;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using NAudio.Wave;
 using SIL.Windows.Forms.ClearShare;
+using SIL.Windows.Forms.ImageToolbox;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -15,9 +18,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomMetadata _metadata;
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
-        private readonly string _imageCopyright;
-        private readonly string _imageLicense;
-        private readonly string _imageCreator;
+	    private readonly CreditsAndCoverExtractor.ImageIP _imageCopyrightAndLicense;
 
 		public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<List<KeyValuePair<Language, string>>> narratedText)
         {
@@ -27,30 +28,33 @@ namespace PhotoStoryToBloomConverter.BloomModel
             //A little bit of book-keeping, we want to remove images that are cover or credit images from the final directory
             var imagePathsToRemove = new SortedSet<string>();
 
+	        bool creditsFound = false;
+
             //For each visual unit create a bloom page
             //Instead of creating a page for cover and credits pages, put information into the book data (data-div)
             //The X-Matter pack will create more visually appealing cover pages
             for (var i = 0; i < project.VisualUnits.Length; i++)
             {
+				// With the latest templates (Jan 2017), we have been told that the next to last slide is always unnarrated
+				// and only placed as a pause for reflection. We can ignore it.
+	            if (i == project.VisualUnits.Length - 2)
+		            continue;
+
                 var visualUnit = project.VisualUnits[i];
                 var psImage = visualUnit.Image;
                 var backgroundAudioPath = GetBackgroundAudioPathForImage(psImage);
                 var backgroundAudioVolume = (backgroundAudioPath == null)?0.00:GetBackgroundAudioVolumeForImage(psImage);
 
                 var extractor = new CreditsAndCoverExtractor();
-                if (extractor.imageIsCreditsOrCover(Path.Combine(bookDirectoryPath, psImage.Path)))
+				extractor.Extract(bookName, Path.Combine(bookDirectoryPath, psImage.Path));
+                if (extractor.IsCreditsOrCoverPage)
                 {
                     //If it was a credits page, put credit information into the data divs
-                    if (extractor.extractedCreditString != null)
+                    if (extractor.CreditString != null)
                     {
-                        _bookData.LocalizedOriginalAcknowledgments.Add(extractor.extractedCreditString);
-
-                        if (extractor.extractedImageCopyright != null)
-                            _imageCopyright = extractor.extractedImageCopyright;
-                        if (extractor.extractedImageLicense != null)
-                            _imageLicense = extractor.extractedImageLicense;
-                        if (extractor.extractedImageCreator != null)
-                            _imageCreator = extractor.extractedImageCreator;
+	                    creditsFound = true;
+                        _bookData.LocalizedOriginalAcknowledgments.Add(extractor.CreditString);
+	                    _imageCopyrightAndLicense = extractor.ImageCopyrightAndLicense;
                     }
 
                     //If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
@@ -104,27 +108,64 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     _pages.Add(new BloomPage(bloomImage, text, bloomAudio));
                 }
             }
+			if (!creditsFound)
+				Console.WriteLine("Credits not processed for {0}", bookName);
+			else
+				CreditsAndCoverExtractor.CreateMapFile();
 
-            if (_imageCopyright != null || _imageLicense != null || _imageCreator != null)
-            {
-                //Because credits may have been at end of book, go back through and set image credits if we extracted some.
-                foreach (var page in _pages)
-                {
-                    var imageLocation = Path.Combine(bookDirectoryPath, page.ImageAndTextWithAudioSplitter.Image.Src);
-                    using (var image = SIL.Windows.Forms.ImageToolbox.PalasoImage.FromFile(imageLocation))
-                    {
-                        image.Metadata.CopyrightNotice = _imageCopyright;
-                        image.Metadata.License = new CreativeCommonsLicense(true, true, CreativeCommonsLicense.DerivativeRules.DerivativesWithShareAndShareAlike);
-                        image.Metadata.Creator = _imageCreator;
-                        image.SaveUpdatedMetadataIfItMakesSense();
-                    }
-                }
-            }
+	        if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.ImageIP.Unknown)
+	        {
+		        //Because credits may have been at end of book, go back through and set image credits if we extracted some.
+		        foreach (var page in _pages)
+		        {
+			        var imageLocation = Path.Combine(bookDirectoryPath, page.ImageAndTextWithAudioSplitter.Image.Src);
+			        using (var image = PalasoImage.FromFile(imageLocation))
+			        {
+				        if (_imageCopyrightAndLicense == CreditsAndCoverExtractor.ImageIP.SweetPublishingAndWycliffe && IsWycliffeImage(bookName, image.FileName))
+					        ApplyWycliffeIPInfoForImages(image);
+				        else
+					        ApplySweetPublishingIPInfoForImages(image);
+
+				        image.SaveUpdatedMetadataIfItMakesSense();
+			        }
+		        }
+	        }
+	        else
+	        {
+		        Debug.Fail("Image copyright and license information unknown for {0}", bookName);
+	        }
             foreach (var imagePath in imagePathsToRemove)
             {
                 File.Delete(imagePath);
             }
-        }
+		}
+
+		private bool IsWycliffeImage(string bookName, string imagePath)
+		{
+			// Unfortunate we can't get this information from the project in some consistent way.
+			// For some of the images, the "comment" field includes the original file name but not all.
+			// (If we knew all the original file names, we would know which ones are Wycliffe because they end in 'CD')
+			var file = Path.GetFileNameWithoutExtension(imagePath);
+			return (bookName.ToLowerInvariant() == "in the beginning" &&
+				new HashSet<string> { "2", "3", "5", "7", "9", "11", "13", "14", "15", "16", "18", "19", "20", "21", "23", "25", "38", "39" }.Contains(file)) ||
+					(bookName.ToLowerInvariant() == "sin enters the world" && new HashSet<string> { "5" }.Contains(file));
+		}
+
+		private void ApplySweetPublishingIPInfoForImages(PalasoImage image)
+		{
+			image.Metadata.CopyrightNotice = "© Sweet Publishing";
+			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl("https://creativecommons.org/licenses/by-sa/4.0/");
+			image.Metadata.Creator = "Jim Padgett (may have been skin-darkened or otherwise adapted by SIL - VM Productions)";
+		}
+
+		private void ApplyWycliffeIPInfoForImages(PalasoImage image)
+		{
+			image.Metadata.CopyrightNotice = "© Wycliffe Bible Translators, Inc.";
+			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl("https://creativecommons.org/licenses/by-nc-nd/4.0/");
+			image.Metadata.License.RightsStatement = "You may crop and resize but not modify the images for your new work. " +
+				"Images may be rotated or flipped horizontally, provided this does not contradict historical fact or violate cultural norms.";
+			image.Metadata.Creator = "Carolyn Dyk";
+		}
 
 		private string GetDuration(string path)
 		{

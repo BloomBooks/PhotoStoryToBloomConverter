@@ -126,10 +126,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				    Spellcheck = "true",
 				    Role = "textbox",
 				    AriaLabel = "false",
-				    FormattedText = new Paragraph
-				    {
-					    Text = ""
-				    }
+				    FormattedText = new List<Paragraph> { new Paragraph { Text = "" }}
 			    });
 		    }
 		    return list;
@@ -153,10 +150,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				    Role = "textbox",
 				    AriaLabel = "false",
 				    DataLanguageTipContent = language.ToString(),
-				    FormattedText = new Paragraph
-				    {
-					    Span = narrationSpan
-				    }
+				    FormattedText = new List<Paragraph> { new Paragraph { Span = narrationSpan }}
 			    });
 		    }
 			return list;

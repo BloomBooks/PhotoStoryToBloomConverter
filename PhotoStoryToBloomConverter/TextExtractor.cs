@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,19 @@ namespace PhotoStoryToBloomConverter
 					doc = new XWPFDocument(file);
 
 				text = doc.Tables[0].Rows.Skip(1).Select(row => GetAllTextForCell(row.GetCell(2))).ToList();
+				
+				// The templates usually have a copyright slide last with "*" as the text.
+				// The newest templates have a blank slide just before that for a "pause".
+				int elementToRemoveCount = 0;
+				foreach (var textElement in text.Reverse())
+				{
+					if (string.IsNullOrWhiteSpace(textElement) || textElement == "*")
+						elementToRemoveCount++;
+					else
+						break;
+				}
+				for (int i = 0; i < elementToRemoveCount; i++)
+					text.RemoveAt(text.Count - 1);
 				return true;
 			}
 			catch

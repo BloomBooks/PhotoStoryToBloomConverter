@@ -5,12 +5,15 @@ using System.Linq;
 using PhotoStoryToBloomConverter.BloomModel;
 using PhotoStoryToBloomConverter.PS3Model;
 using System.Diagnostics;
+using SIL.Extensions;
 
 namespace PhotoStoryToBloomConverter
 {
 
     public class Program
     {
+	    private const bool kProcessAudio = false;
+
         private static Boolean s_overwrite;
         private static Boolean s_batch;
 
@@ -121,7 +124,7 @@ namespace PhotoStoryToBloomConverter
                     return;
                 }
                 BatchConvert(batchPath, bloomPath);
-            }
+			}
             else if (!s_batch && projectPath != null && collectionPath != null && bloomPath != null)
             {
                 if (!File.Exists(projectPath))
@@ -196,25 +199,34 @@ namespace PhotoStoryToBloomConverter
 	        }
 
 			var allLanguages = new List<List<KeyValuePair<Language, string>>>();
+
+			// Perhaps a bad assumption, but for now we will assume that if a non-English language
+			// has the same number of elements as the English, that it is up-to-date. If not, don't include it.
+		    var englishTextElementCount = languageDictionary[Language.English].Count;
+			var languagesToExclude = new List<Language>();
+		    foreach (var language in languageDictionary)
+		    {
+			    if (language.Value.Count != englishTextElementCount)
+				    languagesToExclude.Add(language.Key);
+		    }
+			languageDictionary.RemoveAll(l => languagesToExclude.Contains(l.Key));
+
 			for (int index = 0; index < languageDictionary[Language.English].Count; index++)
 			{
 				var list = new List<KeyValuePair<Language, string>>(6);
 				foreach (var language in languageDictionary)
-				{
-					if (language.Value.Count > index)
-						list.Add(new KeyValuePair<Language, string>(language.Key, language.Value[index]));
-				}
+					list.Add(new KeyValuePair<Language, string>(language.Key, language.Value[index]));
 				allLanguages.Add(list);
 	        }
 
-            //Three things needed for a bloom book: 
+            //Three things needed for a bloom book:
             //  book assets (images, narration audio, background audio)
             //  bloom book css and images
             //  the actual book, a generated html file built from the photostory project
 			CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
 			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, allLanguages);
 
-            var hydrationArguments = string.Format("hydrate --preset app --bookpath \"{0}\" --vernacularisocode en", convertedProjectDirectory);
+            var hydrationArguments = string.Format("hydrate --preset shellbook --bookpath \"{0}\" --vernacularisocode en", convertedProjectDirectory);
 	        bool hydrateSuccessful;
 	        try
 	        {
@@ -255,6 +267,14 @@ namespace PhotoStoryToBloomConverter
 					projectName = projectFileNameWithoutExtension;
 
 				var projectCode = projectFileNameWithoutExtension.Split(' ')[0];
+
+//				if (!(projectCode == "001"/* || projectCode == "002" || projectCode == "003"*/))
+//				{
+//					DeleteAllFilesAndFoldersInDirectory(tempFolder);
+//					return;
+//					//continue;
+//				}
+
 				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
                 Convert(projectXmlPath, outputDirectory, projectName, matchingDocxFiles, bloomExePath, photoStoryProject);
 
@@ -302,7 +322,9 @@ namespace PhotoStoryToBloomConverter
 
                 //Converting all .wav files to .ogg
 	            if (AudioFileNeedsConversion(filename))
-				{
+	            {
+					if (!kProcessAudio)
+						continue;
 					Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
 					var newFileName = ConvertAudioFile(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, Path.GetFileNameWithoutExtension(filename)));
 					if (newFileName == null)
@@ -310,8 +332,10 @@ namespace PhotoStoryToBloomConverter
 	            }
                 //Audio files currently registered are .mp3 .wav .wma, going to store them all in a separate audio directory
                 else if (IsAudioFile(filename))
-                {
-                    Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
+	            {
+					if (!kProcessAudio)
+						continue;
+					Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
                     File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, filename));
                 }
                 //Assuming these are our image assets
