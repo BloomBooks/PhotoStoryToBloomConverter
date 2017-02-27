@@ -87,6 +87,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioHelper.cs" />
     <Compile Include="BloomModel\BloomAudio.cs" />
     <Compile Include="BloomModel\BloomBookData.cs" />
     <Compile Include="BloomModel\BloomDocument.cs" />
@@ -125,6 +126,7 @@
     </Compile>
     <Compile Include="Mp3Encoder.cs" />
     <Compile Include="OggEncoder.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="PS3AndBloomSerializer.cs" />
     <Compile Include="PS3Model\AbsoluteMotion.cs" />
     <Compile Include="PS3Model\Edit.cs" />

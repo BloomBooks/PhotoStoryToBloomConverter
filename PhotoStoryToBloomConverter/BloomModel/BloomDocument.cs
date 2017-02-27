@@ -19,11 +19,14 @@ namespace PhotoStoryToBloomConverter.BloomModel
         private readonly BloomBookData _bookData;
         private readonly List<BloomPage> _pages = new List<BloomPage>();
 	    private readonly CreditsAndCoverExtractor.ImageIP _imageCopyrightAndLicense;
+	    private readonly Dictionary<string, string> _duplicateAudioFiles;
 
-		public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<List<KeyValuePair<Language, string>>> narratedText)
+		public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<List<KeyValuePair<Language, string>>> narratedText,
+			Dictionary<string, string> duplicateAudioFiles)
         {
             _metadata = BloomMetadata.DefaultBloomMetadata(bookName);
             _bookData = BloomBookData.DefaultBloomBookData(bookName);
+	        _duplicateAudioFiles = duplicateAudioFiles;
 
             //A little bit of book-keeping, we want to remove images that are cover or credit images from the final directory
             var imagePathsToRemove = new SortedSet<string>();
@@ -43,7 +46,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                 var visualUnit = project.VisualUnits[i];
                 var psImage = visualUnit.Image;
                 var backgroundAudioPath = GetBackgroundAudioPathForImage(psImage);
-                var backgroundAudioVolume = (backgroundAudioPath == null)?0.00:GetBackgroundAudioVolumeForImage(psImage);
+	            var backgroundAudioVolume = backgroundAudioPath == null ? 0.0 : GetBackgroundAudioVolumeForImage(psImage);
 
                 var extractor = new CreditsAndCoverExtractor();
 				extractor.Extract(bookName, Path.Combine(bookDirectoryPath, psImage.Path));
@@ -185,9 +188,15 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
         private string GetBackgroundAudioPathForImage(Ps3Image image)
         {
-            if (image.MusicTracks != null && image.MusicTracks.First().SoundTracks != null)
-                return image.MusicTracks.First().SoundTracks.First().Path;
-            return null;
+	        if (image.MusicTracks != null && image.MusicTracks.First().SoundTracks != null)
+	        {
+		        var audioPath = image.MusicTracks.First().SoundTracks.First().Path;
+		        string realPath;
+				if (_duplicateAudioFiles.TryGetValue(audioPath, out realPath))
+					return realPath;
+		        return audioPath;
+	        }
+	        return null;
         }
 
         public Html ConvertToHtml()

@@ -94,7 +94,8 @@ namespace PhotoStoryToBloomConverter
             var textPath = wordDocTextBox.Text;
             var bloomExePath = bloomCollectionTextBox.Text;
 
-		    Program.Convert(projectXmlPath, Path.GetDirectoryName(bloomCollectionPath), projectName, new List<string>{textPath}, bloomExePath, _photoStoryProject);
+	        var project = new Project(projectXmlPath);
+		    project.Convert(Path.GetDirectoryName(bloomCollectionPath), projectName, new List<string>{textPath}, bloomExePath, false, _photoStoryProject);
 
             var result = MessageBox.Show("Success! Convert another project?", "Photo Story to Bloom Converter", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)

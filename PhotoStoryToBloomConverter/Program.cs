@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using PhotoStoryToBloomConverter.BloomModel;
-using PhotoStoryToBloomConverter.PS3Model;
-using System.Diagnostics;
-using SIL.Extensions;
 
 namespace PhotoStoryToBloomConverter
 {
 
     public class Program
     {
-	    private const bool kProcessAudio = false;
-
         private static Boolean s_overwrite;
         private static Boolean s_batch;
 
@@ -147,7 +141,8 @@ namespace PhotoStoryToBloomConverter
 					docxPaths = GetMatchingDocxFiles(docxDirectory, projectCode);
 	            else
 		            docxPaths = new List<string> { docxPath };
-				Convert(projectPath, Path.GetDirectoryName(collectionPath), projectName, docxPaths, bloomPath);
+				var project = new Project(projectPath);
+	            project.Convert(Path.GetDirectoryName(collectionPath), projectName, docxPaths, bloomPath, s_overwrite);
             }
             else
             {
@@ -161,90 +156,6 @@ namespace PhotoStoryToBloomConverter
 			Console.WriteLine("       PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f]");
             Console.WriteLine("       PhotoStoryToBloomConverter.exe -g");
 		}
-
-        public static void Convert(string projectXmlPath, string destinationFolder, string projectName, IEnumerable<string> docxPaths, string bloomPath, PhotoStoryProject photoStoryProject = null)
-	    {
-			if (docxPaths == null)
-				docxPaths = new List<string>();
-
-            if (photoStoryProject == null)
-            {
-                photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
-                if (string.IsNullOrEmpty(projectName))
-                    projectName = photoStoryProject.GetProjectName();
-            }
-
-            var convertedProjectDirectory = Path.Combine(destinationFolder, projectName);
-            if (Directory.Exists(convertedProjectDirectory) && !s_overwrite)
-            {
-                Console.WriteLine(string.Format("Error: A book already exists with the name {0}.", projectName), "projectName");
-                return;
-            }
-            if (Directory.Exists(convertedProjectDirectory) && s_overwrite)
-            {
-                DeleteAllFilesAndFoldersInDirectory(convertedProjectDirectory);
-            }
-            else
-                Directory.CreateDirectory(convertedProjectDirectory);
-
-			var languageDictionary = new Dictionary<Language, IList<string>>();
-	        foreach (var docxPath in docxPaths)
-	        {
-				IList<string> languageText;
-		        var language = Path.GetFileNameWithoutExtension(docxPath).GetLanguageFromFileNameWithoutExtension();
-				if (language != Language.Unknown && languageDictionary.ContainsKey(language))
-					continue;
-				if (TextExtractor.TryExtractText(docxPath, out languageText))
-					languageDictionary.Add(language, languageText);
-	        }
-
-			var allLanguages = new List<List<KeyValuePair<Language, string>>>();
-
-			// Perhaps a bad assumption, but for now we will assume that if a non-English language
-			// has the same number of elements as the English, that it is up-to-date. If not, don't include it.
-		    var englishTextElementCount = languageDictionary[Language.English].Count;
-			var languagesToExclude = new List<Language>();
-		    foreach (var language in languageDictionary)
-		    {
-			    if (language.Value.Count != englishTextElementCount)
-				    languagesToExclude.Add(language.Key);
-		    }
-			languageDictionary.RemoveAll(l => languagesToExclude.Contains(l.Key));
-
-			for (int index = 0; index < languageDictionary[Language.English].Count; index++)
-			{
-				var list = new List<KeyValuePair<Language, string>>(6);
-				foreach (var language in languageDictionary)
-					list.Add(new KeyValuePair<Language, string>(language.Key, language.Value[index]));
-				allLanguages.Add(list);
-	        }
-
-            //Three things needed for a bloom book:
-            //  book assets (images, narration audio, background audio)
-            //  bloom book css and images
-            //  the actual book, a generated html file built from the photostory project
-			CopyAssetsAndResources(Path.GetDirectoryName(projectXmlPath), convertedProjectDirectory);
-			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, string.Format("{0}.htm", projectName)), projectName, allLanguages);
-
-            var hydrationArguments = string.Format("hydrate --preset shellbook --bookpath \"{0}\" --vernacularisocode en", convertedProjectDirectory);
-	        bool hydrateSuccessful;
-	        try
-	        {
-				using (var process = Process.Start(bloomPath, hydrationArguments))
-				{
-					process.WaitForExit();
-					hydrateSuccessful = process.ExitCode == 0;
-				}
-	        }
-	        catch
-	        {
-		        hydrateSuccessful = false;
-	        }
-			if (!hydrateSuccessful)
-				Console.WriteLine("Unable to hydrate {0}", projectName);
-	        else if (!s_batch)
-		        Console.WriteLine("Successfully converted {0}", projectName);
-	    }
 
 	    public static void BatchConvert(string directoryPath, string bloomExePath)
 		{
@@ -276,7 +187,8 @@ namespace PhotoStoryToBloomConverter
 //				}
 
 				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
-                Convert(projectXmlPath, outputDirectory, projectName, matchingDocxFiles, bloomExePath, photoStoryProject);
+				var project = new Project(projectXmlPath);
+				project.Convert(outputDirectory, projectName, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject);
 
 				DeleteAllFilesAndFoldersInDirectory(tempFolder);
 
@@ -289,7 +201,7 @@ namespace PhotoStoryToBloomConverter
 			Console.WriteLine("Successfully processed {0} files.", filesToProcess.Count);
 		}
 
-		private static void DeleteAllFilesAndFoldersInDirectory(string directoryPath)
+		public static void DeleteAllFilesAndFoldersInDirectory(string directoryPath)
 		{
 			foreach (FileInfo file in new DirectoryInfo(directoryPath).GetFiles())
 				file.Delete();
@@ -302,61 +214,6 @@ namespace PhotoStoryToBloomConverter
 			var directoryInfo = new DirectoryInfo(directoryPath);
 			var matchingFiles = directoryInfo.GetFiles(projectCode + "*.docx");
 			return matchingFiles.Select(f => Path.Combine(directoryPath, f.Name));
-		}
-
-        //Pulls in all the gathered information for the project and creates a single bloom book html file at destinationFile
-        public static void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<List<KeyValuePair<Language, string>>> text)
-        {
-            var document = new BloomDocument(project, bookName, Path.GetDirectoryName(destinationFile), text);
-            Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);
-        }
-
-        //The assumption is that the wp3 archive only contains assets and a project.xml file. We convert the .xml file and copy the images and audio tracks.
-        public static void CopyAssetsAndResources(string sourceFolderPath, string destinationFolderPath)
-        {
-            foreach (var filePath in Directory.EnumerateFiles(sourceFolderPath))
-            {
-                var filename = Path.GetFileName(filePath);
-                if (filename.Equals("project.xml"))
-                    continue;
-
-                //Converting all .wav files to .ogg
-	            if (AudioFileNeedsConversion(filename))
-	            {
-					if (!kProcessAudio)
-						continue;
-					Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
-					var newFileName = ConvertAudioFile(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, Path.GetFileNameWithoutExtension(filename)));
-					if (newFileName == null)
-						throw new ApplicationException(string.Format("Unable to convert {0}.", Path.Combine(sourceFolderPath, filename)));
-	            }
-                //Audio files currently registered are .mp3 .wav .wma, going to store them all in a separate audio directory
-                else if (IsAudioFile(filename))
-	            {
-					if (!kProcessAudio)
-						continue;
-					Directory.CreateDirectory(Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory));
-                    File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, BloomAudio.kAudioDirectory, filename));
-                }
-                //Assuming these are our image assets
-                else
-                    File.Copy(Path.Combine(sourceFolderPath, filename), Path.Combine(destinationFolderPath, filename));
-            }
-        }
-
-	    private static bool AudioFileNeedsConversion(string fileName)
-		{
-			return Path.GetExtension(fileName) == ".wav";
-		}
-
-		private static string ConvertAudioFile(string sourcePath, string targetPathWithoutExtension)
-		{
-			return new Mp3Encoder().Encode(sourcePath, targetPathWithoutExtension);
-		}
-
-		private static bool IsAudioFile(string fileName)
-		{
-			return Path.GetExtension(fileName) == ".mp3" || Path.GetExtension(fileName) == ".wav" || Path.GetExtension(fileName) == ".wma";
 		}
     }
 }
