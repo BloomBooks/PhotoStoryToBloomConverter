@@ -11,6 +11,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 	public class BloomBookData
 	{
 		public string LanguagesOfBook;
+		public string Topic { get; set; }
 		public string StyleNumberSequence;
 		public string LicenseUrl = ""; //"http://creativecommons.org/licenses/by/4.0/";
 		public string LicenseImage;
@@ -44,6 +45,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			{
 				Title = title,
 				LanguagesOfBook = "English",
+				Topic = "Spiritual",
 				StyleNumberSequence = "0",
 				ContentLanguages = new [] { "en" },
 				Copyright = "© [year] Sweet Publishing",
@@ -73,6 +75,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					new Div { DataBook = "copyright", Lang = "*", SimpleText = Copyright},
 					new Div { DataBook = "licenseNotes", Lang = "*", SimpleText = LicenseNotes },
 					//new Div { DataBook = "licenseUrl", Lang = "*", SimpleText = LicenseUrl },
+					new Div { DataBook = "topic", Lang = "en", SimpleText = Topic},
 				}
 			};
 			if (CoverBackgroundAudioPath != null)

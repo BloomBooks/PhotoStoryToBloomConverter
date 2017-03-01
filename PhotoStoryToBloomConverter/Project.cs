@@ -125,8 +125,15 @@ namespace PhotoStoryToBloomConverter
 		//Pulls in all the gathered information for the project and creates a single bloom book html file at destinationFile
 		private void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<List<KeyValuePair<Language, string>>> text)
 		{
-			var document = new BloomDocument(project, bookName, Path.GetDirectoryName(destinationFile), text, _audioHelper.Duplicates);
+			var destinationDirectory = Path.GetDirectoryName(destinationFile);
+			var document = new BloomDocument(project, bookName, destinationDirectory, text, _audioHelper.Duplicates);
 			Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);
+			AddMetaJson(destinationDirectory);
+		}
+
+		private void AddMetaJson(string destinationDirectory)
+		{
+			File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"), "{tags:['media:audio', 'media:fulltext', 'media:kbanimation', 'media:music', 'tag:BibleStoryMutimedia']}");
 		}
 	}
 }
