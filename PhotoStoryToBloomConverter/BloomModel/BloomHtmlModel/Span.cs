@@ -3,10 +3,21 @@
 namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
 {
     public class Span
-    {
-        [XmlAttribute("id")]
-        public string Id;
-        [XmlAttribute("class")]
+	{
+		private string _id;
+
+		[XmlAttribute("id")]
+	    public string Id
+	    {
+			get
+			{
+				// We don't want to serialize to invalid HTML
+				return string.IsNullOrWhiteSpace(_id) ? null : _id;
+			}
+		    set { _id = value; }
+	    }
+
+	    [XmlAttribute("class")]
         public string Class;
 		[XmlAttribute("data-duration")]
 	    public string Duration;
