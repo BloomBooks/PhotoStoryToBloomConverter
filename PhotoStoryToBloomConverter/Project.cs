@@ -133,7 +133,7 @@ namespace PhotoStoryToBloomConverter
 
 		private void AddMetaJson(string destinationDirectory)
 		{
-			File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"), "{tags:['media:audio', 'media:fulltext', 'media:kbanimation', 'media:music', 'tag:BibleStoryMutimedia']}");
+			File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"), "{tags:['media:audio', 'media:fulltext', 'media:kbanimation', 'media:music', 'tag:BibleStoryMultimedia']}");
 		}
 	}
 }
