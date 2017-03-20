@@ -48,7 +48,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				Topic = "Spiritual",
 				StyleNumberSequence = "0",
 				ContentLanguages = new [] { "en" },
-				Copyright = "© [year] Sweet Publishing",
+				Copyright = $"© {DateTime.Now.Year} Sweet Publishing",
 				LicenseNotes = "The license on this book is to be determined",
 				LocalizedBookTitle = new [] { "" },
 				LocalizedSmallCoverCredits = new[] { "" },
@@ -81,7 +81,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			if (CoverBackgroundAudioPath != null)
 				dataDiv.Divs.Add(new Div { DataBookAttributes = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString(CultureInfo.InvariantCulture) });
 			dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
-			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Span = new Span { Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", ContentText = Title } } } }).ToArray());
+			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { GetTitleParagraph() } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = credits } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = contributions } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = GetMultiParagraphFromString(acknowledgments) }).ToArray());
@@ -90,6 +90,16 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			dataDiv.Divs.AddRange(LocalizedInsideBackCover.Select((insideBackCover, index) => new Div { DataBook = "insideBackCover", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = insideBackCover } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOutsideBackCover.Select((outsideBackCover, index) => new Div { DataBook = "outsideBackCover", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = outsideBackCover } } }).ToArray());
 			return dataDiv;
+		}
+
+		private Paragraph GetTitleParagraph()
+		{
+			if (string.IsNullOrWhiteSpace(CoverNarrationPath))
+				return new Paragraph {Text = Title};
+			return new Paragraph
+			{
+				Span = new Span {Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", ContentText = Title}
+			};
 		}
 
 		private static List<Paragraph> GetMultiParagraphFromString(string input)

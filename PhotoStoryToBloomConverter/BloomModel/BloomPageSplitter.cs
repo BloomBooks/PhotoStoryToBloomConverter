@@ -62,16 +62,21 @@ namespace PhotoStoryToBloomConverter.BloomModel
             };
         }
 
-	    private Span GetNarrationSpan(string text)
+	    private Paragraph GetNarrationParagraph(string text)
 	    {
-			var contentText = string.IsNullOrWhiteSpace(text) ? "nbsp;" : text;
+		    var contentText = string.IsNullOrWhiteSpace(text) ? "nbsp;" : text;
 
-		    return Audio.NarrationPath == null ?
-				new Span { ContentText = contentText } :
-			    new Span
+		    return string.IsNullOrWhiteSpace(Audio.NarrationPath)
+			    ? new Paragraph {Text = contentText}
+			    : new Paragraph
 			    {
-				    Class = "audio-sentence", Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath),
-				    ContentText = contentText, Duration = Audio.Duration
+				    Span = new Span
+				    {
+					    Class = "audio-sentence",
+					    Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath),
+					    ContentText = contentText,
+					    Duration = Audio.Duration
+				    }
 			    };
 	    }
 
@@ -138,7 +143,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		    foreach (var kv in text)
 		    {
 			    var language = kv.Key;
-			    var narrationSpan = GetNarrationSpan(kv.Value);
 			    list.Add(new Div
 			    {
 				    Class = "bloom-editable cke_editable cke_editable_inline cke_contents_ltr normal-style" + (language == Language.English ? " bloom-content1" : ""),
@@ -150,7 +154,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				    Role = "textbox",
 				    AriaLabel = "false",
 				    DataLanguageTipContent = language.ToString(),
-				    FormattedText = new List<Paragraph> { new Paragraph { Span = narrationSpan }}
+				    FormattedText = new List<Paragraph> { GetNarrationParagraph(kv.Value) }
 			    });
 		    }
 			return list;
