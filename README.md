@@ -10,14 +10,22 @@ There is a dependency on libpalaso which can be downloaded from build.palaso.org
 
 Open the PhotoStoryToBloomTools.sln file and build the two projects. Two executable files will be created, CABExtracter and PhotoStoryToBloomConverter. They will be at CABExtracter/output/Debug/CABExtracter.exe and PhotoStoryToBloomConverter/output/Debug/PhotoStoryToBloomConverter.exe respectively.
 
-## Conversion
+## Converting from .doc to .docx (if needed)
 
-If the project is in .wp3 format, you must first extract the files from the .wp3 file into a folder using the CABExtracter.exe file. (Alternatively, just extract the files from Windows Explorer) 
+We have included a Word macro which can be used to convert from .doc format to .docx format. The tool requires the Word documents containing the text to be .docx files. 
 
-    ./path/to/extracter /path/to/wp3 /path/to/outputfolder
+See the macro code and instructions in BatchDoctoDocxMacro.txt.
 
-This will create a folder with all the image and audio assets, along with an xml file called project.xml.
+This macro is for mass conversion. A user can also convert files one at a time by opening the files and saving them as .docx.
 
-The next prerequisite is to install Bloom and create a collection. Download from http://bloomlibrary.org/installers. Then open bloom and fill out the necessary information to create a collection.
+## Conversion from Photo Story 3 to Bloom
 
-Next, run the PhotoStoryToBloomConverter application. Select the location of the project.xml file from the extracted project folder, along with the bloom collection that was created in bloom (default location is 'My Documents\Bloom'). Change the name of the project if necessary or desired and click the convert button. Success! You have converted a Photo Story project into Bloom. Now restart Bloom, and your newly converted book(s) should appear.
+You will need a copy of Bloom to perform the conversion. Install it from [bloomlibrary.org/installers](http://bloomlibrary.org/installers).
+
+There is a simple GUI, but the most full-featured implementation is a command-line tool. 
+
+Run
+```
+PhotoStoryToBloomConverter.exe -h
+```
+to see usage details. 
