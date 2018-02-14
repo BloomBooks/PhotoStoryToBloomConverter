@@ -166,7 +166,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		{
 			image.Metadata.CopyrightNotice = "© Sweet Publishing";
 			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl("https://creativecommons.org/licenses/by-sa/4.0/");
-			image.Metadata.Creator = "Jim Padgett (may have been skin-darkened or otherwise adapted by SIL - VM Productions)";
+			image.Metadata.Creator = "Jim Padgett (may have been skin-darkened or otherwise adapted by Wycliffe Bible Translators, Inc.)";
 		}
 
 		private void ApplyWycliffeIPInfoForImages(PalasoImage image)

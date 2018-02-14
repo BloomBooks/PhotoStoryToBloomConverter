@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+using System.Linq;
+using System.Xml.Serialization;
 
 namespace PhotoStoryToBloomConverter.PS3Model
 {
@@ -19,14 +20,14 @@ namespace PhotoStoryToBloomConverter.PS3Model
         public string CodecVersion;
         [XmlAttribute("sessionSeed")]
         public int SessionSeed;
-        
+
         [XmlElement("VisualUnit")]
         public VisualUnit[] VisualUnits;
 
 	    public string GetProjectName()
 	    {
 			var bookName = "";
-			foreach (var vunit in VisualUnits)
+			foreach (var vunit in VisualUnits.Where(vu => vu.Image?.Edits != null))
 			{
 				foreach (var edit in vunit.Image.Edits)
 				{
@@ -35,7 +36,7 @@ namespace PhotoStoryToBloomConverter.PS3Model
 					bookName = edit.TextOverlays[0].Text.Trim();
 					break;
 				}
-				if (bookName != "") 
+				if (bookName != "")
 					break;
 			}
 		    return bookName;

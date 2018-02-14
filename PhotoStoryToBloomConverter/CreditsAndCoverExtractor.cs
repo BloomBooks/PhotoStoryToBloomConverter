@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -17,9 +19,11 @@ namespace PhotoStoryToBloomConverter
 
 		private static readonly Dictionary<string, List<string>> s_creditSlideMap = new Dictionary<string, List<string>>();
 
-		private readonly string[] _creditImageHashes = { "A3BE4B0D87926E00EDD6884096C80A0C", "3A042BB61CBC8FBD841A67B5CC240545",
-			"53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0" };
+		private readonly string[] _creditImageHashes = { "3CC9B920651BC4726EED4FFD6FBBDCDA", "8F526256E864725E12F9E31447359504" };
 		private readonly string[] _coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
+
+		private readonly string[] _oldCreditImageHashes = { "CDF13EC119AD0128E1196DB518B64BF8", "A3BE4B0D87926E00EDD6884096C80A0C",
+			"3A042BB61CBC8FBD841A67B5CC240545", "53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0" };
 
 		public bool IsCreditsOrCoverPage { get; private set; }
 		public string CreditString { get; private set; }
@@ -30,65 +34,73 @@ namespace PhotoStoryToBloomConverter
 		{
 			IsCreditsOrCoverPage = true;
 			var md5Hash = BitConverter.ToString(MD5.Create().ComputeHash(File.ReadAllBytes(imagePath))).Replace("-", "");
+			Debug.WriteLine(md5Hash);
+
 			//Currently all of the information from the credit page needs to be stored in the additional acknowledgments section
 
 			if (string.Equals(md5Hash, _creditImageHashes[0]))
 			{
 				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
-				// 001 In the Beginning
-				/* This story is © Sweet Publishing. This story was adapted by VM Productions from the
-				 * READ-N-GROW PICTURE BIBLE and used with permission.
-				 * It may be adapted for use in your language.
-				 * -------------------------------------------
-				 * Template & Music © 2016 SIL
-				 * You may use the template and include music for creating Bible Story Videos.
-				 * -------------------------------------------
-				 * Illustrations by Jim Padgett, Courtesy of Sweet Publishing, Ft. Worth, TX. © 1984
-				 * Illustrations skin-darkened and adapted by SIL - VM Productions
-				 * TERMS OF USE FOR READ-N-GROW ILLUSTRATIONS
-				 * These illustrations are © Sweet Publishing and are made available under the terms of a
-				 * Creative Commons Attribution-Share Alike 4.0 International license. [license image]
-				 * -------------------------------------------
-				 * TERMS OF USE FOR Carolyn Dyk Illustrations, with filenames ending in 'CD'
-				 * This work is licensed under a Creative Commons
-				 * Attribution-NonCommercial-NoDerivatives 4.0 International License. [license image]
-				 * You may crop and resize but not modify the images for your new work.
-				 * Images may be rotated or flipped horizontally, provided this does not contradict
-				 * historical fact or violate cultural norms.
-				 * Illustrations by Carolyn Dyk, © 2001 Wycliffe Bible Translators, Inc. Used with permission. */
-				CreditString = @"READ-N-GROW illustrations courtesy of Sweet Publishing, Ft. Worth, TX. Illustrated by Jim Padgett  © 1984 Sweet Publishing CC-BY-SA 4.0.
-SIL - VM Productions adapted this story and skin-darkened illustrations from the READ-N-GROW PICTURE BIBLE. Animation template & music © 2016 SIL [Hopefully creative commons license here]
--------------------------------------------
-TERMS OF USE FOR Carolyn Dyk Illustrations, with filenames ending in 'CD'
-This work is licensed under a Creative Commons
-Attribution-NonCommercial-NoDerivatives 4.0 International License.
-You may crop and resize but not modify the images for your new work.
-Images may be rotated or flipped horizontally, provided this does not contradict historical fact or violate cultural norms.
-Illustrations by Carolyn Dyk, © 2001 Wycliffe Bible Translators, Inc. Used with permission.";
+
+				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a
+Creative Commons Attribution-ShareAlike 3.0 Unported license.
+www.sweetpublishing.com
+
+Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations
+in our collection, and has modified some of them.
+
+
+Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+
+Template © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+
+Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+
+A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
+
+				ImageCopyrightAndLicense = ImageIP.SweetPublishing;
+				return;
+			}
+
+			if (string.Equals(md5Hash, _creditImageHashes[1]))
+			{
+				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
+
+				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a
+Creative Commons Attribution-ShareAlike 3.0 Unported license.
+www.sweetpublishing.com
+
+Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations
+in our collection, and has modified some of them.
+
+Illustrations by Carolyn Dyk © 2001 Wycliffe Bible Translators, Inc. licensed under a Creative Commons Attribution-NonCommercial- NoDerivatives 4.0 International License.
+
+
+Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a
+Creative Commons Attribution-ShareAlike 4.0 International license.
+
+
+Template © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+
+Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+
+A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
 
 				ImageCopyrightAndLicense = ImageIP.SweetPublishingAndWycliffe;
 				return;
 			}
-			if (string.Equals(md5Hash, _creditImageHashes[1]) || string.Equals(md5Hash, _creditImageHashes[2]) || string.Equals(md5Hash, _creditImageHashes[3]))
-			{
-				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
-				// 003, 046, 078
-				/* This story is © Sweet Publishing. This story was adapted by VM Productions from the
-				 * READ-N-GROW PICTURE BIBLE and used by permission.
-				 * It may be adapted for use in your language.
-				 * -------------------------------------------
-				 * Template & Music © 2016 SIL
-				 * You may use the template and include music for creating Bible Story Videos
-				 * -------------------------------------------
-				 * Illustrations by Jim Padgett, Courtesy of Sweet Publishing, Ft. Worth, TX. © 1984
-				 * Illustrations skin-darkened and adapted by SIL - VM Productions
-				 * TERMS OF USE FOR READ-N-GROW ILLUSTRATIONS
-				 * These illustrations are © Sweet Publishing and are made available under the terms of a
-				 * Creative Commons Attribution-Share Alike 4.0 International license. [license image] */
-				CreditString = @"READ-N-GROW illustrations courtesy of Sweet Publishing, Ft. Worth, TX. Illustrated by Jim Padgett © 1984 Sweet Publishing CC-BY-SA 4.0.
-SIL - VM Productions adapted this story and skin-darkened illustrations from the READ-N-GROW PICTURE BIBLE. Animation template & music © 2016 SIL [Hopefully creative commons license here]";
 
-				ImageCopyrightAndLicense = ImageIP.SweetPublishing;
+			if (_oldCreditImageHashes.Contains(md5Hash))
+			{
+				// This is an old one which we don't expect to see in production.
+				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
+				CreditString = "This is just a demo. We need to add real credits.";
+				ImageCopyrightAndLicense = ImageIP.Unknown;
 				return;
 			}
 

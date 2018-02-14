@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -50,6 +50,12 @@ namespace PhotoStoryToBloomConverter
 					continue;
 				if (TextExtractor.TryExtractText(docxPath, out languageText))
 					languageDictionary.Add(language, languageText);
+			}
+
+			if (!languageDictionary.ContainsKey(Language.English))
+			{
+				Console.WriteLine("Error: Could not find document with corresponding English text.");
+				return;
 			}
 
 			var allLanguages = new List<List<KeyValuePair<Language, string>>>();
