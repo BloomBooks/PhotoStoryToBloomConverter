@@ -156,3 +156,4 @@ $RECYCLE.BIN/
 .DS_Store
 #NuGet packages
 packages/
+/.vs/PhotoStoryToBloomTools/v15/

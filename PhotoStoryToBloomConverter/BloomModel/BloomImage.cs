@@ -3,36 +3,59 @@ using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
-    //Comparable to a div with the bloom tag 'bloom-imageContainer'
-    public class BloomImage
-    {
-	    public Size ImageSize { get; set; }
-	    public string Src { get; set; }
-	    public BloomImageMotion ImageMotion { get; set; }
+	//Comparable to a div with the bloom tag 'bloom-imageContainer'
+	public class BloomImage
+	{
+		public const bool kUseBackgroundImage = false;
 
-	    public Div ConvertToHtml()
-        {
-            return new Div
-            {
-                Title = string.Format("{0} 0 KB {1} x {2} 0 DPI (should be 300-600) Bit Depth: 32", Src, ImageSize.Width, ImageSize.Height),
-                Class = "bloom-imageContainer bloom-backgroundImage bloom-leadingElement",
+		public Size ImageSize { get; set; }
+		public string Src { get; set; }
+		public BloomImageMotion ImageMotion { get; set; }
 
-				Style = string.Format("background-image:url('{0}')", Src),
+		public Div ConvertToHtml()
+		{
+			string classStr = null;
+			string style = null;
+			Img[] imgs = null;
+			if (kUseBackgroundImage)
+			{
+				classStr = "bloom-imageContainer bloom-backgroundImage bloom-leadingElement";
+				style = $"background-image:url('{Src}')";
+			}
+			else
+			{
+				classStr = "bloom-imageContainer bloom-leadingElement";
+				imgs = new[]
+				{
+					new Img
+					{
+						Src = Src,
+						Alt = $"This picture, {Src}, is missing or was loading too slowly.",
+					}
+				};
+			}
+			return new Div
+			{
+				Class = classStr,
 
-                DataInitialRect = GetRectangleAttribute(ImageSize, ImageMotion.InitialImageRectangle),
-				DataFinalRect = GetRectangleAttribute(ImageSize, ImageMotion.FinalImageRectangle),
-            };
-        }
+				Style = style,
 
-	    private string GetRectangleAttribute(Size size, Rectangle rect)
-	    {
-		    double width = size.Width;
-		    double height = size.Height;
+				Imgs = imgs,
+
+				DataInitialRect = GetRectangleAttribute(ImageSize, ImageMotion.InitialImageRectangle),
+				DataFinalRect = GetRectangleAttribute(ImageSize, ImageMotion.FinalImageRectangle)
+			};
+		}
+
+		private string GetRectangleAttribute(Size size, Rectangle rect)
+		{
+			double width = size.Width;
+			double height = size.Height;
 			return string.Format("{0:N4} {1:N4} {2:N4} {3:N4}",
 				-rect.Left / width,
 				-rect.Top / height,
 				rect.Width / width,
 				rect.Height / height);
-	    }
-    }
+		}
+	}
 }

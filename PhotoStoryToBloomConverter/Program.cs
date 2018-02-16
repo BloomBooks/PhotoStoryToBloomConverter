@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -118,6 +118,9 @@ namespace PhotoStoryToBloomConverter
                     return;
                 }
                 BatchConvert(batchPath, bloomPath);
+
+				Console.WriteLine("Press any key to close.");
+				Console.ReadLine();
 			}
             else if (!s_batch && projectPath != null && collectionPath != null && bloomPath != null)
             {
@@ -143,7 +146,10 @@ namespace PhotoStoryToBloomConverter
 		            docxPaths = new List<string> { docxPath };
 				var project = new Project(projectPath);
 	            project.Convert(Path.GetDirectoryName(collectionPath), projectName, docxPaths, bloomPath, s_overwrite);
-            }
+
+				Console.WriteLine("Press any key to close.");
+				Console.ReadLine();
+			}
             else
             {
                 DisplayUsage();

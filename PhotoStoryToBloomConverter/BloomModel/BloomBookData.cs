@@ -48,7 +48,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				Topic = "Spiritual",
 				StyleNumberSequence = "0",
 				ContentLanguages = new [] { "en" },
-				Copyright = $"© {DateTime.Now.Year} Sweet Publishing",
+				Copyright = $"© {DateTime.Now.Year} TBD",
 				LicenseNotes = "The license on this book is to be determined",
 				LocalizedBookTitle = new [] { "" },
 				LocalizedSmallCoverCredits = new[] { "" },

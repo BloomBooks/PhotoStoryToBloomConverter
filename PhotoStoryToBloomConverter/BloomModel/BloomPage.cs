@@ -25,7 +25,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				text = new List<KeyValuePair<Language, string>>();
             Uuid = Guid.NewGuid().ToString();
             BloomTags = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual";
-            PageLabel = "";
+            PageLabel = "Basic Text & Picture";
             PageDescription = "";
             Language = "";
             ImageAndTextWithAudioSplitter = new BloomPageSplitter { Image = image, Text = text, Audio = audio };
