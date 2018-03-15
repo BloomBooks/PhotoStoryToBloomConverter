@@ -19,11 +19,12 @@ namespace PhotoStoryToBloomConverter
 
 		private static readonly Dictionary<string, List<string>> s_creditSlideMap = new Dictionary<string, List<string>>();
 
-		private readonly string[] _creditImageHashes = { "3CC9B920651BC4726EED4FFD6FBBDCDA", "8F526256E864725E12F9E31447359504" };
+		private readonly string[] _creditImageHashesWithDykImages = {"8F526256E864725E12F9E31447359504", "A3BE4B0D87926E00EDD6884096C80A0C"};
+		private readonly string[] _creditImageHashes = {"3CC9B920651BC4726EED4FFD6FBBDCDA", "3A042BB61CBC8FBD841A67B5CC240545",
+			"53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0"};
 		private readonly string[] _coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
 
-		private readonly string[] _oldCreditImageHashes = { "CDF13EC119AD0128E1196DB518B64BF8", "A3BE4B0D87926E00EDD6884096C80A0C",
-			"3A042BB61CBC8FBD841A67B5CC240545", "53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0" };
+		private readonly string[] _oldCreditImageHashes = { "CDF13EC119AD0128E1196DB518B64BF8" };
 
 		public bool IsCreditsOrCoverPage { get; private set; }
 		public string CreditString { get; private set; }
@@ -38,26 +39,20 @@ namespace PhotoStoryToBloomConverter
 
 			//Currently all of the information from the credit page needs to be stored in the additional acknowledgments section
 
-			if (string.Equals(md5Hash, _creditImageHashes[0]))
+			if (_creditImageHashes.Contains(md5Hash))
 			{
 				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
 
-				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a
-Creative Commons Attribution-ShareAlike 3.0 Unported license.
+				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
 www.sweetpublishing.com
 
-Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations
-in our collection, and has modified some of them.
-
+Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
 
 Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-
 Template © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-
 Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
 
 A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
 
@@ -65,29 +60,22 @@ A special thanks to the 50+ unnamed people who worked on the story scripts, temp
 				return;
 			}
 
-			if (string.Equals(md5Hash, _creditImageHashes[1]))
+			if (_creditImageHashesWithDykImages.Contains(md5Hash))
 			{
 				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
 
-				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a
-Creative Commons Attribution-ShareAlike 3.0 Unported license.
+				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
 www.sweetpublishing.com
 
-Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations
-in our collection, and has modified some of them.
+Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
 
 Illustrations by Carolyn Dyk © 2001 Wycliffe Bible Translators, Inc. licensed under a Creative Commons Attribution-NonCommercial- NoDerivatives 4.0 International License.
 
-
-Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a
-Creative Commons Attribution-ShareAlike 4.0 International license.
-
+Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
 Template © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-
 Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
 
 A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
 
