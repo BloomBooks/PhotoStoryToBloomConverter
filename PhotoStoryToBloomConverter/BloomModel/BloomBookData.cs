@@ -48,8 +48,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				Topic = "Spiritual",
 				StyleNumberSequence = "0",
 				ContentLanguages = new [] { "en" },
-				Copyright = $"© {DateTime.Now.Year} TBD",
-				LicenseNotes = "The license on this book is to be determined",
+				Copyright = $"© {DateTime.Now.Year} Wycliffe Bible Translators, Inc.",
+				LicenseUrl = "http://creativecommons.org/licenses/by-sa",
+				LicenseNotes = null,
 				LocalizedBookTitle = new [] { "" },
 				LocalizedSmallCoverCredits = new[] { "" },
 				LocalizedOriginalContributions = new[] { "" },
@@ -73,14 +74,14 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					new Div { DataBook = "styleNumberSequence", Lang = "*", SimpleText = StyleNumberSequence},
 					new Div { DataBook = "languagesOfBook", Lang = "*", SimpleText = LanguagesOfBook},
 					new Div { DataBook = "copyright", Lang = "*", SimpleText = Copyright},
-					new Div { DataBook = "licenseNotes", Lang = "*", SimpleText = LicenseNotes },
-					//new Div { DataBook = "licenseUrl", Lang = "*", SimpleText = LicenseUrl },
+					//new Div { DataBook = "licenseNotes", Lang = "*", SimpleText = LicenseNotes },
+					new Div { DataBook = "licenseUrl", Lang = "*", SimpleText = LicenseUrl },
 					new Div { DataBook = "topic", Lang = "en", SimpleText = Topic},
 				}
 			};
 			if (CoverBackgroundAudioPath != null)
 				dataDiv.Divs.Add(new Div { DataBookAttributes = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString(CultureInfo.InvariantCulture) });
-			dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = string.Format("contentLanguage{0}", index+1), Lang = "*", SimpleText = lang }).ToArray());
+			dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = $"contentLanguage{index + 1}", Lang = "*", SimpleText = lang }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { GetTitleParagraph() } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = credits } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = contributions } } }).ToArray());
