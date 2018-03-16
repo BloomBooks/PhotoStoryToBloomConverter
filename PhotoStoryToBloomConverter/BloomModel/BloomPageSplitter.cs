@@ -23,7 +23,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     new Div
                     {
                         Class = "split-pane-component position-top",
-                        Style = "bottom: 50%;",
+                        Style = "bottom: 58.7%;",
                         Divs = new List<Div>
                         {
                             new Div
@@ -39,17 +39,17 @@ namespace PhotoStoryToBloomConverter.BloomModel
                     new Div
                     {
                         Class = "split-pane-divider horizontal-divider",
-                        Style = "bottom: 50%;",
-                        Title = "50%",
+                        Style = "bottom: 58.7%;",
+                        Title = "41.3%",
                         SimpleText = ""
                     },
                     new Div
                     {
                         Class = "split-pane-component position-bottom",
-                        Style = "height: 50%;",
+                        Style = "height: 58.7%;",
                         Divs = new List<Div>
                         {
-                            new Div 
+                            new Div
                             {
                                 Class = "split-pane-component-inner adding",
                                 Style = "position: relative;",
@@ -114,7 +114,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				}
 			});
 		    return divs;
-	    } 
+	    }
 
 	    private List<Div> GetBoxHeaderOffDivs(IList<KeyValuePair<Language, string>> text)
 	    {
