@@ -18,7 +18,7 @@ namespace PhotoStoryToBloomConverter
 			_projectXmlPath = projectXmlPath;
 		}
 
-		public void Convert(string destinationFolder, string projectName, IEnumerable<string> docxPaths, string bloomPath, bool overwrite, PhotoStoryProject photoStoryProject = null)
+		public bool Convert(string destinationFolder, string projectName, IEnumerable<string> docxPaths, string bloomPath, bool overwrite, PhotoStoryProject photoStoryProject = null)
 		{
 			if (docxPaths == null)
 				docxPaths = new List<string>();
@@ -33,8 +33,8 @@ namespace PhotoStoryToBloomConverter
 			var convertedProjectDirectory = Path.Combine(destinationFolder, projectName);
 			if (Directory.Exists(convertedProjectDirectory) && !overwrite)
 			{
-				Console.WriteLine(String.Format("Error: A book already exists with the name {0}.", projectName), "projectName");
-				return;
+				Console.WriteLine($"Error: A book already exists with the name {projectName}.");
+				return false;
 			}
 			if (Directory.Exists(convertedProjectDirectory) && overwrite)
 				Program.DeleteAllFilesAndFoldersInDirectory(convertedProjectDirectory);
@@ -44,18 +44,17 @@ namespace PhotoStoryToBloomConverter
 			var languageDictionary = new Dictionary<Language, IList<string>>();
 			foreach (var docxPath in docxPaths)
 			{
-				IList<string> languageText;
 				var language = Path.GetFileNameWithoutExtension(docxPath).GetLanguageFromFileNameWithoutExtension();
 				if (language != Language.Unknown && languageDictionary.ContainsKey(language))
 					continue;
-				if (TextExtractor.TryExtractText(docxPath, out languageText))
+				if (TextExtractor.TryExtractText(docxPath, out var languageText))
 					languageDictionary.Add(language, languageText);
 			}
 
 			if (!languageDictionary.ContainsKey(Language.English))
 			{
-				Console.WriteLine("Error: Could not find document with corresponding English text.");
-				return;
+				Console.WriteLine($"Error: Could not find document with corresponding English text for {projectName}.");
+				return false;
 			}
 
 			var allLanguages = new List<List<KeyValuePair<Language, string>>>();
@@ -104,6 +103,8 @@ namespace PhotoStoryToBloomConverter
 			if (!hydrateSuccessful)
 				Console.WriteLine("Unable to hydrate {0}", projectName);
 			Console.WriteLine("Successfully converted {0}", projectName);
+
+			return true;
 		}
 
 		//The assumption is that the wp3 archive only contains assets and a project.xml file. We convert the .xml file and copy the images and audio tracks.

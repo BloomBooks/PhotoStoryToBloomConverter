@@ -172,6 +172,8 @@ namespace PhotoStoryToBloomConverter
 			Directory.CreateDirectory(tempFolder);
 		    var filesToProcess = Directory.EnumerateFiles(directoryPath, "*.wp3").Union(Directory.EnumerateFiles(directoryPath, "*.cab")).ToList();
 			Console.WriteLine("Found {0} files to process in this directory...", filesToProcess.Count);
+			int successCount = 0;
+			int failureCount = 0;
 			foreach (var projectPath in filesToProcess)
 			{
 				CABExtracter.Program.ExpandCabFile(projectPath, tempFolder);
@@ -194,17 +196,22 @@ namespace PhotoStoryToBloomConverter
 
 				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
 				var project = new Project(projectXmlPath);
-				project.Convert(outputDirectory, projectName, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject);
+				if (project.Convert(outputDirectory, projectName, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject))
+					successCount++;
+				else
+					failureCount++;
 
 				DeleteAllFilesAndFoldersInDirectory(tempFolder);
-
-				Console.Write(".");
 			}
 
 			Directory.Delete(tempFolder);
 
 		    Console.WriteLine();
-			Console.WriteLine("Successfully processed {0} files.", filesToProcess.Count);
+			if (successCount > 0)
+				Console.WriteLine("Successfully processed {0} files.", successCount);
+			if (failureCount > 0)
+				Console.WriteLine("Failed to process {0} files.", failureCount);
+			Console.WriteLine();
 		}
 
 		public static void DeleteAllFilesAndFoldersInDirectory(string directoryPath)
