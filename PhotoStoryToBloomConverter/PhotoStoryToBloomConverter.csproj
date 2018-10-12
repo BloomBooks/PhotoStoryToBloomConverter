@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>output\Debug\</OutputPath>
+    <OutputPath>..\output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>output\Debug\</OutputPath>
+    <OutputPath>..\output\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -87,7 +87,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioHelper.cs" />
+    <Compile Include="Utilities\AudioHelper.cs" />
     <Compile Include="BloomModel\BloomAudio.cs" />
     <Compile Include="BloomModel\BloomBookData.cs" />
     <Compile Include="BloomModel\BloomDocument.cs" />
@@ -145,6 +145,7 @@
     <Compile Include="PS3Model\Transition.cs" />
     <Compile Include="PS3Model\VisualUnit.cs" />
     <Compile Include="TextExtractor.cs" />
+    <Compile Include="Utilities\IOHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BatchConversionDlg.resx">

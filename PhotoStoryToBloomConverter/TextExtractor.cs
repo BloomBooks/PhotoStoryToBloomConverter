@@ -19,12 +19,12 @@ namespace PhotoStoryToBloomConverter
 
 				text = doc.Tables[0].Rows.Skip(1).Select(row => GetAllTextForCell(row.GetCell(2))).ToList();
 
-				// The templates usually have a copyright slide last with "*" as the text.
+				// The templates usually have a copyright slide last with "*" as the text (sometimes it just starts with "*")
 				// The newest templates have a blank slide just before that for a "pause".
 				int elementToRemoveCount = 0;
 				foreach (var textElement in text.Reverse())
 				{
-					if (string.IsNullOrWhiteSpace(textElement) || textElement == "*")
+					if (string.IsNullOrWhiteSpace(textElement) || textElement.StartsWith("*"))
 						elementToRemoveCount++;
 					else
 						break;
@@ -45,7 +45,7 @@ namespace PhotoStoryToBloomConverter
 			StringBuilder sb = new StringBuilder();
 			foreach (var run in cell.Paragraphs.SelectMany(paragraph => paragraph.Runs))
 				sb.Append(run.Text);
-			return sb.ToString();
+			return sb.ToString().Trim();
 		}
 
 		private string GetReference(XWPFTableRow row)

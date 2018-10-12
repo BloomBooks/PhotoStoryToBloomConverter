@@ -21,7 +21,8 @@ namespace PhotoStoryToBloomConverter
 
 		private readonly string[] _creditImageHashesWithDykImages = {"8F526256E864725E12F9E31447359504", "A3BE4B0D87926E00EDD6884096C80A0C"};
 		private readonly string[] _creditImageHashes = {"3CC9B920651BC4726EED4FFD6FBBDCDA", "3A042BB61CBC8FBD841A67B5CC240545",
-			"53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0"};
+			"53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0", "F043C2C0C21DBB6D3628BAE2A907F09D"};
+
 		private readonly string[] _coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
 
 		private readonly string[] _oldCreditImageHashes = { "CDF13EC119AD0128E1196DB518B64BF8" };
@@ -105,8 +106,7 @@ A special thanks to the 50+ unnamed people who worked on the story scripts, temp
 
 		private void AddToOrUpdateCreditSlideMap(string md5Hash, string imagePath)
 		{
-			List<string> slideList;
-			if (s_creditSlideMap.TryGetValue(md5Hash, out slideList))
+			if (s_creditSlideMap.TryGetValue(md5Hash, out var slideList))
 			{
 				if (slideList == null)
 					slideList = new List<string>();

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using PhotoStoryToBloomConverter.BloomModel;
 
-namespace PhotoStoryToBloomConverter
+namespace PhotoStoryToBloomConverter.Utilities
 {
 	internal class AudioHelper
 	{

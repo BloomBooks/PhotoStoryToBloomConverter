@@ -38,13 +38,14 @@ namespace PhotoStoryToBloomConverter
 			var token = fileNameWithoutExtension.Substring(fileNameWithoutExtension.Length - 3);
 			switch (token)
 			{
-				case "eng": return Language.English;
 				case "fra": return Language.French;
 				case "kor": return Language.Korean;
 				case "por": return Language.Portuguese;
 				case "spa": return Language.Spanish;
 				case "tgl": return Language.Tagalog;
-				default: return Language.Unknown;
+
+				case "eng":
+				default: return Language.English;
 			}
 		}
 	}

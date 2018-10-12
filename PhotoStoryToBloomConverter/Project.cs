@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using PhotoStoryToBloomConverter.BloomModel;
 using PhotoStoryToBloomConverter.PS3Model;
+using PhotoStoryToBloomConverter.Utilities;
 using SIL.Extensions;
 
 namespace PhotoStoryToBloomConverter
@@ -30,7 +31,7 @@ namespace PhotoStoryToBloomConverter
 					projectName = photoStoryProject.GetProjectName();
 			}
 
-			var convertedProjectDirectory = Path.Combine(destinationFolder, projectName);
+			var convertedProjectDirectory = Path.Combine(destinationFolder, IOHelper.SanitizeFileOrDirectoryName(projectName));
 			if (Directory.Exists(convertedProjectDirectory) && !overwrite)
 			{
 				Console.WriteLine($"Error: A book already exists with the name {projectName}.");
