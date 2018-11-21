@@ -32,6 +32,8 @@ namespace PhotoStoryToBloomConverter
 
 		public static Language GetLanguageFromFileNameWithoutExtension(this string fileNameWithoutExtension)
 		{
+			fileNameWithoutExtension = fileNameWithoutExtension.Trim();
+
 			if (fileNameWithoutExtension.Length < 3)
 				return Language.Unknown;
 

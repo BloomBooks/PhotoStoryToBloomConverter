@@ -157,9 +157,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			// For some of the images, the "comment" field includes the original file name but not all.
 			// (If we knew all the original file names, we would know which ones are Wycliffe because they end in 'CD')
 			var file = Path.GetFileNameWithoutExtension(imagePath);
-			return (bookName.ToLowerInvariant() == "in the beginning" &&
+			return (bookName == "God Creates the World" &&
 				new HashSet<string> { "2", "3", "5", "7", "9", "11", "13", "14", "15", "16", "18", "19", "20", "21", "23", "25", "38", "39" }.Contains(file)) ||
-					(bookName.ToLowerInvariant() == "sin enters the world" && new HashSet<string> { "5" }.Contains(file));
+					(bookName == "The Fall into Sin" && new HashSet<string> { "5" }.Contains(file));
 		}
 
 		private void ApplySweetPublishingIPInfoForImages(PalasoImage image)

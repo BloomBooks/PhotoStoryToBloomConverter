@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace PhotoStoryToBloomConverter.PS3Model
@@ -34,6 +35,7 @@ namespace PhotoStoryToBloomConverter.PS3Model
 					if (edit.TextOverlays.Length <= 0)
 						continue;
 					bookName = edit.TextOverlays[0].Text.Trim();
+					bookName = Regex.Replace(bookName, @"\s+", " ");
 					break;
 				}
 				if (bookName != "")

@@ -80,7 +80,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				}
 			};
 			if (CoverBackgroundAudioPath != null)
-				dataDiv.Divs.Add(new Div { DataBookAttributes = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString(CultureInfo.InvariantCulture) });
+				dataDiv.Divs.Add(new Div { DataXmatterPage = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString(CultureInfo.InvariantCulture) });
 			dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = $"contentLanguage{index + 1}", Lang = "*", SimpleText = lang }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { GetTitleParagraph() } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = credits } } }).ToArray());

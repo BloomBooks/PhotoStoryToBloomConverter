@@ -19,7 +19,7 @@ namespace PhotoStoryToBloomConverter
 
 		private static readonly Dictionary<string, List<string>> s_creditSlideMap = new Dictionary<string, List<string>>();
 
-		private readonly string[] _creditImageHashesWithDykImages = {"8F526256E864725E12F9E31447359504", "A3BE4B0D87926E00EDD6884096C80A0C"};
+		private readonly string[] _creditImageHashesWithDykImages = {"8F526256E864725E12F9E31447359504", "A3BE4B0D87926E00EDD6884096C80A0C", "588D1C78C0395E258C503F563CD66A9A" };
 		private readonly string[] _creditImageHashes = {"3CC9B920651BC4726EED4FFD6FBBDCDA", "3A042BB61CBC8FBD841A67B5CC240545",
 			"53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0", "F043C2C0C21DBB6D3628BAE2A907F09D"};
 
@@ -70,7 +70,7 @@ www.sweetpublishing.com
 
 Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
 
-Illustrations by Carolyn Dyk © 2001 Wycliffe Bible Translators, Inc. licensed under a Creative Commons Attribution-NonCommercial- NoDerivatives 4.0 International License.
+Illustrations by Carolyn Dyk © 2001 Wycliffe Bible Translators, Inc. licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
 
 Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 

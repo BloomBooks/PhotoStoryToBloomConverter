@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using PhotoStoryToBloomConverter.BloomModel;
 using PhotoStoryToBloomConverter.PS3Model;
 using PhotoStoryToBloomConverter.Utilities;
@@ -67,7 +68,10 @@ namespace PhotoStoryToBloomConverter
 			foreach (var language in languageDictionary)
 			{
 				if (language.Value.Count != englishTextElementCount)
+				{
+					Console.WriteLine($"Excluding {language.Key} because it is out of sync with English");
 					languagesToExclude.Add(language.Key);
+				}
 			}
 			languageDictionary.RemoveAll(l => languagesToExclude.Contains(l.Key));
 
@@ -104,6 +108,7 @@ namespace PhotoStoryToBloomConverter
 			if (!hydrateSuccessful)
 				Console.WriteLine("Unable to hydrate {0}", projectName);
 			Console.WriteLine("Successfully converted {0}", projectName);
+			Console.WriteLine("   Languages: {0}", string.Join(", ", languageDictionary.Keys));
 
 			return true;
 		}
