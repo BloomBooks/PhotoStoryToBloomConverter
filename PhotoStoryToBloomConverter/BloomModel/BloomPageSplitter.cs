@@ -88,11 +88,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			    var dummyEnglishText = new List<KeyValuePair<Language, string>> { new KeyValuePair<Language, string>(Language.English, "nbsp;") };
 			    divs.AddRange(new List<Div>
 			    {
-				    new Div
-				    {
-					    Class = "box-header-off bloom-translationGroup",
-					    Divs = GetBoxHeaderOffDivs(dummyEnglishText)
-				    },
+				    //new Div
+				    //{
+					   // Class = "box-header-off bloom-translationGroup",
+					   // Divs = GetBoxHeaderOffDivs(dummyEnglishText)
+				    //},
 				    new Div
 				    {
 					    Class = "bloom-translationGroup bloom-trailingElement normal-style",
@@ -102,11 +102,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		    }
 			divs.AddRange(new List<Div>
 			{
-				new Div
-				{
-					Class = "box-header-off bloom-translationGroup",
-					Divs = GetBoxHeaderOffDivs(Text)
-				},
+				//new Div
+				//{
+				//	Class = "box-header-off bloom-translationGroup",
+				//	Divs = GetBoxHeaderOffDivs(Text)
+				//},
 				new Div
 				{
 					Class = "bloom-translationGroup bloom-trailingElement normal-style",
@@ -124,7 +124,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			    var language = kv.Key;
 			    list.Add(new Div
 			    {
-				    Class = "bloom-editable cke_editablecke_editable_inline cke_contents_ltr" + (language == Language.English ? " bloom-content1" : ""),
+				    Class = "bloom-editable" + (language == Language.English ? " bloom-content1" : ""),
 				    ContentEditable = "true",
 				    Lang = language.GetCode(),
 				    TabIndex = "0",
@@ -145,7 +145,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			    var language = kv.Key;
 			    list.Add(new Div
 			    {
-				    Class = "bloom-editable cke_editable cke_editable_inline cke_contents_ltr normal-style" + (language == Language.English ? " bloom-content1" : ""),
+				    Class = "bloom-editable normal-style" + (language == Language.English ? " bloom-content1" : ""),
 				    ContentEditable = "true",
 				    Lang = language.GetCode(),
 				    Style = "min-height: 24px;",
