@@ -145,7 +145,7 @@ namespace PhotoStoryToBloomConverter
 	            else
 		            docxPaths = new List<string> { docxPath };
 				var project = new Project(projectPath);
-	            project.Convert(Path.GetDirectoryName(collectionPath), projectName, docxPaths, bloomPath, s_overwrite);
+	            project.Convert(Path.GetDirectoryName(collectionPath), projectName, null, docxPaths, bloomPath, s_overwrite);
 
 				Console.WriteLine("Press any key to close.");
 				Console.ReadLine();
@@ -182,21 +182,22 @@ namespace PhotoStoryToBloomConverter
                 var photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(projectXmlPath);
                 var projectName = photoStoryProject.GetProjectName();
 				var projectFileNameWithoutExtension = Path.GetFileNameWithoutExtension(projectPath);
-                if (string.IsNullOrWhiteSpace(projectName))
-					projectName = projectFileNameWithoutExtension;
 
 				var projectCode = projectFileNameWithoutExtension.Split(' ')[0];
 
-//				if (!(projectCode == "001"/* || projectCode == "002" || projectCode == "003"*/))
-//				{
-//					DeleteAllFilesAndFoldersInDirectory(tempFolder);
-//					return;
-//					//continue;
-//				}
+				if (string.IsNullOrWhiteSpace(projectName))
+				{
+					Console.WriteLine("WARNING: Could not get project name from Photo Story project");
+					projectName = projectFileNameWithoutExtension;
+				}
+				else
+				{
+					projectName = $"{projectCode} {projectName}";
+				}
 
 				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
 				var project = new Project(projectXmlPath);
-				if (project.Convert(outputDirectory, projectName, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject))
+				if (project.Convert(outputDirectory, projectName, projectCode, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject))
 					successCount++;
 				else
 					failureCount++;

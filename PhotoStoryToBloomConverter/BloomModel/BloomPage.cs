@@ -19,16 +19,16 @@ namespace PhotoStoryToBloomConverter.BloomModel
 	    public string PageLabel { get; set; }
 	    public string PageDescription { get; set; }
 
-	    public BloomPage(BloomImage image, IList<KeyValuePair<Language, string>> text, BloomAudio audio)
+	    public BloomPage(BloomImage image, IList<KeyValuePair<Language, string>> allTranslationsOfThisPage, BloomAudio audio)
         {
-			if (text == null)
-				text = new List<KeyValuePair<Language, string>>();
+			if (allTranslationsOfThisPage == null)
+				allTranslationsOfThisPage = new List<KeyValuePair<Language, string>>();
             Uuid = Guid.NewGuid().ToString();
             BloomTags = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual";
             PageLabel = "Basic Text & Picture";
             PageDescription = "";
             Language = "";
-            ImageAndTextWithAudioSplitter = new BloomPageSplitter { Image = image, Text = text, Audio = audio };
+            ImageAndTextWithAudioSplitter = new BloomPageSplitter { Image = image, Text = allTranslationsOfThisPage, Audio = audio };
         }
 
         public Div ConvertToHtml()

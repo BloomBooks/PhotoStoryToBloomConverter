@@ -18,7 +18,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		public string LicenseNotes;
 		public string Title;
 		public string Copyright;
-		public string[] ContentLanguages;
+		public List<string> ContentLanguages;
 
 		public string CoverImage { get; set; }
 		public string CoverNarrationPath;
@@ -27,7 +27,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 		//All localized variables are expected to have similar indexes
 		//to their languages location in ContentLanguages
-		public string[] LocalizedBookTitle;
+		public List<string> LocalizedBookTitle;
 		public string[] LocalizedSmallCoverCredits;
 		public string[] LocalizedOriginalContributions;
 		public string[] LocalizedFunding;
@@ -47,11 +47,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				LanguagesOfBook = "English",
 				Topic = "Spiritual",
 				StyleNumberSequence = "0",
-				ContentLanguages = new [] { "en" },
+				ContentLanguages = new List<string> { "en" },
 				Copyright = $"© {DateTime.Now.Year} Wycliffe Bible Translators, Inc.",
 				LicenseUrl = "http://creativecommons.org/licenses/by-sa",
 				LicenseNotes = null,
-				LocalizedBookTitle = new [] { "" },
+				LocalizedBookTitle = new List<string> { "" },
 				LocalizedSmallCoverCredits = new[] { "" },
 				LocalizedOriginalContributions = new[] { "" },
 				LocalizedFunding = new[] { "" },
@@ -81,8 +81,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			};
 			if (CoverBackgroundAudioPath != null)
 				dataDiv.Divs.Add(new Div { DataXmatterPage = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString(CultureInfo.InvariantCulture) });
-			dataDiv.Divs.AddRange(ContentLanguages.Select((lang, index) => new Div { DataBook = $"contentLanguage{index + 1}", Lang = "*", SimpleText = lang }).ToArray());
-			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((lang, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { GetTitleParagraph() } }).ToArray());
+
+			//Only add English or all languages will be included in the actual pages
+			dataDiv.Divs.Add(new Div { DataBook = "contentLanguage1", Lang = "*", SimpleText = "en" });
+
+			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((title, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { GetTitleParagraph(title) } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = credits } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = contributions } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = GetMultiParagraphFromString(acknowledgments) }).ToArray());
@@ -93,13 +96,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			return dataDiv;
 		}
 
-		private Paragraph GetTitleParagraph()
+		private Paragraph GetTitleParagraph(string title)
 		{
 			if (string.IsNullOrWhiteSpace(CoverNarrationPath))
-				return new Paragraph {Text = Title};
+				return new Paragraph {Text = title};
 			return new Paragraph
 			{
-				Span = new Span {Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", ContentText = Title}
+				Span = new Span {Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", ContentText = title}
 			};
 		}
 

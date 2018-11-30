@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using PhotoStoryToBloomConverter.BloomModel;
 using PhotoStoryToBloomConverter.PS3Model;
 using PhotoStoryToBloomConverter.Utilities;
@@ -20,7 +19,8 @@ namespace PhotoStoryToBloomConverter
 			_projectXmlPath = projectXmlPath;
 		}
 
-		public bool Convert(string destinationFolder, string projectName, IEnumerable<string> docxPaths, string bloomPath, bool overwrite, PhotoStoryProject photoStoryProject = null)
+		public bool Convert(string destinationFolder, string projectName, string projectCode, IEnumerable<string> docxPaths,
+			string bloomPath, bool overwrite, PhotoStoryProject photoStoryProject = null)
 		{
 			if (docxPaths == null)
 				docxPaths = new List<string>();
@@ -30,6 +30,60 @@ namespace PhotoStoryToBloomConverter
 				photoStoryProject = Ps3AndBloomSerializer.DeserializePhotoStoryXml(_projectXmlPath);
 				if (String.IsNullOrEmpty(projectName))
 					projectName = photoStoryProject.GetProjectName();
+			}
+
+			var textByLanguage = new Dictionary<Language, IList<string>>();
+			foreach (var docxPath in docxPaths)
+			{
+				var language = Path.GetFileNameWithoutExtension(docxPath).GetLanguageFromFileNameWithoutExtension();
+				if (language != Language.Unknown && textByLanguage.ContainsKey(language))
+					continue;
+				if (TextExtractor.TryExtractText(docxPath, out var languageText))
+					textByLanguage.Add(language, languageText);
+			}
+
+			if (!textByLanguage.ContainsKey(Language.English))
+			{
+				Console.WriteLine($"Error: Could not find document with corresponding English text for {projectName}.");
+				return false;
+			}
+
+			var allPagesInAllLanguages = new List<List<KeyValuePair<Language, string>>>();
+
+			// Perhaps a bad assumption, but for now we will assume that if a non-English language
+			// has the same number of elements as the English, that it is up-to-date. If not, don't include it.
+			var englishTextElementCount = textByLanguage[Language.English].Count;
+			var languagesToExclude = new List<Language>();
+			foreach (var language in textByLanguage)
+			{
+				if (language.Value.Count != englishTextElementCount)
+				{
+					Console.WriteLine($"Excluding {language.Key} because it is out of sync with English");
+					languagesToExclude.Add(language.Key);
+				}
+			}
+			textByLanguage.RemoveAll(l => languagesToExclude.Contains(l.Key));
+
+			for (int index = 0; index < textByLanguage[Language.English].Count; index++)
+			{
+				var allTranslationsOfThisPage = new List<KeyValuePair<Language, string>>(6);
+				foreach (var language in textByLanguage)
+				{
+					var text = language.Value[index];
+					if (index == 0 && !string.IsNullOrWhiteSpace(projectCode))
+					{
+						text = $"{projectCode} {text}";
+						if (language.Key == Language.English)
+						{
+							// We decided to give preference to the title in the English docx rather than the original PhotoStory project
+							projectName = text;
+						}
+
+					}
+					allTranslationsOfThisPage.Add(new KeyValuePair<Language, string>(language.Key, text));
+				}
+
+				allPagesInAllLanguages.Add(allTranslationsOfThisPage);
 			}
 
 			var convertedProjectDirectory = Path.Combine(destinationFolder, IOHelper.SanitizeFileOrDirectoryName(projectName));
@@ -43,52 +97,12 @@ namespace PhotoStoryToBloomConverter
 			else
 				Directory.CreateDirectory(convertedProjectDirectory);
 
-			var languageDictionary = new Dictionary<Language, IList<string>>();
-			foreach (var docxPath in docxPaths)
-			{
-				var language = Path.GetFileNameWithoutExtension(docxPath).GetLanguageFromFileNameWithoutExtension();
-				if (language != Language.Unknown && languageDictionary.ContainsKey(language))
-					continue;
-				if (TextExtractor.TryExtractText(docxPath, out var languageText))
-					languageDictionary.Add(language, languageText);
-			}
-
-			if (!languageDictionary.ContainsKey(Language.English))
-			{
-				Console.WriteLine($"Error: Could not find document with corresponding English text for {projectName}.");
-				return false;
-			}
-
-			var allLanguages = new List<List<KeyValuePair<Language, string>>>();
-
-			// Perhaps a bad assumption, but for now we will assume that if a non-English language
-			// has the same number of elements as the English, that it is up-to-date. If not, don't include it.
-			var englishTextElementCount = languageDictionary[Language.English].Count;
-			var languagesToExclude = new List<Language>();
-			foreach (var language in languageDictionary)
-			{
-				if (language.Value.Count != englishTextElementCount)
-				{
-					Console.WriteLine($"Excluding {language.Key} because it is out of sync with English");
-					languagesToExclude.Add(language.Key);
-				}
-			}
-			languageDictionary.RemoveAll(l => languagesToExclude.Contains(l.Key));
-
-			for (int index = 0; index < languageDictionary[Language.English].Count; index++)
-			{
-				var list = new List<KeyValuePair<Language, string>>(6);
-				foreach (var language in languageDictionary)
-					list.Add(new KeyValuePair<Language, string>(language.Key, language.Value[index]));
-				allLanguages.Add(list);
-			}
-
 			//Three things needed for a bloom book:
 			//  book assets (images, narration audio, background audio)
 			//  bloom book css and images
 			//  the actual book, a generated html file built from the photostory project
 			CopyAssetsAndResources(Path.GetDirectoryName(_projectXmlPath), convertedProjectDirectory);
-			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, String.Format("{0}.htm", projectName)), projectName, allLanguages);
+			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, $"{projectName}.htm"), projectName, allPagesInAllLanguages);
 
 			var hydrationArguments =
 				$"hydrate --preset shellbook --bookpath \"{convertedProjectDirectory}\" --vernacularisocode en";
@@ -107,8 +121,11 @@ namespace PhotoStoryToBloomConverter
 			}
 			if (!hydrateSuccessful)
 				Console.WriteLine("Unable to hydrate {0}", projectName);
-			Console.WriteLine("Successfully converted {0}", projectName);
-			Console.WriteLine("   Languages: {0}", string.Join(", ", languageDictionary.Keys));
+			else
+			{
+				Console.WriteLine("Successfully converted {0}", projectName);
+				Console.WriteLine("   Languages: {0}", string.Join(", ", textByLanguage.Keys));
+			}
 
 			return true;
 		}
@@ -136,10 +153,11 @@ namespace PhotoStoryToBloomConverter
 		}
 
 		//Pulls in all the gathered information for the project and creates a single bloom book html file at destinationFile
-		private void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName, IList<List<KeyValuePair<Language, string>>> text)
+		private void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName,
+			IList<List<KeyValuePair<Language, string>>> allPagesInAllLanguages)
 		{
 			var destinationDirectory = Path.GetDirectoryName(destinationFile);
-			var document = new BloomDocument(project, bookName, destinationDirectory, text, _audioHelper.Duplicates);
+			var document = new BloomDocument(project, bookName, destinationDirectory, allPagesInAllLanguages, _audioHelper.Duplicates);
 			Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);
 			AddMetaJson(destinationDirectory);
 		}
@@ -147,7 +165,9 @@ namespace PhotoStoryToBloomConverter
 		private void AddMetaJson(string destinationDirectory)
 		{
 			// TODO: If we include narration audio in any templates we create, we should include the 'media:audio' tag as well.
-			File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"), "{tags:['media:fulltext', 'media:kbanimation', 'media:music', 'tag:BibleStoryMultimedia']}");
+			// Adding these tags was our plan at one point, but we are just leaving them off for now.
+			//File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"), "{tags:['media:fulltext', 'media:kbanimation', 'media:music', 'tag:BibleStoryMultimedia']}");
+			File.Create(Path.Combine(destinationDirectory, "meta.json")).Close();
 		}
 	}
 }

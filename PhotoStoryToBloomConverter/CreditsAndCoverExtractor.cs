@@ -32,7 +32,7 @@ namespace PhotoStoryToBloomConverter
 		public ImageIP ImageCopyrightAndLicense { get; private set; }
 
 		//We are assuming that if an image is checked, it is part of the current book, and the credits should be extracted
-		public void Extract(string bookName, string imagePath)
+		public void Extract(string imagePath)
 		{
 			IsCreditsOrCoverPage = true;
 			var md5Hash = BitConverter.ToString(MD5.Create().ComputeHash(File.ReadAllBytes(imagePath))).Replace("-", "");

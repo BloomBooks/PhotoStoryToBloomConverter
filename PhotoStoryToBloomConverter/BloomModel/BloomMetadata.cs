@@ -18,10 +18,16 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			"..\\customCollectionStyles.css"
 		};
 
-		public static readonly string[] StandardBloomStyles =
+		public static readonly string[] DefaultCoverStyles =
 		{
-			".BigWords-style { font-size: 45pt !important; text-align: center !important; }",
 			"DIV.coverColor TEXTAREA { background-color: #C2A6BF !important; }\r\nDIV.bloom-page.coverColor { background-color: #C2A6BF !important }",
+		};
+
+		public static readonly string[] DefaultUserModifiedStyles =
+		{
+			".BigWords-style { font-size: 45pt ! important; text-align: center ! important; }\r\n" +
+			".Credits-Page-style[lang=\"en\"] { font-size: 8pt ! important; }\r\n" +
+			".Credits-Page-style { font-size: 8pt ! important; }",
 		};
 
 		public static BloomMetadata DefaultBloomMetadata(string title)
@@ -33,7 +39,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				Charset = "UTF-8",
 				TemplateSource = "Basic Book",
 				Generator = "PhotoStoryToBloomConverter 1.0",
-				Styles = StandardBloomStyles,
+				CoverStyles = DefaultCoverStyles,
+				UserModifiedStyles = DefaultUserModifiedStyles,
 				Title = title,
 				LockedDownAsShell = "true"
 			};
@@ -46,7 +53,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		public string Charset { get; set; }
 		public string TemplateSource { get; set; }
 		public string Generator { get; set; }
-		public string[] Styles { get; set; }
+		public string[] CoverStyles { get; set; }
+		public string[] UserModifiedStyles { get; set; }
 		public string LockedDownAsShell { get; set; }
 
 		public Head ConvertToHtml()
@@ -56,7 +64,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				Title = new Title { TitleText = Title },
 				Script = string.IsNullOrEmpty(Script) ? null : new Script { Src = Script, Type = "text/javascript" },
 				Links = Links.Select(linkRef => new Link { Href = linkRef, Rel = "stylesheet", Type = "text/css" }).ToArray(),
-				Styles = Styles.Select(styleCss => new Style { Css = styleCss, Type = "text/css" }).ToArray(),
+				Styles = GetHtmlStyles(),
 				Metas = new[]
 				{
 					new Meta { Charset = Charset },
@@ -66,6 +74,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					new Meta { Name = "lockedDownAsShell", Content = LockedDownAsShell }
 				}
 			};
+		}
+
+		private Style[] GetHtmlStyles()
+		{
+			return CoverStyles.Select(styleCss => new Style {Css = styleCss, Type = "text/css"})
+				.Union(UserModifiedStyles.Select(styleCss => new Style {Css = styleCss, Type = "text/css", Title = "userModifiedStyles"}))
+				.ToArray();
 		}
 	}
 }

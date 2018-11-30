@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NAudio.Wave;
 using SIL.Windows.Forms.ClearShare;
 using SIL.Windows.Forms.ImageToolbox;
@@ -21,7 +22,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		private readonly CreditsAndCoverExtractor.ImageIP _imageCopyrightAndLicense;
 		private readonly Dictionary<string, string> _duplicateAudioFiles;
 
-		public BloomDocument(PhotoStoryProject project, string bookName, string bookDirectoryPath, IList<List<KeyValuePair<Language, string>>> narratedText,
+		public BloomDocument(
+			PhotoStoryProject project,
+			string bookName,
+			string bookDirectoryPath,
+			IList<List<KeyValuePair<Language, string>>> allPagesInAllLanguages,
 			Dictionary<string, string> duplicateAudioFiles)
 		{
 			_metadata = BloomMetadata.DefaultBloomMetadata(bookName);
@@ -50,7 +55,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				var backgroundAudioVolume = backgroundAudioPath == null ? 0.0 : GetBackgroundAudioVolumeForImage(psImage);
 
 				var extractor = new CreditsAndCoverExtractor();
-				extractor.Extract(bookName, Path.Combine(bookDirectoryPath, psImage.Path));
+				extractor.Extract(Path.Combine(bookDirectoryPath, psImage.Path));
 				if (extractor.IsCreditsOrCoverPage)
 				{
 					//If it was a credits page, put credit information into the data divs
@@ -70,6 +75,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					}
 					if (i == 0 && visualUnit.Narration != null)
 						_bookData.CoverNarrationPath = visualUnit.Narration.Path;
+
+					if (i == 0)
+						SetContentLanguagesAndLocalizedTitles(allPagesInAllLanguages[i]);
 
 					imagePathsToRemove.Add(Path.Combine(bookDirectoryPath, psImage.Path));
 				}
@@ -98,9 +106,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 						}
 					};
 
-					List<KeyValuePair<Language, string>> text = null;
-					if (narratedText != null && narratedText.Count > i)
-						text = narratedText[i];
+					List<KeyValuePair<Language, string>> allTranslationsOfThisPage = null;
+					if (allPagesInAllLanguages != null && allPagesInAllLanguages.Count > i)
+						allTranslationsOfThisPage = allPagesInAllLanguages[i];
 
 					var narrationPath = "";
 					if (visualUnit.Narration != null)
@@ -115,7 +123,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 						coverImageFound = true;
 					}
 
-					_pages.Add(new BloomPage(bloomImage, text, bloomAudio));
+					_pages.Add(new BloomPage(bloomImage, allTranslationsOfThisPage, bloomAudio));
 				}
 			}
 			if (!creditsFound)
@@ -150,6 +158,36 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			}
 		}
 
+		private void SetContentLanguagesAndLocalizedTitles(List<KeyValuePair<Language, string>> allTitles)
+		{
+			//English needs to be first. The order of the rest doesn't matter as long as it is the same between the two.
+			//We also want a sanity check to ensure the English title is what we expect.
+			var englishTitleFromText = allTitles.Single(kvp => kvp.Key == Language.English).Value;
+			if (!VerifyEnglishTitleMatches(englishTitleFromText))
+			{
+				Console.WriteLine(
+					$"English title from text ({englishTitleFromText}) does not match title from original project ({_bookData.Title}).");
+				//throw new ApplicationException(
+				//	$"English title from text ({englishTitleFromText}) does not match title from original project ({_bookData.Title}).");
+			}
+
+			_bookData.ContentLanguages[0] = Language.English.GetCode();
+			_bookData.LocalizedBookTitle[0] = englishTitleFromText;
+
+			// Leaving this in for now even though the current code doesn't allow any variation because if we ever do in the future, it would
+			// be important to do.
+			// On the chance there was an acceptable variation (e.g. capitalization), prefer the title from the text document rather than the PS3 project
+			_bookData.Title = englishTitleFromText;
+
+			_bookData.ContentLanguages.AddRange(allTitles.Where(kvp => kvp.Key != Language.English).Select(page => page.Key.GetCode()));
+			_bookData.LocalizedBookTitle.AddRange(allTitles.Where(kvp => kvp.Key != Language.English).Select(page => page.Value));
+		}
+
+		private bool VerifyEnglishTitleMatches(string englishTitle)
+		{
+			return englishTitle == _bookData.Title;
+		}
+
 		// ENHANCE: use image hashes to ensure we are applying to the correct ones if order changes
 		private bool IsWycliffeImage(string bookName, string imagePath)
 		{
@@ -157,9 +195,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			// For some of the images, the "comment" field includes the original file name but not all.
 			// (If we knew all the original file names, we would know which ones are Wycliffe because they end in 'CD')
 			var file = Path.GetFileNameWithoutExtension(imagePath);
-			return (bookName == "God Creates the World" &&
+			return (bookName == "001 God Creates The World" &&
 				new HashSet<string> { "2", "3", "5", "7", "9", "11", "13", "14", "15", "16", "18", "19", "20", "21", "23", "25", "38", "39" }.Contains(file)) ||
-					(bookName == "The Fall into Sin" && new HashSet<string> { "5" }.Contains(file));
+					(bookName == "002 The Fall into Sin" && new HashSet<string> { "5" }.Contains(file));
 		}
 
 		private void ApplySweetPublishingIPInfoForImages(PalasoImage image)
