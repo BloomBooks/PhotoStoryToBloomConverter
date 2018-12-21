@@ -10,41 +10,82 @@ namespace PhotoStoryToBloomConverter
 {
 	class CreditsAndCoverExtractor
 	{
-		public enum ImageIP
+		public enum CreditsType
 		{
 			Unknown,
 			SweetPublishing,
-			SweetPublishingAndWycliffe
+			SweetPublishingAndWycliffe,
+			SweetPublishingWithOttScript,
+			SweetPublishingAndWycliffeWithOttScript,
+			NotCredits
 		}
 
-		private static readonly Dictionary<string, List<string>> s_creditSlideMap = new Dictionary<string, List<string>>();
+		private static readonly Dictionary<string, List<string>> CreditSlideMap = new Dictionary<string, List<string>>();
 
-		private readonly string[] _creditImageHashesWithDykImages = {"8F526256E864725E12F9E31447359504", "A3BE4B0D87926E00EDD6884096C80A0C", "588D1C78C0395E258C503F563CD66A9A" };
-		private readonly string[] _creditImageHashes = {"3CC9B920651BC4726EED4FFD6FBBDCDA", "3A042BB61CBC8FBD841A67B5CC240545",
-			"53956450F833C2B0CB4E4A8AC6432669", "63C8A5355F5287E74ABA26DC9AB377C0", "F043C2C0C21DBB6D3628BAE2A907F09D"};
+		private static readonly Dictionary<string, CreditsType> ImageHashToIpInfoDictionary = new Dictionary<string, CreditsType>
+		{
+			{ "3CC9B920651BC4726EED4FFD6FBBDCDA", CreditsType.SweetPublishing },
+			{ "3A042BB61CBC8FBD841A67B5CC240545", CreditsType.SweetPublishing },
+			{ "53956450F833C2B0CB4E4A8AC6432669", CreditsType.SweetPublishing },
+			{ "63C8A5355F5287E74ABA26DC9AB377C0", CreditsType.SweetPublishing },
+			{ "F043C2C0C21DBB6D3628BAE2A907F09D", CreditsType.SweetPublishing },
 
-		private readonly string[] _coverImageHashes = { "8C7B5AADFF9AB8B4649481421EB8479F", "781ED3E63E6BD138D9BE59A24EFF7D6A" };
+			{ "8F526256E864725E12F9E31447359504", CreditsType.SweetPublishingAndWycliffe },
+			{ "A3BE4B0D87926E00EDD6884096C80A0C", CreditsType.SweetPublishingAndWycliffe },
+			{ "588D1C78C0395E258C503F563CD66A9A", CreditsType.SweetPublishingAndWycliffe },
 
-		private readonly string[] _oldCreditImageHashes = { "CDF13EC119AD0128E1196DB518B64BF8" };
+			{ "108CCAF0758894DD92D41E7B85577F98", CreditsType.SweetPublishingWithOttScript },
+
+			{ "EEC5D3512C67A54E319AFDDDE74BCA1E", CreditsType.SweetPublishingAndWycliffeWithOttScript },
+
+			// Blank gray cover images
+			{ "8C7B5AADFF9AB8B4649481421EB8479F", CreditsType.NotCredits },
+			{ "781ED3E63E6BD138D9BE59A24EFF7D6A", CreditsType.NotCredits },
+
+			// This is an old one which we don't expect to see in production.
+			{ "CDF13EC119AD0128E1196DB518B64BF8", CreditsType.Unknown },
+		};
 
 		public bool IsCreditsOrCoverPage { get; private set; }
 		public string CreditString { get; private set; }
-		public ImageIP ImageCopyrightAndLicense { get; private set; }
+		public CreditsType ImageCopyrightAndLicense { get; private set; }
 
 		//We are assuming that if an image is checked, it is part of the current book, and the credits should be extracted
 		public void Extract(string imagePath)
 		{
-			IsCreditsOrCoverPage = true;
+			IsCreditsOrCoverPage = false;
 			var md5Hash = BitConverter.ToString(MD5.Create().ComputeHash(File.ReadAllBytes(imagePath))).Replace("-", "");
 			Debug.WriteLine(md5Hash);
 
-			//Currently all of the information from the credit page needs to be stored in the additional acknowledgments section
-
-			if (_creditImageHashes.Contains(md5Hash))
+			if (ImageHashToIpInfoDictionary.Keys.Contains(md5Hash))
 			{
-				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
+				IsCreditsOrCoverPage = true;
+				var imageType = ImageHashToIpInfoDictionary[md5Hash];
+				switch (imageType)
+				{
+					case CreditsType.SweetPublishing:
+					case CreditsType.SweetPublishingAndWycliffe:
+					case CreditsType.SweetPublishingWithOttScript:
+					case CreditsType.SweetPublishingAndWycliffeWithOttScript:
+					case CreditsType.Unknown:
+						AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
+						CreditString = GetCreditString(imageType);
+						ImageCopyrightAndLicense = imageType;
+						return;
+					case CreditsType.NotCredits:
+						AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
+						return;
+				}
+			}
+		}
 
-				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
+		//Currently all of the information from the credit page needs to be stored in the additional acknowledgments section
+		private string GetCreditString(CreditsType imageType)
+		{
+			switch (imageType)
+			{
+				case CreditsType.SweetPublishing:
+					return @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
 www.sweetpublishing.com
 
 Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
@@ -57,15 +98,8 @@ Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Cre
 
 A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
 
-				ImageCopyrightAndLicense = ImageIP.SweetPublishing;
-				return;
-			}
-
-			if (_creditImageHashesWithDykImages.Contains(md5Hash))
-			{
-				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
-
-				CreditString = @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
+				case CreditsType.SweetPublishingAndWycliffe:
+					return @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
 www.sweetpublishing.com
 
 Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
@@ -80,33 +114,43 @@ Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Cre
 
 A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
 
-				ImageCopyrightAndLicense = ImageIP.SweetPublishingAndWycliffe;
-				return;
-			}
+				case CreditsType.SweetPublishingWithOttScript:
+					return @"Illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
+www.sweetpublishing.com
 
-			if (_oldCreditImageHashes.Contains(md5Hash))
-			{
-				// This is an old one which we don't expect to see in production.
-				AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
-				CreditString = "This is just a demo. We need to add real credits.";
-				ImageCopyrightAndLicense = ImageIP.Unknown;
-				return;
-			}
+Padgett illustrations adapted by Lori MacLean, Beth Rupprecht and Kris Russell © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-			foreach (var coverImageHash in _coverImageHashes)
-			{
-				if (string.Equals(md5Hash, coverImageHash))
-				{
-					AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
-					return;
-				}
+Story script by Willis Ott and Robin Rempel © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+Music and sound effects by Beth Rupprecht © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+Template developed by International Media Services [appreciation to 50+ unnamed contributors] © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
+
+				case CreditsType.SweetPublishingAndWycliffeWithOttScript:
+					return @"Illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
+www.sweetpublishing.com
+
+Painted illustrations by Carolyn Dyk © 1995 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+Padgett illustrations adapted by Lori MacLean, Beth Rupprecht and Kris Russell © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+Story script by Willis Ott and Robin Rempel © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+Music and sound effects by Beth Rupprecht © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+
+Template developed by International Media Services [appreciation to 50+ unnamed contributors] © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
+
+				case CreditsType.Unknown:
+					return "This is just a demo. We need to add real credits.";
+
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
-			IsCreditsOrCoverPage = false;
 		}
 
 		private void AddToOrUpdateCreditSlideMap(string md5Hash, string imagePath)
 		{
-			if (s_creditSlideMap.TryGetValue(md5Hash, out var slideList))
+			if (CreditSlideMap.TryGetValue(md5Hash, out var slideList))
 			{
 				if (slideList == null)
 					slideList = new List<string>();
@@ -114,14 +158,14 @@ A special thanks to the 50+ unnamed people who worked on the story scripts, temp
 			}
 			else
 			{
-				s_creditSlideMap.Add(md5Hash, new List<string> {imagePath});
+				CreditSlideMap.Add(md5Hash, new List<string> {imagePath});
 			}
 		}
 
 		public static void CreateMapFile()
 		{
 			StringBuilder sb = new StringBuilder();
-			foreach (var pair in s_creditSlideMap)
+			foreach (var pair in CreditSlideMap)
 			{
 				foreach (var list in pair.Value)
 					sb.Append(pair.Key).Append(" ").Append(list).Append(Environment.NewLine);

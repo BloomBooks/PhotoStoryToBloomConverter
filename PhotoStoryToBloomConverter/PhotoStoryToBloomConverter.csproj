@@ -87,6 +87,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BloomModel\BloomTranslationInstructionsPage.cs" />
+    <Compile Include="Utilities\ImageUtilities.cs" />
     <Compile Include="Utilities\AudioHelper.cs" />
     <Compile Include="BloomModel\BloomAudio.cs" />
     <Compile Include="BloomModel\BloomBookData.cs" />

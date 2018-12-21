@@ -1,4 +1,5 @@
-﻿using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
+﻿using System;
+using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,22 +63,14 @@ namespace PhotoStoryToBloomConverter.BloomModel
             };
         }
 
-	    private Paragraph GetNarrationParagraph(string text)
+	    private IEnumerable<Paragraph> GetNarrationParagraphs(string text)
 	    {
 		    var contentText = string.IsNullOrWhiteSpace(text) ? "nbsp;" : text;
 
-		    return string.IsNullOrWhiteSpace(Audio.NarrationPath)
-			    ? new Paragraph {Text = contentText}
-			    : new Paragraph
-			    {
-				    Span = new Span
-				    {
-					    Class = "audio-sentence",
-					    Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath),
-					    ContentText = contentText,
-					    Duration = Audio.Duration
-				    }
-			    };
+		    var paragraphs = contentText.Split('\n');
+
+		    foreach (var paragraph in paragraphs)
+			    yield return new Paragraph { Text = paragraph };
 	    }
 
 	    private List<Div> GetContentDivs()
@@ -143,7 +136,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		    foreach (var kv in text)
 		    {
 			    var language = kv.Key;
-			    list.Add(new Div
+			    var div = new Div
 			    {
 				    Class = "bloom-editable normal-style" + (language == Language.English ? " bloom-content1" : ""),
 				    ContentEditable = "true",
@@ -154,8 +147,18 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				    Role = "textbox",
 				    AriaLabel = "false",
 				    DataLanguageTipContent = language.ToString(),
-				    FormattedText = new List<Paragraph> { GetNarrationParagraph(kv.Value) }
-			    });
+				    FormattedText = GetNarrationParagraphs(kv.Value).ToList()
+			    };
+
+			    if (!string.IsNullOrWhiteSpace(Audio.NarrationPath))
+			    {
+					div.Class += " audio-sentence";
+					div.Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath);
+					div.Duration = Audio.Duration;
+					div.AudioRecordingMode = "TextBox";
+				}
+
+			    list.Add(div);
 		    }
 			return list;
 		}
