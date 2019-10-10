@@ -10,7 +10,7 @@ namespace PhotoStoryToBloomConverter
 	{
 		private static bool s_overwrite;
 		private static bool s_batch;
-		private static bool s_includeReferences;
+		public static bool IncludeReferences;
 
 		[STAThread]
 		public static void Main(string[] args)
@@ -58,7 +58,7 @@ namespace PhotoStoryToBloomConverter
 				}
 				else if (arg == "-r")
 				{
-					s_includeReferences = true;
+					IncludeReferences = true;
 				}
 				else if (arg == "-t")
 				{
@@ -150,7 +150,7 @@ namespace PhotoStoryToBloomConverter
 				else
 					docxPaths = new List<string> { docxPath };
 				var project = new Project(projectPath);
-				project.Convert(Path.GetDirectoryName(collectionPath), projectName, null, docxPaths, bloomPath, s_overwrite, s_includeReferences);
+				project.Convert(Path.GetDirectoryName(collectionPath), projectName, null, docxPaths, bloomPath, s_overwrite);
 
 				Console.WriteLine("Press any key to close.");
 				Console.ReadLine();
@@ -203,7 +203,7 @@ namespace PhotoStoryToBloomConverter
 
 				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
 				var project = new Project(projectXmlPath);
-				if (project.Convert(outputDirectory, projectName, projectCode, matchingDocxFiles, bloomExePath, s_overwrite, s_includeReferences, photoStoryProject))
+				if (project.Convert(outputDirectory, projectName, projectCode, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject))
 					successCount++;
 				else
 					failureCount++;

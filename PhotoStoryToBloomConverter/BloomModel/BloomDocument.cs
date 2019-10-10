@@ -21,7 +21,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		private readonly List<BloomPage> _pages = new List<BloomPage>();
 		private readonly CreditsAndCoverExtractor.CreditsType _imageCopyrightAndLicense;
 		private readonly Dictionary<string, string> _duplicateAudioFiles;
-		private readonly bool _includeReferences;
 
 		public BloomDocument(
 			PhotoStoryProject project,
@@ -29,13 +28,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			string bookDirectoryPath,
 			IList<List<KeyValuePair<Language, SourceText>>> allPagesInAllLanguages,
 			Dictionary<string, string> duplicateAudioFiles,
-			string alternateTitles,
-			bool includeReferences)
+			string alternateTitles)
 		{
 			_metadata = BloomMetadata.DefaultBloomMetadata(bookName);
 			_bookData = BloomBookData.DefaultBloomBookData(bookName);
 			_duplicateAudioFiles = duplicateAudioFiles;
-			_includeReferences = includeReferences;
 
 			//A little bit of book-keeping, we want to remove images that are cover or credit images from the final directory
 			var imagePathsToRemove = new SortedSet<string>();
@@ -126,9 +123,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 						}
 					};
 
-					List<KeyValuePair<Language, string>> allTranslationsOfThisPage = null;
+					List<KeyValuePair<Language, SourceText>> allTranslationsOfThisPage = null;
 					if (allPagesInAllLanguages != null && allPagesInAllLanguages.Count > iPage)
-						allTranslationsOfThisPage = allPagesInAllLanguages[iPage].Select(kvp => new KeyValuePair<Language, string>(kvp.Key, kvp.Value.Text)).ToList();
+						allTranslationsOfThisPage = allPagesInAllLanguages[iPage].Select(kvp => new KeyValuePair<Language, SourceText>(kvp.Key, kvp.Value)).ToList();
 
 					var narrationPath = "";
 					if (visualUnit.Narration != null)
@@ -153,7 +150,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 			// For now, we can use includeReferences to decide if we should add translation instructions.
 			// In the future we may need a separate switch.
-			if (includeReferences)
+			if (Program.IncludeReferences)
 				AddTranslationInstructionPages(alternateTitles);
 
 			if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.CreditsType.Unknown)
@@ -199,7 +196,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			_bookData.ContentLanguages[0] = Language.English.GetCode();
 			_bookData.LocalizedBookTitle[0] = englishTitleFromText;
 
-			if (_includeReferences)
+			if (Program.IncludeReferences)
 				_bookData.LocalizedSmallCoverCredits[0] = englishTitleAndReference.Reference;
 
 			// Leaving this in for now even though the current code doesn't allow any variation because if we ever do in the future, it would

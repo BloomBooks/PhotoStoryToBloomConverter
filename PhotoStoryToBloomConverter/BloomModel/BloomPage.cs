@@ -18,10 +18,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		public string PageLabel { get; set; }
 		public string PageDescription { get; set; }
 
-		public BloomPage(BloomImage image, IList<KeyValuePair<Language, string>> allTranslationsOfThisPage, BloomAudio audio)
+		public BloomPage(BloomImage image, IList<KeyValuePair<Language, SourceText>> allTranslationsOfThisPage, BloomAudio audio)
 		{
 			if (allTranslationsOfThisPage == null)
-				allTranslationsOfThisPage = new List<KeyValuePair<Language, string>>();
+				allTranslationsOfThisPage = new List<KeyValuePair<Language, SourceText>>();
 			Uuid = Guid.NewGuid().ToString();
 			PageClasses = "bloom-page numberedPage customPage Device16x9Portrait layout-style-Default bloom-monolingual";
 			PageLabel = "Basic Text & Picture";
