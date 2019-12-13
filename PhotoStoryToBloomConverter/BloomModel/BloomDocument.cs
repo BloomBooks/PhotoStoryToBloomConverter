@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NAudio.Wave;
+using PhotoStoryToBloomConverter.Utilities;
 using SIL.Windows.Forms.ClearShare;
 using SIL.Windows.Forms.ImageToolbox;
 
@@ -19,15 +19,16 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		private readonly BloomMetadata _metadata;
 		private readonly BloomBookData _bookData;
 		private readonly List<BloomPage> _pages = new List<BloomPage>();
-		private readonly CreditsAndCoverExtractor.ImageIP _imageCopyrightAndLicense;
+		private readonly CreditsAndCoverExtractor.CreditsType _imageCopyrightAndLicense;
 		private readonly Dictionary<string, string> _duplicateAudioFiles;
 
 		public BloomDocument(
 			PhotoStoryProject project,
 			string bookName,
 			string bookDirectoryPath,
-			IList<List<KeyValuePair<Language, string>>> allPagesInAllLanguages,
-			Dictionary<string, string> duplicateAudioFiles)
+			IList<List<KeyValuePair<Language, SourceText>>> allPagesInAllLanguages,
+			Dictionary<string, string> duplicateAudioFiles,
+			string alternateTitles)
 		{
 			_metadata = BloomMetadata.DefaultBloomMetadata(bookName);
 			_bookData = BloomBookData.DefaultBloomBookData(bookName);
@@ -42,14 +43,27 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			//For each visual unit create a bloom page
 			//Instead of creating a page for cover and credits pages, put information into the book data (data-div)
 			//The X-Matter pack will create more visually appealing cover pages
-			for (var i = 0; i < project.VisualUnits.Length; i++)
+			for (var iPage = 0; iPage < project.VisualUnits.Length; iPage++)
 			{
-				// With the latest templates (Jan 2017), we have been told that the next to last slide is always unnarrated
-				// and only placed as a pause for reflection. We can ignore it.
-				if (i == project.VisualUnits.Length - 2)
+				if (iPage >= allPagesInAllLanguages.Count)
+				{
+					Console.WriteLine($"ERROR: Could not convert {bookName}. Number of slides from PhotoStory3 and Word document do not match.");
 					continue;
+					//throw new ApplicationException();
+				}
 
-				var visualUnit = project.VisualUnits[i];
+				// The last page may not have text, but we need to process the credits slide anyway.
+				// Otherwise we can ignore pages without text (or with just an asterisk).
+				var englishTextForPage = allPagesInAllLanguages[iPage].Single(kvp => kvp.Key == Language.English).Value;
+				if (englishTextForPage.TextType == TextType.Text)
+				{
+					var englishTextForPageStr = englishTextForPage.Text;
+					if (string.IsNullOrWhiteSpace(englishTextForPageStr) || englishTextForPageStr.Trim() == "*")
+					    if (iPage != project.VisualUnits.Length - 1)
+							continue;
+				}
+
+				var visualUnit = project.VisualUnits[iPage];
 				var psImage = visualUnit.Image;
 				var backgroundAudioPath = GetBackgroundAudioPathForImage(psImage);
 				var backgroundAudioVolume = backgroundAudioPath == null ? 0.0 : GetBackgroundAudioVolumeForImage(psImage);
@@ -67,17 +81,20 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					}
 
 					//If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
-					if (i == 0 && backgroundAudioPath != null)
+					if (iPage == 0 && backgroundAudioPath != null)
 					{
 						_bookData.CoverBackgroundAudioPath = backgroundAudioPath;
 						_bookData.CoverBackgroundAudioVolume = backgroundAudioVolume;
 
 					}
-					if (i == 0 && visualUnit.Narration != null)
+					if (iPage == 0 && visualUnit.Narration != null)
 						_bookData.CoverNarrationPath = visualUnit.Narration.Path;
 
-					if (i == 0)
-						SetContentLanguagesAndLocalizedTitles(allPagesInAllLanguages[i]);
+					if (iPage == 0)
+					{
+						Debug.Assert(allPagesInAllLanguages[iPage].All(kvp => kvp.Value.TextType == TextType.Title));
+						SetContentLanguagesAndLocalizedTitles(allPagesInAllLanguages[iPage]);
+					}
 
 					imagePathsToRemove.Add(Path.Combine(bookDirectoryPath, psImage.Path));
 				}
@@ -106,9 +123,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 						}
 					};
 
-					List<KeyValuePair<Language, string>> allTranslationsOfThisPage = null;
-					if (allPagesInAllLanguages != null && allPagesInAllLanguages.Count > i)
-						allTranslationsOfThisPage = allPagesInAllLanguages[i];
+					List<KeyValuePair<Language, SourceText>> allTranslationsOfThisPage = null;
+					if (allPagesInAllLanguages != null && allPagesInAllLanguages.Count > iPage)
+						allTranslationsOfThisPage = allPagesInAllLanguages[iPage].Select(kvp => new KeyValuePair<Language, SourceText>(kvp.Key, kvp.Value)).ToList();
 
 					var narrationPath = "";
 					if (visualUnit.Narration != null)
@@ -127,30 +144,27 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				}
 			}
 			if (!creditsFound)
-				Console.WriteLine("Credits not processed for {0}", bookName);
+				Console.WriteLine("ERROR: Credits not processed for {0}", bookName);
 			else
 				CreditsAndCoverExtractor.CreateMapFile();
 
-			if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.ImageIP.Unknown)
+			// For now, we can use includeReferences to decide if we should add translation instructions.
+			// In the future we may need a separate switch.
+			if (Program.IncludeReferences)
+				AddTranslationInstructionPages(alternateTitles);
+
+			if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.CreditsType.Unknown)
 			{
 				//Because credits may have been at end of book, go back through and set image credits if we extracted some.
-				foreach (var page in _pages)
+				foreach (var page in _pages.Where(p => !(p is BloomTranslationInstructionsPage)))
 				{
 					var imageLocation = Path.Combine(bookDirectoryPath, page.ImageAndTextWithAudioSplitter.Image.Src);
-					using (var image = PalasoImage.FromFile(imageLocation))
-					{
-						if (_imageCopyrightAndLicense == CreditsAndCoverExtractor.ImageIP.SweetPublishingAndWycliffe && IsWycliffeImage(bookName, image.FileName))
-							ApplyWycliffeIPInfoForImages(image);
-						else
-							ApplySweetPublishingIPInfoForImages(image);
-
-						image.SaveUpdatedMetadataIfItMakesSense();
-					}
+					ImageUtilities.ApplyImageIpInfo(bookName, imageLocation, _imageCopyrightAndLicense);
 				}
 			}
 			else
 			{
-				Debug.Fail("Image copyright and license information unknown for {0}", bookName);
+				Console.WriteLine("ERROR: Image copyright and license information unknown for {0}", bookName);
 			}
 			foreach (var imagePath in imagePathsToRemove)
 			{
@@ -158,11 +172,19 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			}
 		}
 
-		private void SetContentLanguagesAndLocalizedTitles(List<KeyValuePair<Language, string>> allTitles)
+		private void AddTranslationInstructionPages(string alternateTitles)
+		{
+			_pages.AddRange(BloomTranslationInstructionsPage.GetDefaultTranslationInstructionPages());
+			if (!String.IsNullOrWhiteSpace(alternateTitles))
+				_pages.Add(new BloomTranslationInstructionsPage(alternateTitles));
+		}
+
+		private void SetContentLanguagesAndLocalizedTitles(List<KeyValuePair<Language, SourceText>> allTitles)
 		{
 			//English needs to be first. The order of the rest doesn't matter as long as it is the same between the two.
 			//We also want a sanity check to ensure the English title is what we expect.
-			var englishTitleFromText = allTitles.Single(kvp => kvp.Key == Language.English).Value;
+			var englishTitleAndReference = allTitles.Single(kvp => kvp.Key == Language.English).Value;
+			var englishTitleFromText = englishTitleAndReference.Text;
 			if (!VerifyEnglishTitleMatches(englishTitleFromText))
 			{
 				Console.WriteLine(
@@ -174,46 +196,21 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			_bookData.ContentLanguages[0] = Language.English.GetCode();
 			_bookData.LocalizedBookTitle[0] = englishTitleFromText;
 
+			if (Program.IncludeReferences)
+				_bookData.LocalizedSmallCoverCredits[0] = englishTitleAndReference.Reference;
+
 			// Leaving this in for now even though the current code doesn't allow any variation because if we ever do in the future, it would
 			// be important to do.
 			// On the chance there was an acceptable variation (e.g. capitalization), prefer the title from the text document rather than the PS3 project
 			_bookData.Title = englishTitleFromText;
 
 			_bookData.ContentLanguages.AddRange(allTitles.Where(kvp => kvp.Key != Language.English).Select(page => page.Key.GetCode()));
-			_bookData.LocalizedBookTitle.AddRange(allTitles.Where(kvp => kvp.Key != Language.English).Select(page => page.Value));
+			_bookData.LocalizedBookTitle.AddRange(allTitles.Where(kvp => kvp.Key != Language.English).Select(page => page.Value.Text));
 		}
 
 		private bool VerifyEnglishTitleMatches(string englishTitle)
 		{
 			return englishTitle == _bookData.Title;
-		}
-
-		// ENHANCE: use image hashes to ensure we are applying to the correct ones if order changes
-		private bool IsWycliffeImage(string bookName, string imagePath)
-		{
-			// Unfortunate we can't get this information from the project in some consistent way.
-			// For some of the images, the "comment" field includes the original file name but not all.
-			// (If we knew all the original file names, we would know which ones are Wycliffe because they end in 'CD')
-			var file = Path.GetFileNameWithoutExtension(imagePath);
-			return (bookName == "001 God Creates The World" &&
-				new HashSet<string> { "2", "3", "5", "7", "9", "11", "13", "14", "15", "16", "18", "19", "20", "21", "23", "25", "38", "39" }.Contains(file)) ||
-					(bookName == "002 The Fall into Sin" && new HashSet<string> { "5" }.Contains(file));
-		}
-
-		private void ApplySweetPublishingIPInfoForImages(PalasoImage image)
-		{
-			image.Metadata.CopyrightNotice = "© Sweet Publishing";
-			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl("https://creativecommons.org/licenses/by-sa/4.0/");
-			image.Metadata.Creator = "Jim Padgett (may have been skin-darkened or otherwise adapted by Wycliffe Bible Translators, Inc.)";
-		}
-
-		private void ApplyWycliffeIPInfoForImages(PalasoImage image)
-		{
-			image.Metadata.CopyrightNotice = "© Wycliffe Bible Translators, Inc.";
-			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl("https://creativecommons.org/licenses/by-nc-nd/4.0/");
-			image.Metadata.License.RightsStatement = "You may crop and resize but not modify the images for your new work. " +
-				"Images may be rotated or flipped horizontally, provided this does not contradict historical fact or violate cultural norms.";
-			image.Metadata.Creator = "Carolyn Dyk";
 		}
 
 		private string GetDuration(string path)

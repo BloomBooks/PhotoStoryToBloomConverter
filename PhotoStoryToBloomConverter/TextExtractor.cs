@@ -9,33 +9,52 @@ namespace PhotoStoryToBloomConverter
 {
 	class TextExtractor
 	{
-		public static bool TryExtractText(string path, out IList<string> text)
+		private const int kRowLabelColumnIndex = 0;
+		private const int kTextColumnIndex = 2;
+		private const int kReferenceColumnIndex = 3;
+
+		public static bool TryExtractText(string path, out IList<SourceText> extractedText)
 		{
 			try
 			{
-				XWPFDocument doc;
 				using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-					doc = new XWPFDocument(file);
-
-				text = doc.Tables[0].Rows.Skip(1).Select(row => GetAllTextForCell(row.GetCell(2))).ToList();
-
-				// The templates usually have a copyright slide last with "*" as the text (sometimes it just starts with "*")
-				// The newest templates have a blank slide just before that for a "pause".
-				int elementToRemoveCount = 0;
-				foreach (var textElement in text.Reverse())
 				{
-					if (string.IsNullOrWhiteSpace(textElement) || textElement.StartsWith("*"))
-						elementToRemoveCount++;
-					else
-						break;
+					var doc = new XWPFDocument(file);
+
+					extractedText = new List<SourceText>();
+
+					bool hasAltTitles = false;
+					var rows = doc.Tables.SelectMany(t => t.Rows).Skip(1).ToList();
+					for (var i = 0; i < rows.Count; i++)
+					{
+						XWPFTableRow row = rows[i];
+						TextType textType = TextType.Text;
+						if (i == 0)
+						{
+							textType = TextType.Title;
+							var rowLabel = GetAllTextForCell(row.GetCell(kRowLabelColumnIndex));
+							if (rowLabel == "T")
+								hasAltTitles = true;
+						}
+						else if (hasAltTitles && i == 1)
+						{
+							textType = TextType.AlternateTitles;
+						}
+
+						extractedText.Add(new SourceText
+						{
+							TextType = textType,
+							Text = GetAllTextForCell(row.GetCell(kTextColumnIndex)),
+							Reference = GetAllTextForCell(row.GetCell(kReferenceColumnIndex))
+						});
+					}
 				}
-				for (int i = 0; i < elementToRemoveCount; i++)
-					text.RemoveAt(text.Count - 1);
+
 				return true;
 			}
 			catch (Exception e)
 			{
-				text = null;
+				extractedText = null;
 				return false;
 			}
 		}
@@ -43,21 +62,29 @@ namespace PhotoStoryToBloomConverter
 		private static string GetAllTextForCell(XWPFTableCell cell)
 		{
 			StringBuilder sb = new StringBuilder();
-			foreach (var run in cell.Paragraphs.SelectMany(paragraph => paragraph.Runs))
-				sb.Append(run.Text);
+			foreach (var paragraph in cell.Paragraphs)
+			{
+				foreach (var run in paragraph.Runs)
+					sb.Append(run.Text);
+
+				sb.Append('\n');
+			}
+
 			return sb.ToString().Trim();
 		}
+	}
 
-		private string GetReference(XWPFTableRow row)
-		{
-			try
-			{
-				return row.GetCell(3).Paragraphs[0].Runs[0].Text;
-			}
-			catch
-			{
-				return null;
-			}
-		}
+	public enum TextType
+	{
+		Title,
+		AlternateTitles,
+		Text
+	}
+
+	public class SourceText
+	{
+		public TextType TextType { get; set; }
+		public string Text { get; set; }
+		public string Reference { get; set; }
 	}
 }
