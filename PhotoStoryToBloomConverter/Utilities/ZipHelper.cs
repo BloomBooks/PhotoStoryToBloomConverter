@@ -16,7 +16,7 @@ namespace PhotoStoryToBloomConverter.Utilities
 			var fsOut = RobustFile.Create(outputPath);
 			ZipOutputStream zipStream = new ZipOutputStream(fsOut);
 
-			AddDirectory(directoryPath, zipStream);
+			AddDirectoryContents(directoryPath, zipStream);
 
 			zipStream.IsStreamOwner = true; // makes the Close() also close the underlying stream
 			zipStream.Close();
@@ -24,16 +24,11 @@ namespace PhotoStoryToBloomConverter.Utilities
 
 
 		/// <summary>
-		/// Adds a directory, along with all files and subdirectories
+		/// Adds a directory's files and subdirectories, but not the directory itself
 		/// </summary>
-		private static void AddDirectory(string directoryPath, ZipOutputStream zipStream)
+		private static void AddDirectoryContents(string directoryPath, ZipOutputStream zipStream)
 		{
-			var rootName = Path.GetFileName(directoryPath);
-			if (rootName == null)
-				return;
-
-			var dirNameOffset = directoryPath.Length - rootName.Length;
-			AddDirectory(directoryPath, dirNameOffset, zipStream);
+			AddDirectory(directoryPath, directoryPath.Length, zipStream);
 		}
 
 		private static void AddDirectory(string directoryPath, int dirNameOffset, ZipOutputStream zipStream)
