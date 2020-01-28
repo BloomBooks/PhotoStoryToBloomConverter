@@ -20,7 +20,7 @@ namespace PhotoStoryToBloomConverter
 		}
 
 		public bool Convert(string destinationFolder, string projectName, string projectCode, IEnumerable<string> docxPaths,
-			string bloomPath, bool overwrite, PhotoStoryProject photoStoryProject = null)
+			string bloomPath, bool overwrite, PhotoStoryProject photoStoryProject = null, bool alsoZip = false)
 		{
 			if (docxPaths == null)
 				docxPaths = new List<string>();
@@ -41,12 +41,12 @@ namespace PhotoStoryToBloomConverter
 				if (TextExtractor.TryExtractText(docxPath, out var languageText))
 					textByLanguage.Add(language, languageText);
 				else
-					Console.WriteLine($"Error: Could not process {language.ToString()} Word document for {projectName}.");
+					Console.WriteLine($@"Error: Could not process {language.ToString()} Word document for {projectName}.");
 			}
 
 			if (!textByLanguage.ContainsKey(Language.English))
 			{
-				Console.WriteLine($"Error: Could not find document with corresponding English text for {projectName}.");
+				Console.WriteLine($@"Error: Could not find document with corresponding English text for {projectName}.");
 				return false;
 			}
 
@@ -60,7 +60,7 @@ namespace PhotoStoryToBloomConverter
 			{
 				if (language.Value.Count != englishTextElementCount)
 				{
-					Console.WriteLine($"Excluding {language.Key} because it is out of sync with English");
+					Console.WriteLine($@"Excluding {language.Key} because it is out of sync with English");
 					languagesToExclude.Add(language.Key);
 				}
 			}
@@ -102,7 +102,7 @@ namespace PhotoStoryToBloomConverter
 			var convertedProjectDirectory = Path.Combine(destinationFolder, IOHelper.SanitizeFileOrDirectoryName(projectName));
 			if (Directory.Exists(convertedProjectDirectory) && !overwrite)
 			{
-				Console.WriteLine($"Error: A book already exists with the name {projectName}.");
+				Console.WriteLine($@"Error: A book already exists with the name {projectName}.");
 				return false;
 			}
 			if (Directory.Exists(convertedProjectDirectory) && overwrite)
@@ -133,13 +133,22 @@ namespace PhotoStoryToBloomConverter
 				hydrateSuccessful = false;
 			}
 			if (!hydrateSuccessful)
-				Console.WriteLine("ERROR: Unable to hydrate {0}", projectName);
+				Console.WriteLine($@"ERROR: Unable to hydrate {projectName}");
 			else
 			{
-				Console.WriteLine("Successfully converted {0}", projectName);
-				Console.WriteLine("   Languages: {0}", string.Join(", ", textByLanguage.Keys));
-				Console.WriteLine();
+				Console.WriteLine($@"Successfully converted {projectName}");
+				Console.WriteLine($@"   Languages: {string.Join(", ", textByLanguage.Keys)}");
 			}
+
+			if (alsoZip)
+			{
+				var parentDir = Path.GetDirectoryName(convertedProjectDirectory);
+				var outputPath = Path.Combine(parentDir, $"{projectName}.bloom");
+				ZipHelper.Zip(convertedProjectDirectory, outputPath);
+				Console.WriteLine($@"   Also created {outputPath}");
+			}
+
+			Console.WriteLine();
 
 			return true;
 		}

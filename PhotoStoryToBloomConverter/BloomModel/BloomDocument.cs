@@ -47,7 +47,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			{
 				if (iPage >= allPagesInAllLanguages.Count)
 				{
-					Console.WriteLine($"ERROR: Could not convert {bookName}. Number of slides from PhotoStory3 and Word document do not match.");
+					Console.WriteLine($@"ERROR: Could not convert {bookName}. Number of slides from PhotoStory3 and Word document do not match.");
 					continue;
 					//throw new ApplicationException();
 				}
@@ -188,7 +188,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			if (!VerifyEnglishTitleMatches(englishTitleFromText))
 			{
 				Console.WriteLine(
-					$"English title from text ({englishTitleFromText}) does not match title from original project ({_bookData.Title}).");
+					$@"English title from text ({englishTitleFromText}) does not match title from original project ({_bookData.Title}).");
 				//throw new ApplicationException(
 				//	$"English title from text ({englishTitleFromText}) does not match title from original project ({_bookData.Title}).");
 			}

@@ -37,7 +37,7 @@ namespace PhotoStoryToBloomConverter.Utilities
 								ApplySweetPublishingIpInfoForImages(image);
 								break;
 							case ImageCreator.Unknown:
-								Console.WriteLine($"ERROR: Unable to determine image credits for {bookName}, {image.FileName}");
+								Console.WriteLine($@"ERROR: Unable to determine image credits for {bookName}, {image.FileName}");
 								break;
 						}
 						break;

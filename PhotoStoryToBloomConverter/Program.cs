@@ -10,6 +10,7 @@ namespace PhotoStoryToBloomConverter
 	{
 		private static bool s_overwrite;
 		private static bool s_batch;
+		private static bool s_alsoCreateZippedOutput;
 		public static bool IncludeReferences;
 
 		[STAThread]
@@ -52,7 +53,7 @@ namespace PhotoStoryToBloomConverter
 					}
 					else
 					{
-						Console.WriteLine("Project name not set");
+						Console.WriteLine(@"Project name not set");
 						DisplayUsage();
 					}
 				}
@@ -68,7 +69,7 @@ namespace PhotoStoryToBloomConverter
 					}
 					else
 					{
-						Console.WriteLine("Word document path not set");
+						Console.WriteLine(@"Word document path not set");
 						DisplayUsage();
 					}
 				}
@@ -80,7 +81,7 @@ namespace PhotoStoryToBloomConverter
 					}
 					else
 					{
-						Console.WriteLine("Word document directory not set");
+						Console.WriteLine(@"Word document directory not set");
 						DisplayUsage();
 					}
 				}
@@ -92,9 +93,13 @@ namespace PhotoStoryToBloomConverter
 					}
 					else
 					{
-						Console.WriteLine("Project code not set");
+						Console.WriteLine(@"Project code not set");
 						DisplayUsage();
 					}
+				}
+				else if (arg == "-z")
+				{
+					s_alsoCreateZippedOutput = true;
 				}
 				else
 				{
@@ -114,34 +119,34 @@ namespace PhotoStoryToBloomConverter
 
 				if (!Directory.Exists(batchPath))
 				{
-					Console.WriteLine("Error: batchDirectoryPath does not exist.");
+					Console.WriteLine(@"Error: batchDirectoryPath does not exist.");
 					return;
 				}
 				if (!File.Exists(bloomPath))
 				{
-					Console.WriteLine("Error: bloomAppPath does not exist.");
+					Console.WriteLine(@"Error: bloomAppPath does not exist.");
 					return;
 				}
 				BatchConvert(batchPath, bloomPath);
 
-				Console.WriteLine("Press any key to close.");
+				Console.WriteLine(@"Press any key to close.");
 				Console.ReadLine();
 			}
 			else if (!s_batch && projectPath != null && collectionPath != null && bloomPath != null)
 			{
 				if (!File.Exists(projectPath))
 				{
-					Console.WriteLine("Error: projectXmlPath does not exist.");
+					Console.WriteLine(@"Error: projectXmlPath does not exist.");
 					return;
 				}
 				if (!File.Exists(collectionPath))
 				{
-					Console.WriteLine("Error: bloomCollectionPath does not exist.");
+					Console.WriteLine(@"Error: bloomCollectionPath does not exist.");
 					return;
 				}
 				if (!File.Exists(bloomPath))
 				{
-					Console.WriteLine("Error: bloomAppPath does not exist.");
+					Console.WriteLine(@"Error: bloomAppPath does not exist.");
 					return;
 				}
 				IEnumerable<string> docxPaths;
@@ -150,9 +155,9 @@ namespace PhotoStoryToBloomConverter
 				else
 					docxPaths = new List<string> { docxPath };
 				var project = new Project(projectPath);
-				project.Convert(Path.GetDirectoryName(collectionPath), projectName, null, docxPaths, bloomPath, s_overwrite);
+				project.Convert(Path.GetDirectoryName(collectionPath), projectName, null, docxPaths, bloomPath, s_overwrite, alsoZip: s_alsoCreateZippedOutput);
 
-				Console.WriteLine("Press any key to close.");
+				Console.WriteLine(@"Press any key to close.");
 				Console.ReadLine();
 			}
 			else
@@ -163,9 +168,9 @@ namespace PhotoStoryToBloomConverter
 
 		private static void DisplayUsage()
 		{
-			Console.WriteLine("usage: PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath | -td narrativeDocxDirectory -c projectCode]");
-			Console.WriteLine("	   PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f]");
-			Console.WriteLine("	   PhotoStoryToBloomConverter.exe -g");
+			Console.WriteLine(@"usage: PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath | -td narrativeDocxDirectory -c projectCode]");
+			Console.WriteLine(@"	   PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f]");
+			Console.WriteLine(@"	   PhotoStoryToBloomConverter.exe -g");
 		}
 
 		public static void BatchConvert(string directoryPath, string bloomExePath)
@@ -176,7 +181,7 @@ namespace PhotoStoryToBloomConverter
 			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempFolder);
 			var filesToProcess = Directory.EnumerateFiles(directoryPath, "*.wp3").Union(Directory.EnumerateFiles(directoryPath, "*.cab")).ToList();
-			Console.WriteLine("Found {0} files to process in this directory...", filesToProcess.Count);
+			Console.WriteLine($@"Found {filesToProcess.Count} files to process in this directory...");
 			int successCount = 0;
 			int failureCount = 0;
 			foreach (var projectPath in filesToProcess)
@@ -192,7 +197,7 @@ namespace PhotoStoryToBloomConverter
 
 				if (string.IsNullOrWhiteSpace(projectName))
 				{
-					Console.WriteLine("WARNING: Could not get project name from Photo Story project");
+					Console.WriteLine(@"WARNING: Could not get project name from Photo Story project");
 					projectName = projectFileNameWithoutExtension;
 				}
 				else
@@ -203,7 +208,7 @@ namespace PhotoStoryToBloomConverter
 
 				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
 				var project = new Project(projectXmlPath);
-				if (project.Convert(outputDirectory, projectName, projectCode, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject))
+				if (project.Convert(outputDirectory, projectName, projectCode, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject, s_alsoCreateZippedOutput))
 					successCount++;
 				else
 					failureCount++;
@@ -215,9 +220,9 @@ namespace PhotoStoryToBloomConverter
 
 			Console.WriteLine();
 			if (successCount > 0)
-				Console.WriteLine("Successfully processed {0} files.", successCount);
+				Console.WriteLine($@"Successfully processed {successCount} files.");
 			if (failureCount > 0)
-				Console.WriteLine("Failed to process {0} files.", failureCount);
+				Console.WriteLine($@"Failed to process {failureCount} files.");
 			Console.WriteLine();
 		}
 

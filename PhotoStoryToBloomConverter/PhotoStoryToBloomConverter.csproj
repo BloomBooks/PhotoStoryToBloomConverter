@@ -148,6 +148,7 @@
     <Compile Include="PS3Model\VisualUnit.cs" />
     <Compile Include="TextExtractor.cs" />
     <Compile Include="Utilities\IOHelper.cs" />
+    <Compile Include="Utilities\ZipHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BatchConversionDlg.resx">
