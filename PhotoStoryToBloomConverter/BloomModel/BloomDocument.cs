@@ -30,6 +30,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			Dictionary<string, string> duplicateAudioFiles,
 			string alternateTitles)
 		{
+			// For now, we can use includeReferences to decide if we should add translation instructions.
+			// In the future we may need a separate switch.
+			if (Program.IncludeReferences)
+				AddTranslationInstructionPages(alternateTitles);
+
 			_metadata = BloomMetadata.DefaultBloomMetadata(bookName);
 			_bookData = BloomBookData.DefaultBloomBookData(bookName);
 			_duplicateAudioFiles = duplicateAudioFiles;
@@ -147,11 +152,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				Console.WriteLine("ERROR: Credits not processed for {0}", bookName);
 			else
 				CreditsAndCoverExtractor.CreateMapFile();
-
-			// For now, we can use includeReferences to decide if we should add translation instructions.
-			// In the future we may need a separate switch.
-			if (Program.IncludeReferences)
-				AddTranslationInstructionPages(alternateTitles);
 
 			if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.CreditsType.Unknown)
 			{
