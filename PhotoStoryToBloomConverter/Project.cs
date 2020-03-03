@@ -66,7 +66,7 @@ namespace PhotoStoryToBloomConverter
 			}
 			textByLanguage.RemoveAll(l => languagesToExclude.Contains(l.Key));
 
-			string alternateTitles = null;
+			string alternateTitlesAndScrRef = null;
 			for (int index = 0; index < textByLanguage[Language.English].Count; index++)
 			{
 				var allTranslationsOfThisPage = new List<KeyValuePair<Language, SourceText>>(6);
@@ -84,10 +84,10 @@ namespace PhotoStoryToBloomConverter
 						}
 					}
 
-					if (sourceText.TextType == TextType.AlternateTitles)
+					if (sourceText.TextType == TextType.AlternateTitlesAndScrRef)
 					{
 						if (language.Key == Language.English)
-							alternateTitles = sourceText.Text;
+							alternateTitlesAndScrRef = FormatAlternateTitlesAndScrRef(sourceText);
 						allTranslationsOfThisPage = null;
 						continue;
 					}
@@ -115,7 +115,7 @@ namespace PhotoStoryToBloomConverter
 			//  bloom book css and images
 			//  the actual book, a generated html file built from the photostory project
 			CopyAssetsAndResources(Path.GetDirectoryName(_projectXmlPath), convertedProjectDirectory);
-			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, $"{projectName}.htm"), projectName, allPagesInAllLanguages, alternateTitles);
+			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, $"{projectName}.htm"), projectName, allPagesInAllLanguages, alternateTitlesAndScrRef);
 
 			var hydrationArguments =
 				$"hydrate --preset shellbook --bookpath \"{convertedProjectDirectory}\" --vernacularisocode en";
@@ -153,6 +153,11 @@ namespace PhotoStoryToBloomConverter
 			return true;
 		}
 
+		private string FormatAlternateTitlesAndScrRef(SourceText sourceText)
+		{
+			return $"{sourceText.Text}\n\nScripture Reference:\n{sourceText.Reference}";
+		}
+
 		//The assumption is that the wp3 archive only contains assets and a project.xml file. We convert the .xml file and copy the images and audio tracks.
 		private void CopyAssetsAndResources(string sourceFolderPath, string destinationFolderPath)
 		{
@@ -177,10 +182,10 @@ namespace PhotoStoryToBloomConverter
 
 		//Pulls in all the gathered information for the project and creates a single bloom book html file at destinationFile
 		private void ConvertToBloom(PhotoStoryProject project, string destinationFile, string bookName,
-			IList<List<KeyValuePair<Language, SourceText>>> allPagesInAllLanguages, string alternateTitles)
+			IList<List<KeyValuePair<Language, SourceText>>> allPagesInAllLanguages, string alternateTitlesAndScrRef)
 		{
 			var destinationDirectory = Path.GetDirectoryName(destinationFile);
-			var document = new BloomDocument(project, bookName, destinationDirectory, allPagesInAllLanguages, _audioHelper.Duplicates, alternateTitles);
+			var document = new BloomDocument(project, bookName, destinationDirectory, allPagesInAllLanguages, _audioHelper.Duplicates, alternateTitlesAndScrRef);
 			Ps3AndBloomSerializer.SerializeBloomHtml(document.ConvertToHtml(), destinationFile);
 			AddMetaJson(destinationDirectory);
 		}

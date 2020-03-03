@@ -38,7 +38,7 @@ namespace PhotoStoryToBloomConverter
 						}
 						else if (hasAltTitles && i == 1)
 						{
-							textType = TextType.AlternateTitles;
+							textType = TextType.AlternateTitlesAndScrRef;
 						}
 
 						extractedText.Add(new SourceText
@@ -77,7 +77,7 @@ namespace PhotoStoryToBloomConverter
 	public enum TextType
 	{
 		Title,
-		AlternateTitles,
+		AlternateTitlesAndScrRef,
 		Text
 	}
 

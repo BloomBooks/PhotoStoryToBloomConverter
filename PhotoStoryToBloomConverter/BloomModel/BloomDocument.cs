@@ -28,12 +28,12 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			string bookDirectoryPath,
 			IList<List<KeyValuePair<Language, SourceText>>> allPagesInAllLanguages,
 			Dictionary<string, string> duplicateAudioFiles,
-			string alternateTitles)
+			string alternateTitlesAndScrRef)
 		{
 			// For now, we can use includeReferences to decide if we should add translation instructions.
 			// In the future we may need a separate switch.
 			if (Program.IncludeReferences)
-				AddTranslationInstructionPages(alternateTitles);
+				AddTranslationInstructionPages(alternateTitlesAndScrRef);
 
 			_metadata = BloomMetadata.DefaultBloomMetadata(bookName);
 			_bookData = BloomBookData.DefaultBloomBookData(bookName);
@@ -172,11 +172,11 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			}
 		}
 
-		private void AddTranslationInstructionPages(string alternateTitles)
+		private void AddTranslationInstructionPages(string alternateTitlesAndScrRef)
 		{
 			_pages.AddRange(BloomTranslationInstructionsPage.GetDefaultTranslationInstructionPages());
-			if (!String.IsNullOrWhiteSpace(alternateTitles))
-				_pages.Add(new BloomTranslationInstructionsPage(alternateTitles));
+			if (!String.IsNullOrWhiteSpace(alternateTitlesAndScrRef))
+				_pages.Add(new BloomTranslationInstructionsPage(alternateTitlesAndScrRef));
 		}
 
 		private void SetContentLanguagesAndLocalizedTitles(List<KeyValuePair<Language, SourceText>> allTitles)
