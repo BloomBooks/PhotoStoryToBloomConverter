@@ -104,7 +104,7 @@ www.sweetpublishing.com
 
 Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
 
-Illustrations by Carolyn Dyk © 2001 Wycliffe Bible Translators, Inc. licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+Illustrations by Carolyn Dyk © 2001 Wycliffe Bible Translators, Inc. licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International license.
 
 Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 

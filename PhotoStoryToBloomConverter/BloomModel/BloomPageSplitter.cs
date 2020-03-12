@@ -16,7 +16,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			var imageDiv = Image.ConvertToHtml();
 			var topPaneContent = new List<Div> {imageDiv};
 			List<Div> bottomPaneContent =
-				!Program.IncludeReferences ?
+				!Program.SpAppOutput ?
 					GetContentDivs() :
 					new List<Div> {GetHorizontalSplit(12f, GetContentDivs(true), GetContentDivs())};
 			return GetHorizontalSplit(41.3f, topPaneContent, bottomPaneContent);

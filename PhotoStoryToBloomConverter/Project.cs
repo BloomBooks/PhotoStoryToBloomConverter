@@ -196,8 +196,13 @@ namespace PhotoStoryToBloomConverter
 			// TODO: If we include narration audio in any templates we create, we should include the 'media:audio' tag as well.
 			//File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"), "{tags:['media:fulltext', 'media:kbanimation', 'media:music', 'tag:BibleStoryMultimedia']}");
 
+			var subBookshelf = Program.SpAppOutput
+				? "SPApp"
+				: "IMS-IBS";
+
 			// TODO: If we include narration audio in any templates we create, we should include the talkingBook tag as well.
-			File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"), "{features:['motion']}");
+			File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"),
+				$@"{{features:['motion']}},tags{{bookshelf:Wycliffe/{subBookshelf}}}");
 		}
 	}
 }

@@ -8,10 +8,12 @@ namespace PhotoStoryToBloomConverter
 
 	public class Program
 	{
+		// Do some special formatting/output for Story Producer App
+		public static bool SpAppOutput;
+
 		private static bool s_overwrite;
 		private static bool s_batch;
 		private static bool s_alsoCreateZippedOutput;
-		public static bool IncludeReferences;
 
 		[STAThread]
 		public static void Main(string[] args)
@@ -57,9 +59,11 @@ namespace PhotoStoryToBloomConverter
 						DisplayUsage();
 					}
 				}
-				else if (arg == "-r")
+				// Originally, this was -r for "reference" but morphed into -sp for "Story Producer App".
+				// We're leaving the old -r for backwards compatibility.
+				else if (arg == "-r" || arg == "-sp")
 				{
-					IncludeReferences = true;
+					SpAppOutput = true;
 				}
 				else if (arg == "-t")
 				{
@@ -168,9 +172,17 @@ namespace PhotoStoryToBloomConverter
 
 		private static void DisplayUsage()
 		{
-			Console.WriteLine(@"usage: PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath | -td narrativeDocxDirectory -c projectCode]");
-			Console.WriteLine(@"	   PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f]");
-			Console.WriteLine(@"	   PhotoStoryToBloomConverter.exe -g");
+			Console.WriteLine(@"options:");
+			Console.WriteLine(@"	-f: force overwrite; -sp: Story Producer App output; -z: also produce .bloom output");
+			Console.WriteLine();
+			Console.WriteLine(@"typical use case is batch (-b) processing:");
+			Console.WriteLine(@"		PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f] [-sp] [-z]");
+			Console.WriteLine();
+			Console.WriteLine(@"other (much less tested) use cases:");
+			Console.WriteLine(@"	single conversion:");
+			Console.WriteLine(@"		PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath | -td narrativeDocxDirectory -c projectCode]");
+			Console.WriteLine(@"	graphical interface:");
+			Console.WriteLine(@"		PhotoStoryToBloomConverter.exe -g");
 		}
 
 		public static void BatchConvert(string directoryPath, string bloomExePath)

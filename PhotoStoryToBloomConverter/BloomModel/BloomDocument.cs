@@ -30,9 +30,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			Dictionary<string, string> duplicateAudioFiles,
 			string alternateTitlesAndScrRef)
 		{
-			// For now, we can use includeReferences to decide if we should add translation instructions.
-			// In the future we may need a separate switch.
-			if (Program.IncludeReferences)
+			// For now, only SPApp wants these extra pages.
+			if (Program.SpAppOutput)
 				AddTranslationInstructionPages(alternateTitlesAndScrRef);
 
 			_metadata = BloomMetadata.DefaultBloomMetadata(bookName);
@@ -195,9 +194,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 			_bookData.ContentLanguages[0] = Language.English.GetCode();
 			_bookData.LocalizedBookTitle[0] = englishTitleFromText;
-
-			if (Program.IncludeReferences)
-				_bookData.LocalizedSmallCoverCredits[0] = englishTitleAndReference.Reference;
+			_bookData.LocalizedSmallCoverCredits[0] = englishTitleAndReference.Reference;
 
 			// Leaving this in for now even though the current code doesn't allow any variation because if we ever do in the future, it would
 			// be important to do.
