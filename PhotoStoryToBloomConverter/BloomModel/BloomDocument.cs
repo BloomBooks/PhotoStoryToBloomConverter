@@ -74,7 +74,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 				var extractor = new CreditsAndCoverExtractor();
 				extractor.Extract(Path.Combine(bookDirectoryPath, psImage.Path));
-				if (extractor.IsCreditsOrCoverPage)
+				if (extractor.IsCreditsOrCoverPage || iPage == 0)
 				{
 					//If it was a credits page, put credit information into the data divs
 					if (extractor.CreditString != null)
@@ -100,7 +100,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
 						SetContentLanguagesAndLocalizedTitles(allPagesInAllLanguages[iPage]);
 					}
 
-					imagePathsToRemove.Add(Path.Combine(bookDirectoryPath, psImage.Path));
+					if (extractor.IsCreditsOrCoverPage)
+						imagePathsToRemove.Add(Path.Combine(bookDirectoryPath, psImage.Path));
+					else if (iPage == 0)
+					{
+						_bookData.CoverImage = psImage.Path;
+						coverImageFound = true;
+					}
 				}
 				else
 				{
