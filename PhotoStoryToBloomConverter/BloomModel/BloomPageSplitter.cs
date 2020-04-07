@@ -82,7 +82,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 		private IEnumerable<Paragraph> GetNarrationParagraphs(string text)
 		{
-			var contentText = string.IsNullOrWhiteSpace(text) ? "nbsp;" : text;
+			var contentText = string.IsNullOrWhiteSpace(text) ? " " : text;
 
 			var paragraphs = contentText.Split('\n');
 
