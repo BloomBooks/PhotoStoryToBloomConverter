@@ -202,7 +202,7 @@ namespace PhotoStoryToBloomConverter
 
 			// TODO: If we include narration audio in any templates we create, we should include the talkingBook tag as well.
 			File.WriteAllText(Path.Combine(destinationDirectory, "meta.json"),
-				$@"{{features:['motion']}},tags{{bookshelf:Wycliffe/{subBookshelf}}}");
+				$@"{{features:['motion']}},tags{{bookshelf:Wycliffe/{subBookshelf},bookshelf:Bible/{subBookshelf}}}");
 		}
 	}
 }
