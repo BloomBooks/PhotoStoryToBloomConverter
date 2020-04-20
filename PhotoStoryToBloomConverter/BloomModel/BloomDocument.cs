@@ -4,12 +4,11 @@ using PhotoStoryToBloomConverter.PS3Model;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using NAudio.Wave;
 using PhotoStoryToBloomConverter.Utilities;
-using SIL.Windows.Forms.ClearShare;
-using SIL.Windows.Forms.ImageToolbox;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -28,12 +27,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			string bookDirectoryPath,
 			IList<List<KeyValuePair<Language, SourceText>>> allPagesInAllLanguages,
 			Dictionary<string, string> duplicateAudioFiles,
-			string alternateTitlesAndScrRef)
+			SpAppMetadata spAppMetadata)
 		{
-			// For now, only SPApp wants these extra pages.
-			if (Program.SpAppOutput)
-				AddTranslationInstructionPages(alternateTitlesAndScrRef);
-
 			_metadata = BloomMetadata.DefaultBloomMetadata(bookName);
 			_bookData = BloomBookData.DefaultBloomBookData(bookName);
 			_duplicateAudioFiles = duplicateAudioFiles;
@@ -43,6 +38,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 			bool creditsFound = false;
 			bool coverImageFound = false;
+			bool originalHasRealTitleGraphic = false; // as opposed to the normal gray image which we don't use
 
 			//For each visual unit create a bloom page
 			//Instead of creating a page for cover and credits pages, put information into the book data (data-div)
@@ -106,12 +102,13 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					{
 						_bookData.CoverImage = psImage.Path;
 						coverImageFound = true;
+						originalHasRealTitleGraphic = true;
 					}
 				}
 				else
 				{
 					var cropRectangle = new Rectangle();
-					//If the image photostory was using had a crop edit, we need to adjust the image displayed for bloom likewise
+					//If the image PhotoStory was using had a crop edit, we need to adjust the image displayed for bloom likewise
 					if (psImage.Edits != null)
 					{
 						foreach (var edit in psImage.Edits)
@@ -134,7 +131,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					};
 
 					List<KeyValuePair<Language, SourceText>> allTranslationsOfThisPage = null;
-					if (allPagesInAllLanguages != null && allPagesInAllLanguages.Count > iPage)
+					if (allPagesInAllLanguages.Count > iPage)
 						allTranslationsOfThisPage = allPagesInAllLanguages[iPage].Select(kvp => new KeyValuePair<Language, SourceText>(kvp.Key, kvp.Value)).ToList();
 
 					var narrationPath = "";
@@ -154,7 +151,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				}
 			}
 			if (!creditsFound)
-				Console.WriteLine("ERROR: Credits not processed for {0}", bookName);
+				Console.WriteLine($@"ERROR: Credits not processed for {bookName}");
 			else
 				CreditsAndCoverExtractor.CreateMapFile();
 
@@ -169,19 +166,26 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			}
 			else
 			{
-				Console.WriteLine("ERROR: Image copyright and license information unknown for {0}", bookName);
+				Console.WriteLine($@"ERROR: Image copyright and license information unknown for {bookName}");
 			}
 			foreach (var imagePath in imagePathsToRemove)
 			{
 				File.Delete(imagePath);
 			}
+
+			// For now, only SPApp wants these extra pages.
+			if (Program.SpAppOutput)
+			{
+				spAppMetadata.Graphic = originalHasRealTitleGraphic ? SpAppMetadataGraphic.FrontCoverGraphic : SpAppMetadataGraphic.GrayBackground;
+				AddTranslationInstructionPages(spAppMetadata.ToString());
+			}
 		}
 
-		private void AddTranslationInstructionPages(string alternateTitlesAndScrRef)
+		private void AddTranslationInstructionPages(string spAppMetadata)
 		{
-			_pages.AddRange(BloomTranslationInstructionsPage.GetDefaultTranslationInstructionPages());
-			if (!String.IsNullOrWhiteSpace(alternateTitlesAndScrRef))
-				_pages.Add(new BloomTranslationInstructionsPage(alternateTitlesAndScrRef));
+			if (!String.IsNullOrWhiteSpace(spAppMetadata))
+				_pages.Insert(0, new BloomTranslationInstructionsPage(spAppMetadata));
+			_pages.InsertRange(0, BloomTranslationInstructionsPage.GetDefaultTranslationInstructionPages());
 		}
 
 		private void SetContentLanguagesAndLocalizedTitles(List<KeyValuePair<Language, SourceText>> allTitles)
@@ -222,7 +226,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				return new AudioFileReader(path).TotalTime.ToString();
 			var mp3Path = Path.ChangeExtension(path, "mp3");
 			if (File.Exists(mp3Path))
-				return new AudioFileReader(mp3Path).TotalTime.TotalSeconds.ToString();
+				return new AudioFileReader(mp3Path).TotalTime.TotalSeconds.ToString(CultureInfo.InvariantCulture);
 			return "2"; // arbitrary, should not happen.
 		}
 
@@ -234,11 +238,10 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 		private string GetBackgroundAudioPathForImage(Ps3Image image)
 		{
-			if (image.MusicTracks != null && image.MusicTracks.First().SoundTracks != null)
+			if (image.MusicTracks?.First().SoundTracks != null)
 			{
 				var audioPath = image.MusicTracks.First().SoundTracks.First().Path;
-				string realPath;
-				if (_duplicateAudioFiles.TryGetValue(audioPath, out realPath))
+				if (_duplicateAudioFiles.TryGetValue(audioPath, out var realPath))
 					return realPath;
 				return audioPath;
 			}
