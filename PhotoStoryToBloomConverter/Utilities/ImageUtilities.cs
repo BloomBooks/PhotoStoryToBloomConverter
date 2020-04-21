@@ -41,6 +41,18 @@ namespace PhotoStoryToBloomConverter.Utilities
 								break;
 						}
 						break;
+					case CreditsAndCoverExtractor.CreditsType.PaulWhiteAndHolden:
+						Apply(image, "© 2003 BTL, Kenya", "https://creativecommons.org/licenses/by-sa/4.0/", "Tim Holden");
+						break;
+					case CreditsAndCoverExtractor.CreditsType.PaulWhiteNessAndHolden:
+						Apply(image, "© 2003 BTL, Kenya", "https://creativecommons.org/licenses/by-sa/4.0/", "April Ness and Tim Holden");
+						break;
+					case CreditsAndCoverExtractor.CreditsType.LostCoinRheburg:
+						Apply(image, "© Wycliffe Bible Translators, Inc.", "https://creativecommons.org/licenses/by-sa/4.0/", "Judith Rheburg");
+						break;
+					case CreditsAndCoverExtractor.CreditsType.Kande:
+						Apply(image, "© 2006 SIL International", "https://creativecommons.org/licenses/by-sa/4.0/", "MBANJI Bawe Ernest");
+						break;
 					default:
 						throw new ArgumentOutOfRangeException(nameof(creditsType), creditsType, null);
 				}
@@ -71,6 +83,14 @@ namespace PhotoStoryToBloomConverter.Utilities
 			image.Metadata.License.RightsStatement = "You may crop and resize but not modify the images for your new work. " +
 			                                         "Images may be rotated or flipped horizontally, provided this does not contradict historical fact or violate cultural norms.";
 			image.Metadata.Creator = "Carolyn Dyk";
+		}
+
+		private static void Apply(PalasoImage image, string copyrightNotice, string licenseUrl, string creator, string rightsStatement = null)
+		{
+			image.Metadata.CopyrightNotice = copyrightNotice;
+			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl(licenseUrl);
+			image.Metadata.Creator = creator;
+			image.Metadata.License.RightsStatement = rightsStatement;
 		}
 
 		// Unfortunate we can't get this information from the project in some consistent way.

@@ -49,7 +49,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				StyleNumberSequence = "0",
 				ContentLanguages = new List<string> { "en" },
 				Copyright = $"© {DateTime.Now.Year} Wycliffe Bible Translators, Inc.",
-				LicenseUrl = "http://creativecommons.org/licenses/by-sa",
+				LicenseUrl = "http://creativecommons.org/licenses/by-sa/4.0",
 				LicenseNotes = null,
 				LocalizedBookTitle = new List<string> { "" },
 				LocalizedSmallCoverCredits = new[] { "" },

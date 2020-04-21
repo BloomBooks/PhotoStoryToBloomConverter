@@ -157,10 +157,14 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 			if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.CreditsType.Unknown)
 			{
-				//Because credits may have been at end of book, go back through and set image credits if we extracted some.
-				foreach (var page in _pages.Where(p => !(p is BloomTranslationInstructionsPage)))
+				// Go back through and set image credits if we extracted some.
+				var imageSources = _pages.Where(p => !(p is BloomTranslationInstructionsPage))
+					.Select(p => p.ImageAndTextWithAudioSplitter.Image.Src).ToList();
+				if (coverImageFound)
+					imageSources.Add(_bookData.CoverImage);
+				foreach (var imageSource in imageSources)
 				{
-					var imageLocation = Path.Combine(bookDirectoryPath, page.ImageAndTextWithAudioSplitter.Image.Src);
+					var imageLocation = Path.Combine(bookDirectoryPath, imageSource);
 					ImageUtilities.ApplyImageIpInfo(bookName, imageLocation, _imageCopyrightAndLicense);
 				}
 			}

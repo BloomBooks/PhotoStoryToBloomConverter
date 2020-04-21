@@ -17,6 +17,10 @@ namespace PhotoStoryToBloomConverter
 			SweetPublishingAndWycliffe,
 			SweetPublishingWithOttScript,
 			SweetPublishingAndWycliffeWithOttScript,
+			PaulWhiteAndHolden,
+			PaulWhiteNessAndHolden,
+			LostCoinRheburg,
+			Kande,
 			NotCredits
 		}
 
@@ -37,6 +41,14 @@ namespace PhotoStoryToBloomConverter
 			{ "108CCAF0758894DD92D41E7B85577F98", CreditsType.SweetPublishingWithOttScript },
 
 			{ "EEC5D3512C67A54E319AFDDDE74BCA1E", CreditsType.SweetPublishingAndWycliffeWithOttScript },
+
+			{ "07C0F906D56881C5605369051943ED9A", CreditsType.PaulWhiteAndHolden },
+
+			{ "F81D6C857A1929C4C8F4FEC5D40440DC", CreditsType.PaulWhiteNessAndHolden },
+
+			{ "FDA950D9E21F2A1DC1FBCBFC1E965E8D", CreditsType.LostCoinRheburg },
+
+			{ "225594AC0EB807DDB9A6E1DBF1A93128", CreditsType.Kande },
 
 			// Blank gray cover images
 			{ "8C7B5AADFF9AB8B4649481421EB8479F", CreditsType.NotCredits },
@@ -63,17 +75,13 @@ namespace PhotoStoryToBloomConverter
 				var imageType = ImageHashToIpInfoDictionary[md5Hash];
 				switch (imageType)
 				{
-					case CreditsType.SweetPublishing:
-					case CreditsType.SweetPublishingAndWycliffe:
-					case CreditsType.SweetPublishingWithOttScript:
-					case CreditsType.SweetPublishingAndWycliffeWithOttScript:
-					case CreditsType.Unknown:
+					case CreditsType.NotCredits:
+						AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
+						return;
+					default:
 						AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
 						CreditString = GetCreditString(imageType);
 						ImageCopyrightAndLicense = imageType;
-						return;
-					case CreditsType.NotCredits:
-						AddToOrUpdateCreditSlideMap(md5Hash, imagePath);
 						return;
 				}
 			}
@@ -139,6 +147,51 @@ Story script by Willis Ott and Robin Rempel © 2017 Wycliffe Bible Translators, 
 Music and sound effects by Beth Rupprecht © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
 Template developed by International Media Services [appreciation to 50+ unnamed contributors] © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
+
+				case CreditsType.LostCoinRheburg:
+					return @"The Lost Coin
+Text from Luke 15:8-10
+
+Illustrations by: Judith Rheburg, SIL © Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+
+Story script © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+
+Template © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+
+Music © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.";
+
+				case CreditsType.PaulWhiteAndHolden:
+					return @"Based on the Jungle Doctor Story
+By Paul White © 1981
+Original text adapted from Paul White, 1981 ©. Used with permission.
+Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+
+Illustrator: Tim Holden, BTL, Kenya 2003 © Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+
+Template developed by International Media Services [Robin Rempel] © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.";
+
+				case CreditsType.PaulWhiteNessAndHolden:
+					return @"Based on the Jungle Doctor Story
+By Paul White © 1981
+Original text adapted from Paul White, 1981 ©. Used with permission.
+Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+
+Illustrators: April Ness and Tim Holden, BTL, Kenya 2003 © Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+
+Template developed by International Media Services © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.";
+
+				case CreditsType.Kande:
+					return @"Kande’s Story
+
+Copyright
+
+Kande’s Story Video Templates adapted from Kande’s Story Learner’s book by Kathie Watters and Margaret Hill © SIL International 2012
+
+Illustrations by MBANJI Bawe Ernest © SIL International 2006
+
+Story, questions, and illustrations adapted from the Kande Stories, Books 1-5 © 2004 Shellbook Publishing Systems (www.shellbook.com) Used by permission
+
+Disc © VMS Production 2013-Disc Duplication Prohibited";
 
 				case CreditsType.Unknown:
 					return "This is just a demo. We need to add real credits.";
