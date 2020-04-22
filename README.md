@@ -1,14 +1,20 @@
 # PhotoStoryToBloomTools
 
-Tools to help convert the Photo Story 3 format into a bloom book format
+Tools to help convert the Photo Story 3 format into a Bloom book format
 
-## Building
+## About Bloom
+
+[Bloom Website](https://bloomlibrary.org)
+
+On [github.com](https://github.com/BloomBooks/BloomDesktop)
+
+## Building PhotoStoryToBloomTools
 
 This project is built in Visual Studio to run on Windows. 
 
 There is a dependency on libpalaso which can be downloaded from build.palaso.org. Run build/getDependencies-windows.sh.
 
-Open the PhotoStoryToBloomTools.sln file and build the two projects. Two executable files will be created, CABExtracter and PhotoStoryToBloomConverter. They will be at CABExtracter/output/Debug/CABExtracter.exe and PhotoStoryToBloomConverter/output/Debug/PhotoStoryToBloomConverter.exe respectively.
+Open the PhotoStoryToBloomTools.sln file and build the two projects. Two executable files will be created, CABExtracter and PhotoStoryToBloomConverter. They will be at CABExtracter/output/{Debug|Release}/CABExtracter.exe and PhotoStoryToBloomConverter/output/{Debug|Release}/PhotoStoryToBloomConverter.exe respectively.
 
 ## Converting from .doc to .docx (if needed)
 
@@ -20,9 +26,7 @@ This macro is for mass conversion. A user can also convert files one at a time b
 
 ## Conversion from Photo Story 3 to Bloom
 
-You will need a copy of Bloom to perform the conversion. Install it from [bloomlibrary.org/installers](http://bloomlibrary.org/installers).
-
-There is a simple GUI, but the most full-featured implementation is a command-line tool. 
+You will need a copy of Bloom to perform the conversion. Install it from [bloomlibrary.org/installers](https://bloomlibrary.org/installers).
 
 Run
 ```

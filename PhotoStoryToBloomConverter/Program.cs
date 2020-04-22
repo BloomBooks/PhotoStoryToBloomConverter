@@ -34,11 +34,6 @@ namespace PhotoStoryToBloomConverter
 					DisplayUsage();
 					return;
 				}
-				if (arg == "-g")
-				{
-					new MainScreen().ShowDialog();
-					return;
-				}
 				if (arg == "-b")
 				{
 					s_batch = true;
@@ -176,13 +171,11 @@ namespace PhotoStoryToBloomConverter
 			Console.WriteLine(@"	-f: force overwrite; -sp: Story Producer App output; -z: also produce .bloom output");
 			Console.WriteLine();
 			Console.WriteLine(@"typical use case is batch (-b) processing:");
-			Console.WriteLine(@"		PhotoStoryToBloomConverter.exe -b batchDirectoryPath bloomAppPath [-f] [-sp] [-z]");
+			Console.WriteLine(@"	PhotoStoryToBloomConverter.exe -b batchSourceDirectoryPath bloomExePath [-f] [-sp] [-z]");
+			Console.WriteLine(@"		Output will be in batchSourceDirectoryPath/Batch Conversion Output");
 			Console.WriteLine();
-			Console.WriteLine(@"other (much less tested) use cases:");
-			Console.WriteLine(@"	single conversion:");
-			Console.WriteLine(@"		PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomAppPath [-f] [-pn projectName] [-t narrativeDocxPath | -td narrativeDocxDirectory -c projectCode]");
-			Console.WriteLine(@"	graphical interface:");
-			Console.WriteLine(@"		PhotoStoryToBloomConverter.exe -g");
+			Console.WriteLine(@"single conversion (not recommended... much much less tested):");
+			Console.WriteLine(@"	PhotoStoryToBloomConverter.exe projectXmlPath bloomCollectionPath bloomExePath [-f] [-pn projectName] [-t narrativeDocxPath | -td narrativeDocxDirectory -c projectCode]");
 		}
 
 		public static void BatchConvert(string directoryPath, string bloomExePath)

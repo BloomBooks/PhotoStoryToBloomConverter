@@ -74,13 +74,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="taglib-sharp">
       <HintPath>..\lib\dotnet\taglib-sharp.dll</HintPath>
@@ -114,20 +107,8 @@
     <Compile Include="BloomModel\BloomPage.cs" />
     <Compile Include="BloomModel\BloomPageSplitter.cs" />
     <Compile Include="BloomModel\BloomTextBox.cs" />
-    <Compile Include="BatchConversionDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BatchConversionDlg.Designer.cs">
-      <DependentUpon>BatchConversionDlg.cs</DependentUpon>
-    </Compile>
     <Compile Include="CreditsAndCoverExtractor.cs" />
     <Compile Include="Language.cs" />
-    <Compile Include="MainScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainScreen.Designer.cs">
-      <DependentUpon>MainScreen.cs</DependentUpon>
-    </Compile>
     <Compile Include="Mp3Encoder.cs" />
     <Compile Include="OggEncoder.cs" />
     <Compile Include="Project.cs" />
@@ -153,12 +134,6 @@
     <Compile Include="Utilities\ZipHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BatchConversionDlg.resx">
-      <DependentUpon>BatchConversionDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainScreen.resx">
-      <DependentUpon>MainScreen.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
