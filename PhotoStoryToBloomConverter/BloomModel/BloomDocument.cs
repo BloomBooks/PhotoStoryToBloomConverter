@@ -152,8 +152,12 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			}
 			if (!creditsFound)
 				Console.WriteLine($@"ERROR: Credits not processed for {bookName}");
+#if DEBUG
+			// A helpful way to get the md5hashes of the images...
+			// Can't do this on a user's machine due to lack of permission to write to the installed location.
 			else
 				CreditsAndCoverExtractor.CreateMapFile();
+#endif
 
 			if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.CreditsType.Unknown)
 			{
