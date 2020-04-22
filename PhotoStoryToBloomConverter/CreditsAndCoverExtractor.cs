@@ -20,7 +20,6 @@ namespace PhotoStoryToBloomConverter
 			PaulWhiteAndHolden,
 			PaulWhiteNessAndHolden,
 			LostCoinRheburg,
-			Kande,
 			NotCredits
 		}
 
@@ -47,8 +46,6 @@ namespace PhotoStoryToBloomConverter
 			{ "F81D6C857A1929C4C8F4FEC5D40440DC", CreditsType.PaulWhiteNessAndHolden },
 
 			{ "FDA950D9E21F2A1DC1FBCBFC1E965E8D", CreditsType.LostCoinRheburg },
-
-			{ "225594AC0EB807DDB9A6E1DBF1A93128", CreditsType.Kande },
 
 			// Blank gray cover images
 			{ "8C7B5AADFF9AB8B4649481421EB8479F", CreditsType.NotCredits },
@@ -179,19 +176,6 @@ Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 Inter
 Illustrators: April Ness and Tim Holden, BTL, Kenya 2003 © Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
 
 Template developed by International Media Services © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.";
-
-				case CreditsType.Kande:
-					return @"Kande’s Story
-
-Copyright
-
-Kande’s Story Video Templates adapted from Kande’s Story Learner’s book by Kathie Watters and Margaret Hill © SIL International 2012
-
-Illustrations by MBANJI Bawe Ernest © SIL International 2006
-
-Story, questions, and illustrations adapted from the Kande Stories, Books 1-5 © 2004 Shellbook Publishing Systems (www.shellbook.com) Used by permission
-
-Disc © VMS Production 2013-Disc Duplication Prohibited";
 
 				case CreditsType.Unknown:
 					return "This is just a demo. We need to add real credits.";
