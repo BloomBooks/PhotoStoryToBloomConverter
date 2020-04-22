@@ -160,7 +160,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				// Go back through and set image credits if we extracted some.
 				var imageSources = _pages.Where(p => !(p is BloomTranslationInstructionsPage))
 					.Select(p => p.ImageAndTextWithAudioSplitter.Image.Src).ToList();
-				if (coverImageFound)
+				if (originalHasRealTitleGraphic)
 					imageSources.Add(_bookData.CoverImage);
 				foreach (var imageSource in imageSources)
 				{
