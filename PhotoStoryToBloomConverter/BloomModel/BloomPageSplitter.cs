@@ -137,12 +137,17 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					FormattedText = GetNarrationParagraphs(references ? kv.Value.Reference : kv.Value.Text).ToList()
 				};
 
-				if (!references && !string.IsNullOrWhiteSpace(Audio.NarrationPath))
+				if (!string.IsNullOrWhiteSpace(Audio.NarrationPath))
 				{
+					// Have to set these for the references, too, if we are setting it for the main text.
+					// Otherwise, it can confuse Bloom when we open the talking book tool on this page.
 					div.Class += " audio-sentence";
-					div.Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath);
-					div.Duration = Audio.Duration;
 					div.AudioRecordingMode = "TextBox";
+					if (!references)
+					{
+						div.Id = Path.GetFileNameWithoutExtension(Audio.NarrationPath);
+						div.Duration = Audio.Duration;
+					}
 				}
 
 				list.Add(div);
