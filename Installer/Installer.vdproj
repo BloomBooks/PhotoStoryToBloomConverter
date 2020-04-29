@@ -87,6 +87,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_84F93C8D74873F1A5C1898648A025F4C"
+        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AABA38ACF8BD66F488A4A056714E4DAB"
         "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
         "MsmSig" = "8:_UNDEFINED"
@@ -95,12 +101,6 @@
         {
         "MsmKey" = "8:_AABA38ACF8BD66F488A4A056714E4DAB"
         "OwnerKey" = "8:_1B758CC4A573EEA56D8DB03E25D8753A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_BEF77DC5C21E1C2A2F7D44E4D9443933"
-        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -155,6 +155,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_84F93C8D74873F1A5C1898648A025F4C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -217,12 +223,6 @@
         "OwnerKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
         "MsmSig" = "8:_UNDEFINED"
         }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BEF77DC5C21E1C2A2F7D44E4D9443933"
-        "MsmSig" = "8:_UNDEFINED"
-        }
     }
     "Configurations"
     {
@@ -272,6 +272,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -477,20 +485,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AABA38ACF8BD66F488A4A056714E4DAB"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_84F93C8D74873F1A5C1898648A025F4C"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:CABExtracter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_AABA38ACF8BD66F488A4A056714E4DAB"
+                    "_84F93C8D74873F1A5C1898648A025F4C"
                     {
-                    "Name" = "8:NAudio.dll"
+                    "Name" = "8:CABExtracter.exe"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:NAudio.dll"
+            "SourcePath" = "8:CABExtracter.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
@@ -508,20 +516,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BEF77DC5C21E1C2A2F7D44E4D9443933"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AABA38ACF8BD66F488A4A056714E4DAB"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CABExtracter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_BEF77DC5C21E1C2A2F7D44E4D9443933"
+                    "_AABA38ACF8BD66F488A4A056714E4DAB"
                     {
-                    "Name" = "8:CABExtracter.exe"
+                    "Name" = "8:NAudio.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:CABExtracter.exe"
+            "SourcePath" = "8:NAudio.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
@@ -719,15 +727,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PhotoStoryToBloomConverter"
-        "ProductCode" = "8:{756253AF-0A9D-4E4C-89FF-7940B836FCC1}"
-        "PackageCode" = "8:{AEC1BFB9-CAB2-4A71-97BB-F894696EB973}"
+        "ProductCode" = "8:{A28DD465-1303-41A4-9853-CE68990F35DF}"
+        "PackageCode" = "8:{D8242126-B3E7-4039-B30F-21B085438801}"
         "UpgradeCode" = "8:{EB04FADE-7E19-45CD-AA37-5A706D216538}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.1"
+        "ProductVersion" = "8:1.0.2"
         "Manufacturer" = "8:SIL International"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1241,7 +1249,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_14AE745FBF164AB89B68909263278A7B"
             {
-            "SourcePath" = "8:..\\PhotoStoryToBloomConverter\\obj\\Debug\\PhotoStoryToBloomConverter.exe"
+            "SourcePath" = "8:..\\PhotoStoryToBloomConverter\\obj\\Release\\PhotoStoryToBloomConverter.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"

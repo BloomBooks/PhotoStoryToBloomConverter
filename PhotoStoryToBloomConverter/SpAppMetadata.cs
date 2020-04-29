@@ -9,7 +9,7 @@ namespace PhotoStoryToBloomConverter
 	{
 		[Description("gray-background")]
 		GrayBackground,
-		[Description("front-cover-graphic")]
+		[Description("front-cover-picture")]
 		FrontCoverGraphic
 	}
 
@@ -26,8 +26,7 @@ After ""Graphic="" type either ""gray-background"" or ""front-cover-picture"" in
 After ""ScriptureReference="" type a Scripture reference or a subtitle for your story in the LWC.
 After ""TitleIdeasHeading="" type something like ""Ideas for the story title:"" in the LWC.
 After ""TitleIdea1="" type a sample title in the LWC. (Always complete this line providing a title example.)
-After ""TitleIdea2="" type another sample title in the LWC. (Or leave this line blank.)
-After ""TitleIdea3="" type another sample title in the LWC. (Or leave this line blank.)";
+After ""TitleIdea2="" (3, etc) type another sample title in the LWC. (Or leave this line blank.)";
 
 		public SpAppMetadata(string scriptureReference, string titleIdeasHeading, List<string> titleIdeas)
 		{
@@ -36,17 +35,12 @@ After ""TitleIdea3="" type another sample title in the LWC. (Or leave this line 
 			TitleIdeas = titleIdeas;
 		}
 
-		public string EnsureOneLine(string possibleMultiLine)
-		{
-			return string.Join("; ", possibleMultiLine.Split('\n'));
-		}
-
 		public override string ToString()
 		{
 			var sb = new StringBuilder($"{kIntro}\n\n" +
 				$"Graphic={Graphic.ToDescriptionString()}\n" +
-				$"ScriptureReference ={EnsureOneLine(ScriptureReference) }\n" + 
-				$"TitleIdeasHeading ={TitleIdeasHeading}"
+				$"ScriptureReference={ScriptureReference}\n" + 
+				$"TitleIdeasHeading={TitleIdeasHeading}"
 			);
 			for (int i = 0; i < TitleIdeas.Count; i++)
 				sb.Append($"\nTitleIdea{i + 1}={TitleIdeas[i]}");

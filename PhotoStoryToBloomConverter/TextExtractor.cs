@@ -45,7 +45,7 @@ namespace PhotoStoryToBloomConverter
 						{
 							TextType = textType,
 							Text = GetAllTextForCell(row.GetCell(kTextColumnIndex)),
-							Reference = GetAllTextForCell(row.GetCell(kReferenceColumnIndex))
+							Reference = EnsureOneLine(GetAllTextForCell(row.GetCell(kReferenceColumnIndex)))
 						});
 					}
 				}
@@ -71,6 +71,13 @@ namespace PhotoStoryToBloomConverter
 			}
 
 			return sb.ToString().Trim();
+		}
+
+		private static string EnsureOneLine(string possibleMultiLine)
+		{
+			if (possibleMultiLine == null)
+				return null;
+			return string.Join("; ", possibleMultiLine.Split('\n'));
 		}
 	}
 
