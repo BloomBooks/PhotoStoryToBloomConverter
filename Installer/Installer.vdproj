@@ -160,12 +160,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_84F93C8D74873F1A5C1898648A025F4C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FBFB355BE687C8452EED1C4803AC2651"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -223,6 +217,12 @@
         "OwnerKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_84F93C8D74873F1A5C1898648A025F4C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -248,6 +248,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -727,15 +735,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PhotoStoryToBloomConverter"
-        "ProductCode" = "8:{A28DD465-1303-41A4-9853-CE68990F35DF}"
-        "PackageCode" = "8:{D8242126-B3E7-4039-B30F-21B085438801}"
+        "ProductCode" = "8:{B0517939-D72D-4AEE-A750-8F97602CD4DB}"
+        "PackageCode" = "8:{D1ACA475-C6A5-4D1F-9065-697E7FA07180}"
         "UpgradeCode" = "8:{EB04FADE-7E19-45CD-AA37-5A706D216538}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.2"
+        "ProductVersion" = "8:1.0.3"
         "Manufacturer" = "8:SIL International"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

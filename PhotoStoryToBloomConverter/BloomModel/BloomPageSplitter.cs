@@ -18,7 +18,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			List<Div> bottomPaneContent =
 				!Program.SpAppOutput ?
 					GetContentDivs() :
-					new List<Div> {GetHorizontalSplit(12f, GetContentDivs(true), GetContentDivs())};
+					new List<Div> {GetHorizontalSplit(90f, GetContentDivs(), GetContentDivs(true))};
 			return GetHorizontalSplit(41.3f, topPaneContent, bottomPaneContent);
 		}
 
