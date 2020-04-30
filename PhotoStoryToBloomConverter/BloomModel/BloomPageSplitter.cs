@@ -106,11 +106,15 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					}
 				});
 			}
+			Label[] labels = null;
+			if (Program.SpAppOutput)
+				labels = new[] {Label.CreateHintBubble(references ? "Scripture reference" : "Narration text")};
 			divs.AddRange(new List<Div>
 			{
 				new Div
 				{
 					Class = "bloom-translationGroup bloom-trailingElement normal-style",
+					Labels = labels,
 					Divs = GetDivsInTranslationGroup(Text, references)
 				}
 			});
