@@ -15,9 +15,10 @@ namespace PhotoStoryToBloomConverter
 
 	public class SpAppMetadata
 	{
+		public const string kTitleIdea = "TitleIdea";
 		public SpAppMetadataGraphic Graphic { get; set; }
-		public string ScriptureReference { get; set; }
-		public string TitleIdeasHeading { get; set; }
+		public string ScriptureReference { get; }
+		public string TitleIdeasHeading { get; }
 		public List<string> TitleIdeas { get; }
 
 		private const string kIntro = "CONTENT FOR THE TITLE SLIDE (slide #0) in SP APP";
@@ -43,7 +44,7 @@ After ""TitleIdea2="" (3, etc) type another sample title in the LWC. (Or leave t
 				$"TitleIdeasHeading={TitleIdeasHeading}"
 			);
 			for (int i = 0; i < TitleIdeas.Count; i++)
-				sb.Append($"\nTitleIdea{i + 1}={TitleIdeas[i]}");
+				sb.Append($"\n{kTitleIdea}{i + 1}={TitleIdeas[i]}");
 			sb.Append("\n\n");
 			sb.Append(kInstructions);
 			return sb.ToString();

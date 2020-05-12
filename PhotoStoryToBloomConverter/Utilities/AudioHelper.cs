@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using NAudio.Wave;
 using PhotoStoryToBloomConverter.BloomModel;
 
 namespace PhotoStoryToBloomConverter.Utilities
@@ -64,6 +66,21 @@ namespace PhotoStoryToBloomConverter.Utilities
 		public static bool IsAudioFile(string fileName)
 		{
 			return new[] {".mp3", ".wav", ".wma"}.Contains(Path.GetExtension(fileName));
+		}
+
+		public static string GetDuration(string path)
+		{
+			if (File.Exists(path))
+				return GetFormattedDuration(new AudioFileReader(path).TotalTime);
+			var mp3Path = Path.ChangeExtension(path, "mp3");
+			if (File.Exists(mp3Path))
+				return GetFormattedDuration(new AudioFileReader(mp3Path).TotalTime);
+			return "2"; // arbitrary, should not happen.
+		}
+
+		private static string GetFormattedDuration(TimeSpan duration)
+		{
+			return duration.TotalSeconds.ToString(CultureInfo.InvariantCulture);
 		}
 	}
 }

@@ -4,10 +4,8 @@ using PhotoStoryToBloomConverter.PS3Model;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using NAudio.Wave;
 using PhotoStoryToBloomConverter.Utilities;
 
 namespace PhotoStoryToBloomConverter.BloomModel
@@ -139,7 +137,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 						narrationPath = visualUnit.Narration.Path;
 
 					var narrationFilePath = Path.Combine(bookDirectoryPath, BloomAudio.kAudioDirectory, narrationPath);
-					var bloomAudio = new BloomAudio(narrationPath, backgroundAudioPath, backgroundAudioVolume, GetDuration(narrationFilePath));
+					var bloomAudio = new BloomAudio(narrationPath, backgroundAudioPath, backgroundAudioVolume, AudioHelper.GetDuration(narrationFilePath));
 
 					if (!coverImageFound)
 					{
@@ -185,14 +183,17 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			if (Program.SpAppOutput)
 			{
 				spAppMetadata.Graphic = originalHasRealTitleGraphic ? SpAppMetadataGraphic.FrontCoverGraphic : SpAppMetadataGraphic.GrayBackground;
-				AddTranslationInstructionPages(spAppMetadata.ToString());
+				string coverNarrationPath = null;
+				if (!string.IsNullOrWhiteSpace(_bookData.CoverNarrationPath))
+					coverNarrationPath = Path.Combine(bookDirectoryPath, BloomAudio.kAudioDirectory, _bookData.CoverNarrationPath);
+				AddTranslationInstructionPages(spAppMetadata.ToString(), coverNarrationPath);
 			}
 		}
 
-		private void AddTranslationInstructionPages(string spAppMetadata)
+		private void AddTranslationInstructionPages(string spAppMetadata, string coverNarrationPath)
 		{
 			if (!String.IsNullOrWhiteSpace(spAppMetadata))
-				_pages.Insert(0, new BloomTranslationInstructionsPage(spAppMetadata));
+				_pages.Insert(0, new BloomTranslationInstructionsPage(spAppMetadata, coverNarrationPath));
 			_pages.InsertRange(0, BloomTranslationInstructionsPage.GetDefaultTranslationInstructionPages());
 		}
 
@@ -226,16 +227,6 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		private bool VerifyEnglishTitleMatches(string englishTitle)
 		{
 			return englishTitle == _bookData.Title;
-		}
-
-		private string GetDuration(string path)
-		{
-			if (File.Exists(path))
-				return new AudioFileReader(path).TotalTime.ToString();
-			var mp3Path = Path.ChangeExtension(path, "mp3");
-			if (File.Exists(mp3Path))
-				return new AudioFileReader(mp3Path).TotalTime.TotalSeconds.ToString(CultureInfo.InvariantCulture);
-			return "2"; // arbitrary, should not happen.
 		}
 
 		private double GetBackgroundAudioVolumeForImage(Ps3Image image)
