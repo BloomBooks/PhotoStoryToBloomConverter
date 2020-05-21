@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.IO;
+using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
 using PhotoStoryToBloomConverter.Utilities;
+using SIL.IO;
 
 namespace PhotoStoryToBloomConverter
 {
@@ -15,19 +18,12 @@ namespace PhotoStoryToBloomConverter
 
 	public class SpAppMetadata
 	{
-		public const string kTitleIdea = "TitleIdea";
+		public const string kTitleIdeaKey = "spTitleIdea";
 		public SpAppMetadataGraphic Graphic { get; set; }
 		public string ScriptureReference { get; }
 		public string TitleIdeasHeading { get; }
 		public List<string> TitleIdeas { get; }
-
-		private const string kIntro = "CONTENT FOR THE TITLE SLIDE (slide #0) in SP APP";
-		private const string kInstructions = @"INSTRUCTIONS:
-After ""Graphic="" type either ""gray-background"" or ""front-cover-picture"" in English to indicate your choice for the title slide image.
-After ""ScriptureReference="" type a Scripture reference or a subtitle for your story in the LWC.
-After ""TitleIdeasHeading="" type something like ""Ideas for the story title:"" in the LWC.
-After ""TitleIdea1="" type a sample title in the LWC. (Always complete this line providing a title example.)
-After ""TitleIdea2="" (3, etc) type another sample title in the LWC. (Or leave this line blank.)";
+		public string TitleIdeaNarrationPath { get; private set; }
 
 		public SpAppMetadata(string scriptureReference, string titleIdeasHeading, List<string> titleIdeas)
 		{
@@ -36,18 +32,63 @@ After ""TitleIdea2="" (3, etc) type another sample title in the LWC. (Or leave t
 			TitleIdeas = titleIdeas;
 		}
 
-		public override string ToString()
+		public void PrepareNarrationAudio(string narrationFilePath)
 		{
-			var sb = new StringBuilder($"{kIntro}\n\n" +
-				$"Graphic={Graphic.ToDescriptionString()}\n" +
-				$"ScriptureReference={ScriptureReference}\n" + 
-				$"TitleIdeasHeading={TitleIdeasHeading}"
-			);
-			for (int i = 0; i < TitleIdeas.Count; i++)
-				sb.Append($"\n{kTitleIdea}{i + 1}={TitleIdeas[i]}");
-			sb.Append("\n\n");
-			sb.Append(kInstructions);
-			return sb.ToString();
+			// We use the same recording here which is the title on the cover.
+			// We need to clone the audio file so if the user re-records one, it doesn't change both.
+
+			// When we get here, we have the .wav in our path, but the file has already been converted to .mp3.
+			var audioExtension = ".mp3";
+			narrationFilePath = Path.ChangeExtension(narrationFilePath, "mp3");
+			var audioDirectoryPath = Path.GetDirectoryName(narrationFilePath);
+			if (audioDirectoryPath == null)
+				return;
+
+			TitleIdeaNarrationPath = Path.Combine(audioDirectoryPath, $"{Guid.NewGuid()}{audioExtension}");
+			RobustFile.Copy(narrationFilePath, TitleIdeaNarrationPath);
+		}
+
+		public List<Div> GetSpAppMetadataForDataDiv(string language1Code)
+		{
+			var divs = new List<Div>();
+			divs.AddRange(new List<Div>
+			{
+				new Div
+				{
+					DataBook = "spGraphic", Lang = "*",
+					FormattedText = Paragraph.GetFormattedText(Graphic.ToDescriptionString())
+				},
+				new Div
+				{
+					DataBook = "spReference", Lang = language1Code,
+					FormattedText = Paragraph.GetFormattedText(ScriptureReference)
+				},
+				new Div
+				{
+					DataBook = "spTitleIdeasHeading", Lang = language1Code,
+					FormattedText = Paragraph.GetFormattedText(TitleIdeasHeading)
+				}
+			});
+			if (TitleIdeas?.Count > 0)
+			{
+				for (int i = 0; i < TitleIdeas.Count; i++)
+				{
+					List<Paragraph> formattedText;
+					if (i == 0)
+						formattedText = new List<Paragraph> {Paragraph.GetParagraphForTextWithAudio(TitleIdeas[0], TitleIdeaNarrationPath)};
+					else
+						formattedText = Paragraph.GetFormattedText(TitleIdeas[i]);
+
+					divs.Add(new Div
+					{
+						DataBook = $"{kTitleIdeaKey}{i + 1}",
+						Lang = language1Code,
+						FormattedText = formattedText
+					});
+				}
+			}
+
+			return divs;
 		}
 	}
 }

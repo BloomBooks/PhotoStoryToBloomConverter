@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel;
-using System.IO;
 
 namespace PhotoStoryToBloomConverter.BloomModel
 {
@@ -36,6 +35,8 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		public string[] LocalizedInsideBackCover;
 		public string[] LocalizedOutsideBackCover;
 		public string[] LocalizedLicenseDescription;
+
+		public SpAppMetadata SpAppMetadata { get; set; }
 
 		public List<List<Dictionary<string, string>>> LocalizedNarrationList;
 
@@ -82,36 +83,24 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			if (CoverBackgroundAudioPath != null)
 				dataDiv.Divs.Add(new Div { DataXmatterPage = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString(CultureInfo.InvariantCulture) });
 
-			//Only add English or all languages will be included in the actual pages
-			dataDiv.Divs.Add(new Div { DataBook = "contentLanguage1", Lang = "*", SimpleText = "en" });
+			const string language1Code = "en";
+			dataDiv.Divs.Add(new Div { DataBook = "contentLanguage1", Lang = "*", SimpleText = language1Code });
 
-			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((title, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { GetTitleParagraph(title) } }).ToArray());
+			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((title, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> {Paragraph.GetParagraphForTextWithAudio(title, CoverNarrationPath) } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = credits } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = contributions } } }).ToArray());
-			dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = GetMultiParagraphFromString(acknowledgments) }).ToArray());
+			dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = Paragraph.GetMultiParagraphFromString(acknowledgments) }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedFunding.Select((funding, index) => new Div { DataBook = "funding", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = funding } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedInsideFrontCover.Select((insideFrontCover, index) => new Div { DataBook = "insideFrontCover", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = insideFrontCover } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedInsideBackCover.Select((insideBackCover, index) => new Div { DataBook = "insideBackCover", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = insideBackCover } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOutsideBackCover.Select((outsideBackCover, index) => new Div { DataBook = "outsideBackCover", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = outsideBackCover } } }).ToArray());
-			return dataDiv;
-		}
 
-		private Paragraph GetTitleParagraph(string title)
-		{
-			if (string.IsNullOrWhiteSpace(CoverNarrationPath))
-				return new Paragraph {Text = title};
-			return new Paragraph
+			if (Program.SpAppOutput)
 			{
-				Span = new Span {Id = Path.GetFileNameWithoutExtension(CoverNarrationPath), Class = "audio-sentence", ContentText = title}
-			};
-		}
+				dataDiv.Divs.AddRange(SpAppMetadata.GetSpAppMetadataForDataDiv(language1Code));
+			}
 
-		private static List<Paragraph> GetMultiParagraphFromString(string input)
-		{
-			var result = new List<Paragraph>();
-			foreach (var paragraph in input.Split(new[] { "\r\n" }, StringSplitOptions.None))
-				result.Add(new Paragraph {Text = paragraph});
-			return result;
+			return dataDiv;
 		}
 
 		public string GetBackgroundAudio()

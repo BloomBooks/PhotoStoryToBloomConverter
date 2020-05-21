@@ -182,18 +182,19 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			// For now, only SPApp wants these extra pages.
 			if (Program.SpAppOutput)
 			{
-				spAppMetadata.Graphic = originalHasRealTitleGraphic ? SpAppMetadataGraphic.FrontCoverGraphic : SpAppMetadataGraphic.GrayBackground;
 				string coverNarrationPath = null;
 				if (!string.IsNullOrWhiteSpace(_bookData.CoverNarrationPath))
 					coverNarrationPath = Path.Combine(bookDirectoryPath, BloomAudio.kAudioDirectory, _bookData.CoverNarrationPath);
-				AddTranslationInstructionPages(spAppMetadata.ToString(), coverNarrationPath);
+				AddTranslationInstructionPages();
+
+				spAppMetadata.Graphic = originalHasRealTitleGraphic ? SpAppMetadataGraphic.FrontCoverGraphic : SpAppMetadataGraphic.GrayBackground;
+				spAppMetadata.PrepareNarrationAudio(coverNarrationPath);
+				_bookData.SpAppMetadata = spAppMetadata;
 			}
 		}
 
-		private void AddTranslationInstructionPages(string spAppMetadata, string coverNarrationPath)
+		private void AddTranslationInstructionPages()
 		{
-			if (!String.IsNullOrWhiteSpace(spAppMetadata))
-				_pages.Insert(0, new BloomTranslationInstructionsPage(spAppMetadata, coverNarrationPath));
 			_pages.InsertRange(0, BloomTranslationInstructionsPage.GetDefaultTranslationInstructionPages());
 		}
 
