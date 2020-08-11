@@ -54,7 +54,10 @@ namespace PhotoStoryToBloomConverter.Utilities
 						throw new ArgumentOutOfRangeException(nameof(creditsType), creditsType, null);
 				}
 
-				image.SaveUpdatedMetadataIfItMakesSense();
+				// Don't do this. If there is a problem with the existing exif entries, it will fail.
+				//image.SaveUpdatedMetadataIfItMakesSense();
+				// Instead do this:
+				image.Save(image.OriginalFilePath);
 			}
 		}
 
