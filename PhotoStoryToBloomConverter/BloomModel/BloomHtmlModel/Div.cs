@@ -11,12 +11,9 @@ namespace PhotoStoryToBloomConverter.BloomModel.BloomHtmlModel
 		[XmlAttribute("id")]
 		public string Id
 		{
-			get
-			{
-				// We don't want to serialize to invalid HTML
-				return string.IsNullOrWhiteSpace(_id) ? null : _id;
-			}
-			set { _id = value; }
+			// We don't want to serialize to invalid HTML
+			get => string.IsNullOrWhiteSpace(_id) ? null : _id;
+			set => _id = value;
 		}
 
 		[XmlAttribute("class")]

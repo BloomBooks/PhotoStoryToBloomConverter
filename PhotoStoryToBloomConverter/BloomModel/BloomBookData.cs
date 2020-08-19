@@ -83,10 +83,20 @@ namespace PhotoStoryToBloomConverter.BloomModel
 			if (CoverBackgroundAudioPath != null)
 				dataDiv.Divs.Add(new Div { DataXmatterPage = "frontCover", BackgroundAudio = GetBackgroundAudio(), BackgroundAudioVolume = CoverBackgroundAudioVolume.ToString(CultureInfo.InvariantCulture) });
 
-			const string language1Code = "en";
+			string language1Code = Program.PrimaryOutputLanguage;
 			dataDiv.Divs.Add(new Div { DataBook = "contentLanguage1", Lang = "*", SimpleText = language1Code });
 
-			dataDiv.Divs.AddRange(LocalizedBookTitle.Select((title, index) => new Div { DataBook = "bookTitle", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> {Paragraph.GetParagraphForTextWithAudio(title, CoverNarrationPath) } }).ToArray());
+			IEnumerable<Div> localizedBookTitles = LocalizedBookTitle.Select(delegate(string title, int index)
+			{
+				string narrationFilePath = ContentLanguages[index] == Program.PrimaryOutputLanguage ? CoverNarrationPath : null;
+				return new Div
+				{
+					DataBook = "bookTitle", Lang = ContentLanguages[index],
+					FormattedText = new List<Paragraph> {Paragraph.GetParagraphForTextWithAudio(title, narrationFilePath)}
+				};
+			}).ToArray();
+
+			dataDiv.Divs.AddRange(localizedBookTitles);
 			dataDiv.Divs.AddRange(LocalizedSmallCoverCredits.Select((credits, index) => new Div { DataBook = "smallCoverCredits", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = credits } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalContributions.Select((contributions, index) => new Div { DataBook = "originalContributions", Lang = ContentLanguages[index], FormattedText = new List<Paragraph> { new Paragraph { Text = contributions } } }).ToArray());
 			dataDiv.Divs.AddRange(LocalizedOriginalAcknowledgments.Select((acknowledgments, index) => new Div { DataBook = "originalAcknowledgments", Lang = ContentLanguages[index], FormattedText = Paragraph.GetMultiParagraphFromString(acknowledgments) }).ToArray());

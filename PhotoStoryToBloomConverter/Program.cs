@@ -11,6 +11,8 @@ namespace PhotoStoryToBloomConverter
 		// Do some special formatting/output for Story Producer App
 		public static bool SpAppOutput;
 
+		public static string PrimaryOutputLanguage = "en";
+
 		private static bool s_overwrite;
 		private static bool s_batch;
 		private static bool s_alsoCreateZippedOutput;
@@ -100,6 +102,19 @@ namespace PhotoStoryToBloomConverter
 				{
 					s_alsoCreateZippedOutput = true;
 				}
+				else if (arg == "-lang")
+				{
+					if (args.Length > i + 1)
+					{
+						PrimaryOutputLanguage = args[i + 1];
+						i++;
+					}
+					else
+					{
+						Console.WriteLine(@"Primary output language code not set");
+						DisplayUsage();
+					}
+				}
 				else
 				{
 					if (projectPath == null)
@@ -110,6 +125,7 @@ namespace PhotoStoryToBloomConverter
 						bloomPath = arg;
 				}
 			}
+			Console.WriteLine($"Primary output language is {PrimaryOutputLanguage}");
 			if (s_batch && projectPath != null)
 			{
 				//Reassign arguments
@@ -168,10 +184,11 @@ namespace PhotoStoryToBloomConverter
 		private static void DisplayUsage()
 		{
 			Console.WriteLine(@"options:");
-			Console.WriteLine(@"	-f: force overwrite; -sp: Story Producer App output; -z: also produce .bloom output");
+			Console.WriteLine(@"	-f: force overwrite; -sp: Story Producer App output; -z: also produce .bloom output;");
+			Console.WriteLine(@"	-lang: primary output language code (default is en)");
 			Console.WriteLine();
 			Console.WriteLine(@"typical use case is batch (-b) processing:");
-			Console.WriteLine(@"	PhotoStoryToBloomConverter.exe -b batchSourceDirectoryPath bloomExePath [-f] [-sp] [-z]");
+			Console.WriteLine(@"	PhotoStoryToBloomConverter.exe -b batchSourceDirectoryPath bloomExePath [-f] [-sp] [-z] [-lang primaryOutputLanguageCode]");
 			Console.WriteLine(@"		Output will be in batchSourceDirectoryPath/Batch Conversion Output");
 			Console.WriteLine();
 			Console.WriteLine(@"single conversion (not recommended... much much less tested):");

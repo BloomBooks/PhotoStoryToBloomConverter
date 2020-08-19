@@ -129,7 +129,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				var language = kv.Key;
 				var div = new Div
 				{
-					Class = "bloom-editable normal-style" + (language == Language.English ? " bloom-content1" : ""),
+					Class = "bloom-editable normal-style" + (language.GetCode() == Program.PrimaryOutputLanguage ? " bloom-content1" : ""),
 					ContentEditable = "true",
 					Lang = language.GetCode(),
 					Style = "min-height: 24px;",
@@ -141,7 +141,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					FormattedText = GetNarrationParagraphs(references ? kv.Value.Reference : kv.Value.Text).ToList()
 				};
 
-				if (!string.IsNullOrWhiteSpace(Audio.NarrationPath))
+				if (!string.IsNullOrWhiteSpace(Audio.NarrationPath) && language.GetCode() == Program.PrimaryOutputLanguage)
 				{
 					// Have to set these for the references, too, if we are setting it for the main text.
 					// Otherwise, it can confuse Bloom when we open the talking book tool on this page.

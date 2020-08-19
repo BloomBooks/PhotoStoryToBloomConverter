@@ -81,6 +81,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4AC3BD20CBEED67A6DFDE59B991BB2EF"
+        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AABA38ACF8BD66F488A4A056714E4DAB"
         "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
         "MsmSig" = "8:_UNDEFINED"
@@ -113,6 +119,30 @@
         {
         "MsmKey" = "8:_C90C769CCEF680756AA8B1366F3DDC0D"
         "OwnerKey" = "8:_435F789E7099609CEDB5868CDD63A7D5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CD10468D0F036A241C69DF52F52BC926"
+        "OwnerKey" = "8:_4AC3BD20CBEED67A6DFDE59B991BB2EF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CD10468D0F036A241C69DF52F52BC926"
+        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
+        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
+        "OwnerKey" = "8:_4AC3BD20CBEED67A6DFDE59B991BB2EF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -167,6 +197,24 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_AABA38ACF8BD66F488A4A056714E4DAB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4AC3BD20CBEED67A6DFDE59B991BB2EF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CD10468D0F036A241C69DF52F52BC926"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -414,6 +462,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4AC3BD20CBEED67A6DFDE59B991BB2EF"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SIL.Windows.Forms, Version=3.1.0.0, Culture=neutral, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_4AC3BD20CBEED67A6DFDE59B991BB2EF"
+                    {
+                    "Name" = "8:SIL.Windows.Forms.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SIL.Windows.Forms.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AABA38ACF8BD66F488A4A056714E4DAB"
             {
             "AssemblyRegister" = "3:1"
@@ -490,6 +569,68 @@
                     }
                 }
             "SourcePath" = "8:ICSharpCode.SharpZipLib.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_CD10468D0F036A241C69DF52F52BC926"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:taglib-sharp, Version=2.1.2.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_CD10468D0F036A241C69DF52F52BC926"
+                    {
+                    "Name" = "8:taglib-sharp.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:taglib-sharp.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FBCFDB0B63667C7008CDFA7851798880"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SIL.Core, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_FBCFDB0B63667C7008CDFA7851798880"
+                    {
+                    "Name" = "8:SIL.Core.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SIL.Core.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
@@ -594,15 +735,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PhotoStoryToBloomConverter"
-        "ProductCode" = "8:{50C9C87F-9814-46A9-9C3A-71A8AA2091ED}"
-        "PackageCode" = "8:{ABAF717C-170B-4A10-95DE-053226CC8EE1}"
+        "ProductCode" = "8:{540A6F9E-CA1D-4BB8-AC48-C26936824C17}"
+        "PackageCode" = "8:{8873A2D2-5ED2-4421-8C8E-09FA84FC1E79}"
         "UpgradeCode" = "8:{EB04FADE-7E19-45CD-AA37-5A706D216538}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.7"
+        "ProductVersion" = "8:1.0.8"
         "Manufacturer" = "8:SIL International"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

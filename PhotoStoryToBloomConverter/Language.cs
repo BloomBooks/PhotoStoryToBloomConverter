@@ -10,6 +10,7 @@ namespace PhotoStoryToBloomConverter
 		Portuguese,
 		Spanish,
 		Tagalog,
+		TokPisin,
 		Unknown
 	}
 
@@ -25,8 +26,9 @@ namespace PhotoStoryToBloomConverter
 				case Language.Portuguese: return "pt";
 				case Language.Spanish: return "es";
 				case Language.Tagalog: return "tl";
+				case Language.TokPisin: return "tpi";
 				default:
-					throw new ArgumentOutOfRangeException("language", language, null);
+					throw new ArgumentOutOfRangeException(nameof(language), language, null);
 			}
 		}
 
@@ -45,8 +47,8 @@ namespace PhotoStoryToBloomConverter
 				case "por": return Language.Portuguese;
 				case "spa": return Language.Spanish;
 				case "tgl": return Language.Tagalog;
+				case "tpi": return Language.TokPisin;
 
-				case "eng":
 				default: return Language.English;
 			}
 		}

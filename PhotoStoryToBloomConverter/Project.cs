@@ -77,16 +77,16 @@ namespace PhotoStoryToBloomConverter
 					{
 						if (!sourceText.Text.StartsWith(projectCode))
 							sourceText.Text = $"{projectCode} {sourceText.Text}";
-						if (language.Key == Language.English)
+						if (language.Key.GetCode() == Program.PrimaryOutputLanguage)
 						{
-							// We decided to give preference to the title in the English docx rather than the original PhotoStory project
+							// We decided to give preference to the title in the docx rather than the original PhotoStory project
 							projectName = sourceText.Text;
 						}
 					}
 
 					if (sourceText.TextType == TextType.AlternateTitlesAndScrRef)
 					{
-						if (Program.SpAppOutput && language.Key == Language.English)
+						if (Program.SpAppOutput && language.Key.GetCode() == Program.PrimaryOutputLanguage)
 							spAppMetadata = CreateSpAppMetadata(sourceText);
 						allTranslationsOfThisPage = null;
 						continue;
@@ -118,7 +118,7 @@ namespace PhotoStoryToBloomConverter
 			ConvertToBloom(photoStoryProject, Path.Combine(convertedProjectDirectory, $"{projectName}.htm"), projectName, allPagesInAllLanguages, spAppMetadata);
 
 			var hydrationArguments =
-				$"hydrate --preset shellbook --bookpath \"{convertedProjectDirectory}\" --vernacularisocode en";
+				$"hydrate --preset shellbook --bookpath \"{convertedProjectDirectory}\" --vernacularisocode {Program.PrimaryOutputLanguage}";
 			bool hydrateSuccessful;
 			try
 			{

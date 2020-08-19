@@ -200,34 +200,20 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 		private void SetContentLanguagesAndLocalizedTitles(List<KeyValuePair<Language, SourceText>> allTitles)
 		{
-			//English needs to be first. The order of the rest doesn't matter as long as it is the same between the two.
-			//We also want a sanity check to ensure the English title is what we expect.
-			var englishTitleAndReference = allTitles.Single(kvp => kvp.Key == Language.English).Value;
-			var englishTitleFromText = englishTitleAndReference.Text;
-			if (!VerifyEnglishTitleMatches(englishTitleFromText))
-			{
-				Console.WriteLine(
-					$@"English title from text ({englishTitleFromText}) does not match title from original project ({_bookData.Title}).");
-				//throw new ApplicationException(
-				//	$"English title from text ({englishTitleFromText}) does not match title from original project ({_bookData.Title}).");
-			}
+			var primaryLanguageTitleAndReference = allTitles.Single(kvp => kvp.Key.GetCode() == Program.PrimaryOutputLanguage).Value;
+			var primaryLanguageTitleFromText = primaryLanguageTitleAndReference.Text;
 
-			_bookData.ContentLanguages[0] = Language.English.GetCode();
-			_bookData.LocalizedBookTitle[0] = englishTitleFromText;
-			_bookData.LocalizedSmallCoverCredits[0] = englishTitleAndReference.Reference;
+			//PrimaryOutputLanguage needs to be first.
+			//The order of the rest doesn't matter as long as it is the same between ContentLanguages and LocalizedBookTitle.
+			_bookData.ContentLanguages[0] = Program.PrimaryOutputLanguage;
+			_bookData.LocalizedBookTitle[0] = primaryLanguageTitleFromText;
+			_bookData.LocalizedSmallCoverCredits[0] = primaryLanguageTitleAndReference.Reference;
 
-			// Leaving this in for now even though the current code doesn't allow any variation because if we ever do in the future, it would
-			// be important to do.
-			// On the chance there was an acceptable variation (e.g. capitalization), prefer the title from the text document rather than the PS3 project
-			_bookData.Title = englishTitleFromText;
+			_bookData.Title = primaryLanguageTitleFromText;
 
-			_bookData.ContentLanguages.AddRange(allTitles.Where(kvp => kvp.Key != Language.English).Select(page => page.Key.GetCode()));
-			_bookData.LocalizedBookTitle.AddRange(allTitles.Where(kvp => kvp.Key != Language.English).Select(page => page.Value.Text));
-		}
-
-		private bool VerifyEnglishTitleMatches(string englishTitle)
-		{
-			return englishTitle == _bookData.Title;
+			var notPrimary = allTitles.Where(kvp => kvp.Key.GetCode() != Program.PrimaryOutputLanguage).ToList();
+			_bookData.ContentLanguages.AddRange(notPrimary.Select(page => page.Key.GetCode()));
+			_bookData.LocalizedBookTitle.AddRange(notPrimary.Select(page => page.Value.Text));
 		}
 
 		private double GetBackgroundAudioVolumeForImage(Ps3Image image)
