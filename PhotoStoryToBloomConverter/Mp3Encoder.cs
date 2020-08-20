@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NAudio.Lame;
+﻿using NAudio.Lame;
 using NAudio.Wave;
 
 namespace PhotoStoryToBloomConverter
@@ -14,7 +9,7 @@ namespace PhotoStoryToBloomConverter
 		public string Encode(string sourcePath, string destPathWithoutExtension)
 		{
 			var outputPath = destPathWithoutExtension + "." + FormatName;
-			var reader = new WaveFileReader(sourcePath);
+			using (var reader = new WaveFileReader(sourcePath))
 			using (var writer = new LameMP3FileWriter(outputPath, reader.WaveFormat, LAMEPreset.VBR_50))
 			{
 				reader.CopyTo(writer);
@@ -22,9 +17,6 @@ namespace PhotoStoryToBloomConverter
 			return outputPath;
 		}
 
-		public string FormatName
-		{
-			get { return "mp3"; }
-		}
+		public string FormatName => "mp3";
 	}
 }
