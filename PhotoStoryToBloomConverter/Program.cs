@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace PhotoStoryToBloomConverter
 {
@@ -125,7 +126,11 @@ namespace PhotoStoryToBloomConverter
 						bloomPath = arg;
 				}
 			}
+			Console.WriteLine($"Converter version {Assembly.GetExecutingAssembly().GetName().Version}");
+			Console.WriteLine($"Built on {GetBuiltOnDate()}");
+			Console.WriteLine();
 			Console.WriteLine($"Primary output language is {PrimaryOutputLanguage}");
+			Console.WriteLine();
 			if (s_batch && projectPath != null)
 			{
 				//Reassign arguments
@@ -261,6 +266,29 @@ namespace PhotoStoryToBloomConverter
 			var directoryInfo = new DirectoryInfo(directoryPath);
 			var matchingFiles = directoryInfo.GetFiles(projectCode + "*.docx");
 			return matchingFiles.Select(f => Path.Combine(directoryPath, f.Name));
+		}
+
+		private static string GetBuiltOnDate()
+		{
+			var fileString = Assembly.GetExecutingAssembly().CodeBase;
+
+			if (string.IsNullOrEmpty(fileString))
+				return fileString;
+
+			var prefix = Uri.UriSchemeFile + ":";
+
+			if (!fileString.StartsWith(prefix))
+				return fileString;
+
+			var file = fileString.Substring(prefix.Length);
+			// Trim any number of beginning slashes
+			file = file.TrimStart('/');
+
+			var fi = new FileInfo(file);
+
+			// Use UTC for calculation of build-on-date so that we get the same date regardless
+			// of timezone setting.
+			return fi.CreationTimeUtc.ToString("dd-MMM-yyyy");
 		}
 	}
 }

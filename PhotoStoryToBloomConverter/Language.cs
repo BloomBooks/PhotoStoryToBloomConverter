@@ -40,7 +40,8 @@ namespace PhotoStoryToBloomConverter
 				return Language.Unknown;
 
 			var token = fileNameWithoutExtension.Substring(fileNameWithoutExtension.Length - 3);
-			switch (token)
+			switch (token.ToLowerInvariant())
+			//switch (token.ToLowerInvariant())
 			{
 				case "fra": return Language.French;
 				case "kor": return Language.Korean;
