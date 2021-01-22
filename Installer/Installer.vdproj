@@ -51,6 +51,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2ED7F2274BBB125DD4AD6483BE1F4CAE"
+        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3CBA3B50D54912900E30697C51ECC847"
         "OwnerKey" = "8:_FBFB355BE687C8452EED1C4803AC2651"
         "MsmSig" = "8:_UNDEFINED"
@@ -87,20 +93,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_84F93C8D74873F1A5C1898648A025F4C"
+        "MsmKey" = "8:_BEF77DC5C21E1C2A2F7D44E4D9443933"
         "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_AABA38ACF8BD66F488A4A056714E4DAB"
-        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_AABA38ACF8BD66F488A4A056714E4DAB"
-        "OwnerKey" = "8:_1B758CC4A573EEA56D8DB03E25D8753A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -136,13 +130,19 @@
         "Entry"
         {
         "MsmKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
-        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
+        "OwnerKey" = "8:_BEF77DC5C21E1C2A2F7D44E4D9443933"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
         "OwnerKey" = "8:_4AC3BD20CBEED67A6DFDE59B991BB2EF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FBCFDB0B63667C7008CDFA7851798880"
+        "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -155,12 +155,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_14AE745FBF164AB89B68909263278A7B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_84F93C8D74873F1A5C1898648A025F4C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -202,7 +196,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_AABA38ACF8BD66F488A4A056714E4DAB"
+        "OwnerKey" = "8:_2ED7F2274BBB125DD4AD6483BE1F4CAE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -215,6 +209,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_CD10468D0F036A241C69DF52F52BC926"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_BEF77DC5C21E1C2A2F7D44E4D9443933"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -400,6 +400,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2ED7F2274BBB125DD4AD6483BE1F4CAE"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_2ED7F2274BBB125DD4AD6483BE1F4CAE"
+                    {
+                    "Name" = "8:NAudio.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:NAudio.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3CBA3B50D54912900E30697C51ECC847"
             {
             "AssemblyRegister" = "3:1"
@@ -493,51 +524,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_84F93C8D74873F1A5C1898648A025F4C"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BEF77DC5C21E1C2A2F7D44E4D9443933"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:CABExtracter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_84F93C8D74873F1A5C1898648A025F4C"
+                    "_BEF77DC5C21E1C2A2F7D44E4D9443933"
                     {
                     "Name" = "8:CABExtracter.exe"
                     "Attributes" = "3:512"
                     }
                 }
             "SourcePath" = "8:CABExtracter.exe"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AABA38ACF8BD66F488A4A056714E4DAB"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_AABA38ACF8BD66F488A4A056714E4DAB"
-                    {
-                    "Name" = "8:NAudio.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:NAudio.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"
@@ -735,15 +735,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PhotoStoryToBloomConverter"
-        "ProductCode" = "8:{EE2BCFA0-CBFB-416E-805A-4F20F4A07D3F}"
-        "PackageCode" = "8:{6E69EA53-A71B-4D7A-8598-68FECC71BBC8}"
+        "ProductCode" = "8:{C815559F-1C74-4C02-AA57-4E440A41E77F}"
+        "PackageCode" = "8:{BDBB1317-C025-4E26-A045-5BBDE9F770B1}"
         "UpgradeCode" = "8:{EB04FADE-7E19-45CD-AA37-5A706D216538}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.13"
+        "ProductVersion" = "8:1.0.14"
         "Manufacturer" = "8:SIL International"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1257,7 +1257,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_14AE745FBF164AB89B68909263278A7B"
             {
-            "SourcePath" = "8:..\\PhotoStoryToBloomConverter\\obj\\Release\\PhotoStoryToBloomConverter.exe"
+            "SourcePath" = "8:..\\PhotoStoryToBloomConverter\\obj\\Debug\\PhotoStoryToBloomConverter.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"

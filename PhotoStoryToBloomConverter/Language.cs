@@ -9,6 +9,7 @@ namespace PhotoStoryToBloomConverter
 		Korean,
 		Portuguese,
 		Spanish,
+		Swahili,
 		Tagalog,
 		TokPisin,
 		Unknown
@@ -25,6 +26,7 @@ namespace PhotoStoryToBloomConverter
 				case Language.Korean: return "ko";
 				case Language.Portuguese: return "pt";
 				case Language.Spanish: return "es";
+				case Language.Swahili: return "sw";
 				case Language.Tagalog: return "tl";
 				case Language.TokPisin: return "tpi";
 				default:
@@ -41,12 +43,12 @@ namespace PhotoStoryToBloomConverter
 
 			var token = fileNameWithoutExtension.Substring(fileNameWithoutExtension.Length - 3);
 			switch (token.ToLowerInvariant())
-			//switch (token.ToLowerInvariant())
 			{
 				case "fra": return Language.French;
 				case "kor": return Language.Korean;
 				case "por": return Language.Portuguese;
 				case "spa": return Language.Spanish;
+				case "swa": return Language.Swahili;
 				case "tgl": return Language.Tagalog;
 				case "tpi": return Language.TokPisin;
 
