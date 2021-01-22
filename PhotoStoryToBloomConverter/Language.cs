@@ -5,6 +5,7 @@ namespace PhotoStoryToBloomConverter
 	public enum Language
 	{
 		English,
+		Bislama,
 		French,
 		Korean,
 		Portuguese,
@@ -12,6 +13,7 @@ namespace PhotoStoryToBloomConverter
 		Swahili,
 		Tagalog,
 		TokPisin,
+		Vietnamese,
 		Unknown
 	}
 
@@ -22,6 +24,7 @@ namespace PhotoStoryToBloomConverter
 			switch (language)
 			{
 				case Language.English: return "en";
+				case Language.Bislama: return "bi";
 				case Language.French: return "fr";
 				case Language.Korean: return "ko";
 				case Language.Portuguese: return "pt";
@@ -29,6 +32,7 @@ namespace PhotoStoryToBloomConverter
 				case Language.Swahili: return "sw";
 				case Language.Tagalog: return "tl";
 				case Language.TokPisin: return "tpi";
+				case Language.Vietnamese: return "vi";
 				default:
 					throw new ArgumentOutOfRangeException(nameof(language), language, null);
 			}
@@ -44,6 +48,7 @@ namespace PhotoStoryToBloomConverter
 			var token = fileNameWithoutExtension.Substring(fileNameWithoutExtension.Length - 3);
 			switch (token.ToLowerInvariant())
 			{
+				case "bis": return Language.Bislama;
 				case "fra": return Language.French;
 				case "kor": return Language.Korean;
 				case "por": return Language.Portuguese;
@@ -51,6 +56,7 @@ namespace PhotoStoryToBloomConverter
 				case "swa": return Language.Swahili;
 				case "tgl": return Language.Tagalog;
 				case "tpi": return Language.TokPisin;
+				case "vie": return Language.Vietnamese;
 
 				default: return Language.English;
 			}
