@@ -67,7 +67,7 @@ namespace PhotoStoryToBloomConverter
 				{
 					if (args.Length > i + 1)
 					{
-						docxPath = args[i + 1];
+						docxPath = args[++i];
 					}
 					else
 					{
@@ -79,7 +79,7 @@ namespace PhotoStoryToBloomConverter
 				{
 					if (args.Length > i + 1)
 					{
-						docxDirectory = args[i + 1];
+						docxDirectory = args[++i];
 					}
 					else
 					{
@@ -148,9 +148,6 @@ namespace PhotoStoryToBloomConverter
 					return;
 				}
 				BatchConvert(batchPath, bloomPath);
-
-				Console.WriteLine(@"Press any key to close.");
-				Console.ReadLine();
 			}
 			else if (!s_batch && projectPath != null && collectionPath != null && bloomPath != null)
 			{
@@ -176,14 +173,13 @@ namespace PhotoStoryToBloomConverter
 					docxPaths = new List<string> { docxPath };
 				var project = new Project(projectPath);
 				project.Convert(Path.GetDirectoryName(collectionPath), projectName, null, docxPaths, bloomPath, s_overwrite, alsoZip: s_alsoCreateZippedOutput);
-
-				Console.WriteLine(@"Press any key to close.");
-				Console.ReadLine();
 			}
 			else
 			{
 				DisplayUsage();
 			}
+			Console.WriteLine(@"Press any key to close.");
+			Console.ReadLine();
 		}
 
 		private static void DisplayUsage()

@@ -16,7 +16,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 		private readonly BloomMetadata _metadata;
 		private readonly BloomBookData _bookData;
 		private readonly List<BloomPage> _pages = new List<BloomPage>();
-		private readonly CreditsAndCoverExtractor.CreditsType _imageCopyrightAndLicense;
+		private readonly CreditsAndCoverExtractor.CreditsType _imageCreditsType;
 		private readonly Dictionary<string, string> _duplicateAudioFiles;
 
 		public BloomDocument(
@@ -50,6 +50,9 @@ namespace PhotoStoryToBloomConverter.BloomModel
 					//throw new ApplicationException();
 				}
 
+				var isExplicitCreditsType = false;
+				CreditsAndCoverExtractor.CreditsType explicitCreditsType = CreditsAndCoverExtractor.CreditsType.Unknown;
+
 				// The last page may not have text, but we need to process the credits slide anyway.
 				// Otherwise we can ignore pages without text (or with just an asterisk).
 				var englishTextForPage = allPagesInAllLanguages[iPage].Single(kvp => kvp.Key == Language.English).Value;
@@ -57,8 +60,22 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				{
 					var englishTextForPageStr = englishTextForPage.Text;
 					if (string.IsNullOrWhiteSpace(englishTextForPageStr) || englishTextForPageStr.Trim() == "*")
-					    if (iPage != project.VisualUnits.Length - 1)
+					{
+						if (iPage != project.VisualUnits.Length - 1)
 							continue;
+					}
+					else if (englishTextForPageStr.StartsWith("*CreditsType.") || englishTextForPageStr.StartsWith("CreditsType."))
+					{
+						var explicitCreditsTypeStr = englishTextForPageStr.Substring(englishTextForPageStr.IndexOf("CreditsType.") + "CreditsType.".Length);
+						if (Enum.TryParse(explicitCreditsTypeStr, out explicitCreditsType)) { 
+							isExplicitCreditsType = true;
+							Console.WriteLine($"Credits type explicitly set in docx to \"{explicitCreditsTypeStr}\"");
+						}
+						else
+						{
+							Console.WriteLine($"ERROR: Credits type explicitly set in docx to \"{explicitCreditsTypeStr}\" which is not known. Will fall back to looking at the credits image.");
+						}
+					}
 				}
 
 				var visualUnit = project.VisualUnits[iPage];
@@ -68,14 +85,24 @@ namespace PhotoStoryToBloomConverter.BloomModel
 
 				var extractor = new CreditsAndCoverExtractor();
 				extractor.Extract(Path.Combine(bookDirectoryPath, psImage.Path));
-				if (extractor.IsCreditsOrCoverPage || iPage == 0)
+
+				if (isExplicitCreditsType || extractor.IsCreditsOrCoverPage || iPage == 0)
 				{
 					//If it was a credits page, put credit information into the data divs
-					if (extractor.CreditString != null)
+					if (isExplicitCreditsType || extractor.CreditString != null)
 					{
 						creditsFound = true;
-						_bookData.LocalizedOriginalAcknowledgments.Add(extractor.CreditString);
-						_imageCopyrightAndLicense = extractor.ImageCopyrightAndLicense;
+						if (isExplicitCreditsType)
+						{
+							_bookData.LocalizedOriginalAcknowledgments.Add(CreditsAndCoverExtractor.GetCreditString(explicitCreditsType));
+							_imageCreditsType = explicitCreditsType;
+						}
+						else
+						{
+							_bookData.LocalizedOriginalAcknowledgments.Add(extractor.CreditString);
+							_imageCreditsType = extractor.ImageCopyrightAndLicense;
+							Console.WriteLine($"Credits type determined from credits image: \"{_imageCreditsType}\"");
+						}
 					}
 
 					//If the image had narration and/or background audio, and was the front cover, we want to store the audio for the new cover page
@@ -157,7 +184,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				CreditsAndCoverExtractor.CreateMapFile();
 #endif
 
-			if (_imageCopyrightAndLicense != CreditsAndCoverExtractor.CreditsType.Unknown)
+			if (_imageCreditsType != CreditsAndCoverExtractor.CreditsType.Unknown)
 			{
 				// Go back through and set image credits if we extracted some.
 				var imageSources = _pages.Where(p => !(p is BloomTranslationInstructionsPage))
@@ -167,7 +194,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 				foreach (var imageSource in imageSources)
 				{
 					var imageLocation = Path.Combine(bookDirectoryPath, imageSource);
-					ImageUtilities.ApplyImageIpInfo(bookName, imageLocation, _imageCopyrightAndLicense);
+					ImageUtilities.ApplyImageIpInfo(bookName, imageLocation, _imageCreditsType);
 				}
 			}
 			else

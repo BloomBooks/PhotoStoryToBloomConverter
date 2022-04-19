@@ -743,7 +743,7 @@
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.15"
+        "ProductVersion" = "8:1.0.16"
         "Manufacturer" = "8:SIL International"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

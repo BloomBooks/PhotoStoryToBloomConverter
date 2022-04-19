@@ -18,61 +18,100 @@ namespace PhotoStoryToBloomConverter.Utilities
 	{
 		public static void ApplyImageIpInfo(string bookName, string imageLocation, CreditsAndCoverExtractor.CreditsType creditsType)
 		{
-			using (var image = PalasoImage.FromFile(imageLocation))
+			try
 			{
-				switch (creditsType)
+				using (var image = PalasoImage.FromFile(imageLocation))
 				{
-					case CreditsAndCoverExtractor.CreditsType.SweetPublishing:
-					case CreditsAndCoverExtractor.CreditsType.SweetPublishingWithOttScript:
-						ApplySweetPublishingIpInfoForImages(image);
-						break;
-					case CreditsAndCoverExtractor.CreditsType.SweetPublishingAndWycliffe:
-					case CreditsAndCoverExtractor.CreditsType.SweetPublishingAndWycliffeWithOttScript:
-						switch (GetImageCreator(image.OriginalFilePath))
-						{
-							case ImageCreator.Dyk:
-								ApplyWycliffeIpInfoForImages(image);
-								break;
-							case ImageCreator.Padgett:
-								ApplySweetPublishingIpInfoForImages(image);
-								break;
-							case ImageCreator.Unknown:
-								Console.WriteLine($@"ERROR: Unable to determine image credits for {bookName}, {image.FileName}");
-								break;
-						}
-						break;
-					case CreditsAndCoverExtractor.CreditsType.PaulWhiteAndHolden:
-						Apply(image, "© 2003 BTL, Kenya", "https://creativecommons.org/licenses/by-sa/4.0/", "Tim Holden");
-						break;
-					case CreditsAndCoverExtractor.CreditsType.PaulWhiteNessAndHolden:
-						Apply(image, "© 2003 BTL, Kenya", "https://creativecommons.org/licenses/by-sa/4.0/", "April Ness and Tim Holden");
-						break;
-					case CreditsAndCoverExtractor.CreditsType.LostCoinRheburg:
-						Apply(image, "© Wycliffe Bible Translators, Inc.", "https://creativecommons.org/licenses/by-sa/4.0/", "Judith Rheburg");
-						break;
-					default:
-						throw new ArgumentOutOfRangeException(nameof(creditsType), creditsType, null);
-				}
+					switch (creditsType)
+					{
+						case CreditsAndCoverExtractor.CreditsType.SweetPublishing:
+							ApplySweetPublishingIpInfoForImages(image);
+							break;
+						case CreditsAndCoverExtractor.CreditsType.SweetPublishingAndWycliffe:
+							switch (GetImageCreator(image))
+							{
+								case ImageCreator.Dyk:
+									ApplyWycliffeIpInfoForImages(image);
+									break;
+								case ImageCreator.Padgett:
+									ApplySweetPublishingIpInfoForImages(image);
+									break;
+								case ImageCreator.Unknown:
+									Console.WriteLine($@"ERROR: Unable to determine image credits for {bookName}, {image.FileName}");
+									break;
+							}
+							break;
+						case CreditsAndCoverExtractor.CreditsType.PaulWhiteAndHolden:
+							Apply(image, "© 2003 BTL, Kenya", "https://creativecommons.org/licenses/by-sa/4.0/", "Tim Holden");
+							break;
+						case CreditsAndCoverExtractor.CreditsType.PaulWhiteNessAndHolden:
+							Apply(image, "© 2003 BTL, Kenya", "https://creativecommons.org/licenses/by-sa/4.0/", "April Ness and Tim Holden");
+							break;
+						case CreditsAndCoverExtractor.CreditsType.LostCoinRheburg:
+							Apply(image, "© Wycliffe Bible Translators, Inc.", "https://creativecommons.org/licenses/by-sa/4.0/", "Judith Rheburg");
+							break;
+						default:
+							throw new ArgumentOutOfRangeException(nameof(creditsType), creditsType, null);
+					}
 
-				// Don't do this. If there is a problem with the existing exif entries, it will fail.
-				//image.SaveUpdatedMetadataIfItMakesSense();
-				// Instead do this:
-				image.Save(image.OriginalFilePath);
+					// Don't do this. If there is a problem with the existing exif entries, it will fail.
+					//image.SaveUpdatedMetadataIfItMakesSense();
+					// Instead do this:
+					image.Save(image.OriginalFilePath);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($@"ERROR: Could not apply copyright and license information for image {bookName}, {Path.GetFileName(imageLocation)}");
+				Console.WriteLine("Technical details:");
+				Console.WriteLine(ex);
+				Console.WriteLine();
 			}
 		}
 
-		private static ImageCreator GetImageCreator(string imagePath)
+		// This is only relevant for books with multiple image sources
+		private static ImageCreator GetImageCreator(PalasoImage image)
 		{
-			var imageMd5Hash = BitConverter.ToString(MD5.Create().ComputeHash(File.ReadAllBytes(imagePath))).Replace("-", "");
+			var imageMd5Hash = BitConverter.ToString(MD5.Create().ComputeHash(File.ReadAllBytes(image.OriginalFilePath))).Replace("-", "");
 			if (ImageHashToCreatorDictionary.ContainsKey(imageMd5Hash))
 				return ImageHashToCreatorDictionary[imageMd5Hash];
+
+			if (TryGetImageCreatorFromCopyrightNotice(image, out var imageCreator))
+				return imageCreator;
+
 			return ImageCreator.Unknown;
+		}
+
+		// In 2022, we decided on a more robust approach to knowing an image source:
+		// the PhotoStory creator will add CopyrightNotice into the image tag as a mapping key.
+		// That tag was picked because it is easily editable in Adobe's Bridge product.
+		private static bool TryGetImageCreatorFromCopyrightNotice(PalasoImage image, out ImageCreator imageCreator)
+		{
+			try
+			{
+				var imageCopyrightNotice = image.Metadata.CopyrightNotice;
+				if (imageCopyrightNotice == "© Sweet Publishing")
+				{
+					imageCreator = ImageCreator.Padgett;
+					return true;
+				}
+				else if (imageCopyrightNotice == "© Wycliffe Bible Translators, Inc.")
+				{
+					imageCreator = ImageCreator.Dyk;
+					return true;
+				}
+			}
+			catch
+			{
+			}
+			imageCreator = ImageCreator.Unknown;
+			return false;
 		}
 
 		private static void ApplySweetPublishingIpInfoForImages(PalasoImage image)
 		{
 			image.Metadata.CopyrightNotice = "© Sweet Publishing";
-			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl("https://creativecommons.org/licenses/by-sa/4.0/");
+			image.Metadata.License = CreativeCommonsLicense.FromLicenseUrl("https://creativecommons.org/licenses/by-sa/3.0/");
 			image.Metadata.Creator = "Jim Padgett (may have been skin-darkened or otherwise adapted by Wycliffe Bible Translators, Inc.)";
 		}
 

@@ -15,8 +15,6 @@ namespace PhotoStoryToBloomConverter
 			Unknown,
 			SweetPublishing,
 			SweetPublishingAndWycliffe,
-			SweetPublishingWithOttScript,
-			SweetPublishingAndWycliffeWithOttScript,
 			PaulWhiteAndHolden,
 			PaulWhiteNessAndHolden,
 			LostCoinRheburg,
@@ -37,9 +35,9 @@ namespace PhotoStoryToBloomConverter
 			{ "A3BE4B0D87926E00EDD6884096C80A0C", CreditsType.SweetPublishingAndWycliffe },
 			{ "588D1C78C0395E258C503F563CD66A9A", CreditsType.SweetPublishingAndWycliffe },
 
-			{ "108CCAF0758894DD92D41E7B85577F98", CreditsType.SweetPublishingWithOttScript },
+			{ "108CCAF0758894DD92D41E7B85577F98", CreditsType.SweetPublishing },
 
-			{ "EEC5D3512C67A54E319AFDDDE74BCA1E", CreditsType.SweetPublishingAndWycliffeWithOttScript },
+			{ "EEC5D3512C67A54E319AFDDDE74BCA1E", CreditsType.SweetPublishingAndWycliffe },
 
 			{ "07C0F906D56881C5605369051943ED9A", CreditsType.PaulWhiteAndHolden },
 
@@ -85,97 +83,65 @@ namespace PhotoStoryToBloomConverter
 		}
 
 		//Currently all of the information from the credit page needs to be stored in the additional acknowledgments section
-		private string GetCreditString(CreditsType imageType)
+		public static string GetCreditString(CreditsType imageType)
 		{
 			switch (imageType)
 			{
 				case CreditsType.SweetPublishing:
-					return @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
+					return @"Original illustrations by Jim Padgett, © Sweet Publishing, licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
 www.sweetpublishing.com
+Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified many of them.
 
-Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
-
-Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Template © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+Story script, Template, and Music © 2022 Wycliffe Bible Translators, Inc., licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
 A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
+
 
 				case CreditsType.SweetPublishingAndWycliffe:
-					return @"Original illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
+					return @"Original illustrations by Jim Padgett, © Sweet Publishing, licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
 www.sweetpublishing.com
-
-Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified some of them.
-
+Wycliffe Bible Translators, Inc. has skin darkened all of the Jim Padgett illustrations in our collection, and has modified many of them.
 Illustrations by Carolyn Dyk © 2001 Wycliffe Bible Translators, Inc. licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International license.
 
-Story script © 2018 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Template © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Music © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+Story script, Template, and Music © 2022 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
 A special thanks to the 50+ unnamed people who worked on the story scripts, templates, adapted illustrations and music.";
 
-				case CreditsType.SweetPublishingWithOttScript:
-					return @"Illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
-www.sweetpublishing.com
-
-Padgett illustrations adapted by Lori MacLean, Beth Rupprecht and Kris Russell © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Story script by Willis Ott and Robin Rempel © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Music and sound effects by Beth Rupprecht © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Template developed by International Media Services [appreciation to 50+ unnamed contributors] © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
-
-				case CreditsType.SweetPublishingAndWycliffeWithOttScript:
-					return @"Illustrations by Jim Padgett, © Sweet Publishing licensed under the terms of a Creative Commons Attribution-ShareAlike 3.0 Unported license.
-www.sweetpublishing.com
-
-Painted illustrations by Carolyn Dyk © 1995 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Padgett illustrations adapted by Lori MacLean, Beth Rupprecht and Kris Russell © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Story script by Willis Ott and Robin Rempel © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Music and sound effects by Beth Rupprecht © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
-
-Template developed by International Media Services [appreciation to 50+ unnamed contributors] © 2017 Wycliffe Bible Translators, Inc. licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
 
 				case CreditsType.LostCoinRheburg:
 					return @"The Lost Coin
 Text from Luke 15:8-10
+Illustrations by: Judith Rheburg, SIL © Licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-Illustrations by: Judith Rheburg, SIL © Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+Story script, Template, and Music © 2022 Wycliffe Bible Translators, Inc., licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
+A special thanks to the unnamed people who worked on the story script, template, and music.";
 
-Story script © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
 
-Template © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
-
-Music © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.";
 
 				case CreditsType.PaulWhiteAndHolden:
 					return @"Based on the Jungle Doctor Story
 By Paul White © 1981
 Original text adapted from Paul White, 1981 ©. Used with permission.
-Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+Licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-Illustrator: Tim Holden, BTL, Kenya 2003 © Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+Illustrator: Tim Holden, BTL, Kenya 2003 ©, licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-Template developed by International Media Services [Robin Rempel] © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.";
+Template and Music © 2022 Wycliffe Bible Translators, Inc., licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
+
+
 
 				case CreditsType.PaulWhiteNessAndHolden:
 					return @"Based on the Jungle Doctor Story
 By Paul White © 1981
 Original text adapted from Paul White, 1981 ©. Used with permission.
-Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+Licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-Illustrators: April Ness and Tim Holden, BTL, Kenya 2003 © Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.
+Illustrators: April Ness and Tim Holden, BTL, Kenya 2003 ©, licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.
 
-Template developed by International Media Services © 2017 Wycliffe Bible Translators, Inc. Licensed under the terms of a Creative Commons Attribution-Share Alike 4.0 International license.";
+Template and Music © 2022 Wycliffe Bible Translators, Inc., licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
+
+
+
 
 				case CreditsType.Unknown:
 					return "This is just a demo. We need to add real credits.";
