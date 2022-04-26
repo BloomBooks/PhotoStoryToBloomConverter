@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace PhotoStoryToBloomConverter
 {
@@ -203,8 +204,11 @@ namespace PhotoStoryToBloomConverter
 
 			var tempFolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempFolder);
-			var filesToProcess = Directory.EnumerateFiles(directoryPath, "*.wp3").Union(Directory.EnumerateFiles(directoryPath, "*.cab")).ToList();
-			Console.WriteLine($@"Found {filesToProcess.Count} files to process in this directory...");
+			var wp3Files = Directory.EnumerateFiles(directoryPath, "*.wp3");
+			var cabFiles = Directory.EnumerateFiles(directoryPath, "*.cab");
+			var filesToProcess = wp3Files.Union(cabFiles).ToList();
+			Console.WriteLine($@"Found {filesToProcess.Count} stories to process in this directory...");
+			Console.WriteLine($"   ({wp3Files.Count()} .wp3 files and {cabFiles.Count()} .cab files)");
 			int successCount = 0;
 			int failureCount = 0;
 			foreach (var projectPath in filesToProcess)
@@ -230,6 +234,9 @@ namespace PhotoStoryToBloomConverter
 				}
 
 				var matchingDocxFiles = GetMatchingDocxFiles(directoryPath, projectCode);
+				Console.WriteLine();
+				Console.WriteLine($"Processing {Path.GetFileName(projectPath)}...");
+				Console.WriteLine($"   with docx file(s): {GetFileNameListAsString(matchingDocxFiles)}");
 				var project = new Project(projectXmlPath);
 				if (project.Convert(outputDirectory, projectName, projectCode, matchingDocxFiles, bloomExePath, s_overwrite, photoStoryProject, s_alsoCreateZippedOutput))
 					successCount++;
@@ -243,9 +250,9 @@ namespace PhotoStoryToBloomConverter
 
 			Console.WriteLine();
 			if (successCount > 0)
-				Console.WriteLine($@"Successfully processed {successCount} files.");
+				Console.WriteLine($"Successfully processed {successCount} stories.");
 			if (failureCount > 0)
-				Console.WriteLine($@"Failed to process {failureCount} files.");
+				Console.WriteLine($"Failed to process {failureCount} stories.");
 			Console.WriteLine();
 		}
 
@@ -262,6 +269,20 @@ namespace PhotoStoryToBloomConverter
 			var directoryInfo = new DirectoryInfo(directoryPath);
 			var matchingFiles = directoryInfo.GetFiles(projectCode + "*.docx");
 			return matchingFiles.Select(f => Path.Combine(directoryPath, f.Name));
+		}
+
+		private static string GetFileNameListAsString(IEnumerable<string> pathList)
+		{
+			var sb = new StringBuilder();
+			foreach (var path in pathList)
+				sb.Append(Path.GetFileName(path) + ", ");
+			sb.Remove(sb.Length - 2, 2);
+			if (pathList.Count() > 1)
+			{
+				sb.Insert(0, "[");
+				sb.Append("]");
+			}
+			return sb.ToString();
 		}
 
 		private static string GetBuiltOnDate()

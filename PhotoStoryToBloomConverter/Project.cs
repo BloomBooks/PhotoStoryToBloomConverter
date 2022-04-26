@@ -41,7 +41,7 @@ namespace PhotoStoryToBloomConverter
 				if (TextExtractor.TryExtractText(docxPath, out var languageText))
 					textByLanguage.Add(language, languageText);
 				else
-					Console.WriteLine($@"Error: Could not process {language.ToString()} Word document for {projectName}.");
+					Console.WriteLine($@"Error: Could not process {language} Word document for {projectName}.");
 			}
 
 			if (!textByLanguage.ContainsKey(Language.English))
@@ -133,11 +133,11 @@ namespace PhotoStoryToBloomConverter
 				hydrateSuccessful = false;
 			}
 			if (!hydrateSuccessful)
-				Console.WriteLine($@"ERROR: Unable to hydrate {projectName}");
+				Console.WriteLine($"ERROR: Unable to hydrate \"{projectName}\"");
 			else
 			{
-				Console.WriteLine($@"Successfully converted {projectName}");
-				Console.WriteLine($@"   Languages: {string.Join(", ", textByLanguage.Keys)}");
+				Console.WriteLine($"Successfully converted \"{projectName}\"");
+				Console.WriteLine($"   Languages: {string.Join(", ", textByLanguage.Keys)}");
 			}
 
 			if (alsoZip)
@@ -145,7 +145,7 @@ namespace PhotoStoryToBloomConverter
 				var parentDir = Path.GetDirectoryName(convertedProjectDirectory);
 				var outputPath = Path.Combine(parentDir, $"{projectName}.bloom");
 				ZipHelper.Zip(convertedProjectDirectory, outputPath);
-				Console.WriteLine($@"   Also created {outputPath}");
+				Console.WriteLine($"   Also created {outputPath}");
 			}
 
 			Console.WriteLine();
