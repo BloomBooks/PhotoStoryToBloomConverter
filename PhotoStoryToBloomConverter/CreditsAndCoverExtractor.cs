@@ -18,6 +18,7 @@ namespace PhotoStoryToBloomConverter
 			PaulWhiteAndHolden,
 			PaulWhiteNessAndHolden,
 			LostCoinRheburg,
+			KandeMBANJI,
 			NotCredits
 		}
 
@@ -141,6 +142,14 @@ Illustrators: April Ness and Tim Holden, BTL, Kenya 2003 ©, licensed under the 
 Template and Music © 2022 Wycliffe Bible Translators, Inc., licensed under the terms of a Creative Commons Attribution-ShareAlike 4.0 International license.";
 
 
+				case CreditsType.KandeMBANJI:
+return @"Adapted from Kande’s Story: How a community can love and care for people affected by AIDS by Kathie Waters and Margaret Hill © 2012, SIL International. Permission is granted for reproduction for non-commercial use or translation of this text as long as the source and copyright are acknowledged and the text meeting is not altered more than required for good translation. Licensed under the terms of a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International license. CC-BY-NC-ND
+
+Illustrations by MBANJI Bawe Ernest © 2006, 2009, 2012 SIL International. IMS of SIL vectorized and colorized the MBANJI illustrations in 2013.  Licensed under the terms of a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International license. CC-BY-NC-ND
+
+Story template © 2020 SIL International. Licensed under the terms of a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International license. CC-BY-NC-ND
+
+Music © 2020 SIL International. Licensed under the terms of a Creative Commons Attribution ShareAlike 4.0 International license. CC-BY-SA.";
 
 
 				case CreditsType.Unknown:

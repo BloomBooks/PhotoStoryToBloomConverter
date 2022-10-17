@@ -497,7 +497,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CABExtracter, Version=1.0.16.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:CABExtracter, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_84F93C8D74873F1A5C1898648A025F4C"
@@ -735,15 +735,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PhotoStoryToBloomConverter"
-        "ProductCode" = "8:{AD15C14B-AE10-4C8C-90EF-8526B7B09945}"
-        "PackageCode" = "8:{53FCC0FF-0ABC-48C7-AA34-9958C244EDE5}"
+        "ProductCode" = "8:{B7FDBE7E-EA54-4B17-B841-6E5378491C28}"
+        "PackageCode" = "8:{F4E55966-4D85-4D9E-9292-65BD08CA5729}"
         "UpgradeCode" = "8:{EB04FADE-7E19-45CD-AA37-5A706D216538}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.17"
+        "ProductVersion" = "8:1.0.18"
         "Manufacturer" = "8:SIL International"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1257,7 +1257,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_14AE745FBF164AB89B68909263278A7B"
             {
-            "SourcePath" = "8:..\\PhotoStoryToBloomConverter\\obj\\Release\\PhotoStoryToBloomConverter.exe"
+            "SourcePath" = "8:..\\PhotoStoryToBloomConverter\\obj\\Debug\\PhotoStoryToBloomConverter.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_331844F7BCDC4A3DBC8DF56D18AEF28B"

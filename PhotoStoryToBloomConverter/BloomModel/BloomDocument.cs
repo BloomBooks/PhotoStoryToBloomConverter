@@ -64,7 +64,7 @@ namespace PhotoStoryToBloomConverter.BloomModel
 						if (iPage != project.VisualUnits.Length - 1)
 							continue;
 					}
-					else if (englishTextForPageStr.StartsWith("*CreditsType.") || englishTextForPageStr.StartsWith("CreditsType."))
+					else if (englishTextForPageStr.StartsWith("*CreditsType.") || englishTextForPageStr.StartsWith("CreditsType.") || englishTextForPageStr.StartsWith("* CreditsType."))
 					{
 						var explicitCreditsTypeStr = englishTextForPageStr.Substring(englishTextForPageStr.IndexOf("CreditsType.") + "CreditsType.".Length);
 						if (Enum.TryParse(explicitCreditsTypeStr, out explicitCreditsType)) { 

@@ -50,6 +50,9 @@ namespace PhotoStoryToBloomConverter.Utilities
 						case CreditsAndCoverExtractor.CreditsType.LostCoinRheburg:
 							Apply(image, "© Wycliffe Bible Translators, Inc.", "https://creativecommons.org/licenses/by-sa/4.0/", "Judith Rheburg");
 							break;
+						case CreditsAndCoverExtractor.CreditsType.KandeMBANJI:
+							Apply(image, "© 2006, 2009, 2012, 2013 SIL International", "https://creativecommons.org/licenses/by-nc-nd/4.0/", "MBANJI Bawe Ernest. SIL International. IMS of SIL vectorized and colorized the MBANJI illustrations in 2013");
+							break;
 						default:
 							throw new ArgumentOutOfRangeException(nameof(creditsType), creditsType, null);
 					}
