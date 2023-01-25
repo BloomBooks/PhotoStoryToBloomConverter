@@ -47,6 +47,6 @@ Open the PhotoStoryToBloomTools.sln file in Visual Studio.
 
 ## About Bloom
 
-[Bloom Website](https://bloomlibrary.org)
+[Bloom Website](https://bloomlibrary.org/about)
 
 On [github.com](https://github.com/BloomBooks/BloomDesktop)
